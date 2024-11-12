@@ -1,5 +1,6 @@
 import tkinter as tk
 from start import start
+from pause import pause
 
 class main_window:
     def __init__(self):
@@ -30,7 +31,7 @@ class main_window:
         self.__start_screen()
 
     def __pause(self):
-        print("pause")
+        pause(self.__window)
 
     def __end_fullscreen(self, event):
         self.__window.attributes("-fullscreen", False)
