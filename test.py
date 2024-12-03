@@ -1,0 +1,1 @@
+print([open("gameSlots/slot"+str(1)+".ccsn", "r").read()])

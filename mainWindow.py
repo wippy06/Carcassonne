@@ -54,10 +54,10 @@ class mainWindow:
         start(self.__window, self.__bottomFrame, self.__selectGame)
 
     def __selectGame(self):
-        selectGame(self.__bottomFrame, self.__selectPlayers)
+        selectGame(self.__bottomFrame, self.__playGame)
 
-    def __selectPlayers(self, gameSlot):
-        print("players")
+    def __playGame(self, gameSlot):
+        print("play "+str(gameSlot))
 
     def run(self):
         self.__window.mainloop()
