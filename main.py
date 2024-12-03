@@ -1,5 +1,5 @@
-from mainWindow import main_window
+from mainWindow import mainWindow
 
 if __name__ == "__main__":
-    main = main_window()
+    main = mainWindow()
     main.run()

@@ -1,10 +1,10 @@
 import tkinter as tk
 
 class start:
-    def __init__(self, window, frame, start_func):
+    def __init__(self, window, frame, startFunc):
         self.__frame = frame
         self.__window = window
-        self.__start_func = start_func
+        self.__startFunc = startFunc
 
         tk.Label(self.__frame,text ="Carcassonne").pack()
         tk.Button(self.__frame, text = "Start", command = self.__start).pack()
@@ -13,5 +13,5 @@ class start:
     def __start(self):
         for widget in self.__frame.winfo_children():
             widget.destroy()
-        self.__start_func()
+        self.__startFunc()
         
