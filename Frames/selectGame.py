@@ -5,6 +5,7 @@ class selectGame:
         self.__frame = frame
         self.__playerFunc = playerFunc
 
+        #set tk vars
         tk.Label(self.__frame,text ="Choose save slot").pack()
 
         self.__slot1Frame = tk.Frame(self.__frame)
@@ -16,11 +17,13 @@ class selectGame:
         self.__slot3Frame = tk.Frame(self.__frame)
         self.__slot3Frame.pack(side="top")
 
+        #create button options
         self.__createSlotDisplay(1, self.__slot1Frame)
         self.__createSlotDisplay(2, self.__slot2Frame)
         self.__createSlotDisplay(3, self.__slot3Frame)
 
     def __createSlotDisplay(self, slot, frame):
+        #check if slot filled
         slotFile = open("gameSlots/slot"+str(slot)+".ccsn", "r")
 
         if slotFile.read() == "":
@@ -40,7 +43,6 @@ class selectGame:
         self.__createSlotDisplay(slot, frame)
         
     def __slotChoice(self, slot):
-        print(slot)
         for widget in self.__frame.winfo_children():
             widget.destroy()
         self.__playerFunc(slot)
