@@ -1,7 +1,8 @@
 import tkinter as tk
-from start import start
-from pause import pause
-from selectGame import selectGame
+from Frames.start import start
+from Frames.pause import pause
+from Frames.selectGame import selectGame
+from Frames.selectPlayers import selectPlayers
 from constants import START_FULLSCREEN
 
 class mainWindow:
@@ -54,10 +55,14 @@ class mainWindow:
         start(self.__window, self.__bottomFrame, self.__selectGame)
 
     def __selectGame(self):
-        selectGame(self.__bottomFrame, self.__playGame)
+        selectGame(self.__bottomFrame, self.__selectPlayers, self.__loadGame)
 
-    def __playGame(self, gameSlot):
-        print("play "+str(gameSlot))
+    def __selectPlayers(self, gameSlot):
+        selectPlayers(self.__bottomFrame, gameSlot, self.__loadGame)
+
+    def __loadGame(self, slot):
+        print("load " + str(slot))
+
 
     def run(self):
         self.__window.mainloop()

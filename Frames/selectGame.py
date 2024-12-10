@@ -1,9 +1,10 @@
 import tkinter as tk
 
 class selectGame:
-    def __init__(self, frame, playerFunc):
+    def __init__(self, frame, playerFunc, loadGameFunc):
         self.__frame = frame
         self.__playerFunc = playerFunc
+        self.__loadGameFunc = loadGameFunc
 
         #set tk vars
         tk.Label(self.__frame,text ="Choose save slot").pack()
@@ -45,4 +46,10 @@ class selectGame:
     def __slotChoice(self, slot):
         for widget in self.__frame.winfo_children():
             widget.destroy()
-        self.__playerFunc(slot)
+
+        slotFile = open("gameSlots/slot"+str(slot)+".ccsn", "r")
+       
+        if slotFile.read() == "":
+            self.__playerFunc(slot)
+        else:
+            self.__loadGameFunc(slot)

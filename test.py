@@ -1,1 +1,1 @@
-print([open("gameSlots/slot"+str(1)+".ccsn", "r").read()])
+print([open("gameSlots/slot"+str(1)+".ccsn", "r+").read()])
