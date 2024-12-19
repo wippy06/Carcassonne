@@ -1,1 +1,5 @@
-print([open("gameSlots/slot"+str(1)+".ccsn", "r+").read()])
+for i in range(6):
+    if i == 0:
+        print(i-1)
+    else:
+        continue
