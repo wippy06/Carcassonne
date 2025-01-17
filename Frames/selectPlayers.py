@@ -1,6 +1,8 @@
 import tkinter as tk
 from constants import BGDEFAULTCOLOUR
 
+#skipped deactivating buttons
+
 class selectPlayers:
     def __init__(self, frame, gameSlot, gameFunc):
         self.__frame = frame
@@ -15,19 +17,21 @@ class selectPlayers:
         self.__topLFrame.grid(column=0,row=0)
 
         self.__topMFrame = tk.Frame(self.__playerFrame)
-        self.__topMFrame.grid(column=0,row=1)
+        self.__topMFrame.grid(column=1,row=0)
 
         self.__topRFrame = tk.Frame(self.__playerFrame)
-        self.__topRFrame.grid(column=0,row=2)
+        self.__topRFrame.grid(column=2,row=0)
 
         self.__bottomLFrame = tk.Frame(self.__playerFrame)
-        self.__bottomLFrame.grid(column=1,row=0)
+        self.__bottomLFrame.grid(column=0,row=1)
 
         self.__bottomMFrame = tk.Frame(self.__playerFrame)
         self.__bottomMFrame.grid(column=1,row=1)
 
         self.__bottomRFrame = tk.Frame(self.__playerFrame)
-        self.__bottomRFrame.grid(column=1,row=2)
+        self.__bottomRFrame.grid(column=2,row=1)
+
+        self.__playerList = []
 
         self.__player1 = playerSelectBox(self.__topLFrame, self.__changeOrderButtons)
         self.__player2 = playerSelectBox(self.__topMFrame, self.__changeOrderButtons)
@@ -38,19 +42,34 @@ class selectPlayers:
         
         self.__playerList = [self.__player1, self.__player2, self.__player3, self.__player4, self.__player5, self.__player6]
 
-        self.__takenOrderList = []
-
         tk.Button(self.__frame, text = "Continue", command = lambda: self.__confirmChoice()).pack()
 
-    def __changeOrderButtons(self, numberNew, numberOld):
-        if numberOld != 0:
-            self.__takenOrderList.remove(numberOld)
-        self.__takenOrderList.append(numberNew)
+    def __changeOrderButtons(self):
+        orderList = []      
+        if self.__playerList != []:
+            for player in self.__playerList:
+                if player.getOrder() != 0:
+                    orderList.append(player.getOrder())
+            
+            #for deactivating buttons not working
+            '''for player in self.__playerList:
+                player.deactivateOrderBs(orderList)'''
         
-        for player in self.__playerList:
-            player.deactivateOrderBs(self.__takenOrderList)
-    
     def __confirmChoice(self):
+        orderList = []
+        nameList = []
+        typeList = []
+
+        for players in self.__playerList:
+            if players.getIsPlaying():
+                orderList.append(players.getOrder())
+                nameList.append(players.getName())
+                typeList.append(players.getType())
+
+        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not("" in nameList) and not(0 in orderList) and orderList != [] and nameList != [] and typeList != []:
+            self.__continue()
+
+    def __continue(self):
         for widget in self.__frame.winfo_children():
             widget.destroy()
         self.__gameFunc(self.__gameSlot)
@@ -58,20 +77,22 @@ class selectPlayers:
 class playerSelectBox:
     def __init__(self, frame, changeOrderButtons):
         self.__frame = frame
-        self.__name = ""
         self.__type = "player"
         self.__order = 0
+        self.__isPlaying = False
         self.__orderChanged = changeOrderButtons
         self.__orderBList = []
         self.__deletePlayer()
 
     def __newPlayer(self):
+        self.__isPlaying = True
+        
         for widget in self.__frame.winfo_children():
             widget.destroy()
 
         tk.Label(self.__frame, text = "Name: ").pack()
-        self.__name = tk.Entry(self.__frame)
-        self.__name.pack()
+        self.__nameEntry = tk.Entry(self.__frame)
+        self.__nameEntry.pack()
 
         tk.Label(self.__frame, text = "Type: ").pack()
         self.__typeButton = tk.Button(self.__frame, text = self.__type, command = self.__typeChange)
@@ -111,19 +132,37 @@ class playerSelectBox:
             else:
                 self.__orderBList[i].config(bg = BGDEFAULTCOLOUR, fg = "black")
 
-        self.__orderChanged(number, self.__order)
         self.__order = number
+        self.__orderChanged()
 
+    #not working skip for now maybe move back
     def deactivateOrderBs(self, takenList):
         if self.__orderBList != []:
+            print(self.__orderBList)
             for i in range(len(self.__orderBList)):
                 if i+1 in takenList:
                     self.__orderBList[i].config(state="disabled")
                 else:
-                    self.__orderBList[i].config(state="normal")
+                    self.__orderBList[i].config(state="active")
 
+    def getOrder(self):
+        return self.__order
+    
+    def getName(self):
+        return self.__nameEntry.get()
+    
+    def getType(self):
+        return self.__type
+    
+    def getIsPlaying(self):
+        return self.__isPlaying
 
     def __deletePlayer(self):
+        self.__isPlaying = False
+        self.__name = ""
+        self.__type = "player"
+        self.__order = 0
+
         for widget in self.__frame.winfo_children():
             widget.destroy()
         tk.Button(self.__frame, text = "New Player", command = lambda: self.__newPlayer()).pack()
