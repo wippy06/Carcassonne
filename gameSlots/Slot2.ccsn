@@ -1,0 +1,20 @@
+{
+    "players": [
+        {
+            "Name": "wil",
+            "type": "bot"
+        },
+        {
+            "Name": "wio",
+            "type": "player"
+        },
+        {
+            "Name": "wid",
+            "type": "bot"
+        },
+        {
+            "Name": "wip",
+            "type": "player"
+        }
+    ]
+}

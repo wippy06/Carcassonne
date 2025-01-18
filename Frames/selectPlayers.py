@@ -1,5 +1,6 @@
 import tkinter as tk
 from constants import BGDEFAULTCOLOUR
+import json
 
 #skipped deactivating buttons
 
@@ -69,9 +70,37 @@ class selectPlayers:
         if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not("" in nameList) and not(0 in orderList) and orderList != [] and nameList != [] and typeList != []:
             self.__continue()
 
+    def __bubbleSort(self, playerList):
+        for i in range(len(playerList)):
+            swaps = False
+
+            for j in range(len(playerList)-i-1):
+                if playerList[j].getOrder()>playerList[j+1].getOrder():
+                    playerList[j],playerList[j+1]=playerList[j+1],playerList[j]
+                    swaps = True
+
+            if not swaps:
+                break
+
+        return playerList
+
     def __continue(self):
+
+        #sort player list
+        sortedPlayerList = self.__bubbleSort(self.__playerList)
+
+        fullPlayerList = []
+
+        for player in sortedPlayerList:
+            if player.getIsPlaying():
+                playerDict = {"Name" : player.getName(), "type" : player.getType()}
+                fullPlayerList.append(playerDict)         
+
+        self.__gameFile.write(json.dumps({"players":fullPlayerList}, indent=4))
+
         for widget in self.__frame.winfo_children():
             widget.destroy()
+        self.__gameFile.close()
         self.__gameFunc(self.__gameSlot)
 
 class playerSelectBox:
