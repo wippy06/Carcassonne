@@ -58,20 +58,20 @@
         "CoA": true
     },
     "D": {
-        "North": "Road",
-        "South": "Road",
-        "East": null,
-        "West": "Castle",
+        "North": "Castle",
+        "South": null,
+        "East": "Road",
+        "West": "Road",
         "Centre": null,
         "Connections": {
-            "North": [
-                "South"
+            "North": [],
+            "South": [],
+            "East": [
+                "West"
             ],
-            "South": [
-                "North"
-            ],
-            "East": [],
-            "West": []
+            "West": [
+                "East"
+            ]
         },
         "CoA": false
     },

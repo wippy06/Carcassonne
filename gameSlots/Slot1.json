@@ -1,0 +1,18 @@
+{
+    "Seed": "79287",
+    "Players": [
+        {
+            "Name": "wik",
+            "Type": "player"
+        },
+        {
+            "Name": "wil",
+            "Type": "bot"
+        },
+        {
+            "Name": "wip",
+            "Type": "player"
+        }
+    ],
+    "Moves": []
+}

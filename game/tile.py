@@ -1,16 +1,21 @@
-class Tile:
-    def __init__(self, tileDict):
-        north = tileDict["North"]
-        south = tileDict["South"]
-        east = tileDict["East"]
-        west = tileDict["West"]
-        centre = tileDict["Centre"]
+class tile:
+    def __init__(self, tileDict, order):
+        self.__north = tileDict["North"]
+        self.__south = tileDict["South"]
+        self.__east = tileDict["East"]
+        self.__west = tileDict["West"]
+        self.__centre = tileDict["Centre"]
 
-        connections = {
+        self.__connections = {
             "North" : tileDict["Connections"]["North"],
             "South" : tileDict["Connections"]["South"],
             "East" : tileDict["Connections"]["East"],
             "West" : tileDict["Connections"]["West"]
         }
 
-        CoA = tileDict["CoA"]
+        self.__CoA = tileDict["CoA"]
+
+        self.__tileOrder = order
+
+    def getOrder(self):
+        return self.__tileOrder

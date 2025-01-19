@@ -25,7 +25,7 @@ class selectGame:
 
     def __createSlotDisplay(self, slot, frame):
         #check if slot filled
-        slotFile = open("gameSlots/slot"+str(slot)+".ccsn", "r")
+        slotFile = open("gameSlots/slot"+str(slot)+".json", "r")
 
         if slotFile.read() == "":
             tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot)).pack()
@@ -37,7 +37,7 @@ class selectGame:
 
     def __clearSlot(self, slotFile, slot, frame):
         slotFile.close()
-        slotFile = open("gameSlots/slot"+str(slot)+".ccsn", "w")
+        slotFile = open("gameSlots/slot"+str(slot)+".json", "w")
         slotFile.close()
         for widget in frame.winfo_children():
             widget.destroy()
@@ -47,9 +47,9 @@ class selectGame:
         for widget in self.__frame.winfo_children():
             widget.destroy()
 
-        slotFile = open("gameSlots/slot"+str(slot)+".ccsn", "r")
+        slotFile = open("gameSlots/slot"+str(slot)+".json", "r")
        
         if slotFile.read() == "":
             self.__playerFunc(slot)
         else:
-            self.__loadGameFunc(slot)
+            self.__loadGameFunc("gameSlots/slot"+str(slot)+".json")

@@ -1,6 +1,6 @@
 import tkinter as tk
-from constants import BGDEFAULTCOLOUR
-import json
+from constants import BG_DEFAULT_COLOUR
+import json, random
 
 #skipped deactivating buttons
 
@@ -8,7 +8,8 @@ class selectPlayers:
     def __init__(self, frame, gameSlot, gameFunc):
         self.__frame = frame
         self.__gameSlot = gameSlot
-        self.__gameFile = open("gameSlots/slot"+str(self.__gameSlot)+".ccsn", "r+")
+        self.__fileName = "gameSlots/slot"+str(self.__gameSlot)+".json"
+        self.__gameFile = open(self.__fileName, "r+")
         self.__gameFunc = gameFunc
 
         self.__playerFrame = tk.Frame(frame)
@@ -86,23 +87,26 @@ class selectPlayers:
 
     def __continue(self):
 
-        #sort player list
+        seed = str(random.randint(0,99999))
+        while(len(seed) != 5):
+            seed = "0" + seed
+
         sortedPlayerList = self.__bubbleSort(self.__playerList)
 
         fullPlayerList = []
 
         for player in sortedPlayerList:
             if player.getIsPlaying():
-                playerDict = {"Name" : player.getName(), "type" : player.getType()}
+                playerDict = {"Name" : player.getName(), "Type" : player.getType()}
                 fullPlayerList.append(playerDict)         
 
-        self.__gameFile.write(json.dumps({"players":fullPlayerList}, indent=4))
+        self.__gameFile.write(json.dumps({"Seed":seed,"Players":fullPlayerList,"Moves":[]}, indent=4))
 
         for widget in self.__frame.winfo_children():
             widget.destroy()
         self.__gameFile.close()
-        self.__gameFunc(self.__gameSlot)
-
+        self.__gameFunc(self.__fileName)
+        
 class playerSelectBox:
     def __init__(self, frame, changeOrderButtons):
         self.__frame = frame
@@ -157,9 +161,9 @@ class playerSelectBox:
     def __selectOrder(self, number):
         for i in range(len(self.__orderBList)):
             if i == number-1:
-                self.__orderBList[i].config(bg = "black", fg = BGDEFAULTCOLOUR)
+                self.__orderBList[i].config(bg = "black", fg = BG_DEFAULT_COLOUR)
             else:
-                self.__orderBList[i].config(bg = BGDEFAULTCOLOUR, fg = "black")
+                self.__orderBList[i].config(bg = BG_DEFAULT_COLOUR, fg = "black")
 
         self.__order = number
         self.__orderChanged()
