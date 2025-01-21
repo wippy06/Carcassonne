@@ -1,0 +1,30 @@
+{
+    "Seed": "26825",
+    "Players": [
+        {
+            "Name": "kil",
+            "Type": "bot"
+        },
+        {
+            "Name": "bil",
+            "Type": "bot"
+        },
+        {
+            "Name": "hil",
+            "Type": "player"
+        },
+        {
+            "Name": "til",
+            "Type": "bot"
+        },
+        {
+            "Name": "nil",
+            "Type": "player"
+        },
+        {
+            "Name": "wil",
+            "Type": "player"
+        }
+    ],
+    "Moves": []
+}

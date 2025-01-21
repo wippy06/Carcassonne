@@ -1,8 +1,9 @@
-import random
+def FillNumbers(NumbersAllowed, TrainingGame, MaxNumber):
+    if TrainingGame:
+        return [2, 3, 2, 8, 512]
+    else:
+        while len(NumbersAllowed) < 5:
+            NumbersAllowed.append(2)      
+        return NumbersAllowed
 
-for x in range(100):
-    seed = str(random.randint(0,10))
-    while(len(seed) != 5):
-        seed = "0" + seed
-
-    print(seed)
+print(FillNumbers([],False,5))

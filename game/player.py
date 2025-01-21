@@ -1,6 +1,9 @@
 class player:
     def __init__(self, infoDict):
-        name = infoDict["Name"]
-        playerType = infoDict["Type"]
-        score = 0
-        meeples = 7
+        self.__name = infoDict["Name"]
+        self.__playerType = infoDict["Type"]
+        self.__score = 0
+        self.__meeples = 7
+
+    def getName(self):
+        return self.__name
