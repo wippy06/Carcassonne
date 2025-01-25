@@ -7,3 +7,9 @@ class player:
 
     def getName(self):
         return self.__name
+    
+    def getScore(self):
+        return self.__score
+    
+    def getRemainingMeeples(self):
+        return self.__meeples

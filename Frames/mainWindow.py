@@ -14,7 +14,7 @@ class mainWindow:
 
         self.__window.title("Carcassonne")
 
-        self.__topBarFrame = tk.Frame(self.__window)
+        self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1)
         self.__topBarFrame.pack(side="top", fill ="x")
 
         self.__topBarFrameL = tk.Frame(self.__topBarFrame)
@@ -24,11 +24,11 @@ class mainWindow:
         self.__topBarFrameR.pack(side="right")
 
         self.__bottomFrame = tk.Frame(self.__window)
-        self.__bottomFrame.pack(side="top")
+        self.__bottomFrame.pack(side="top", fill="both")
 
-        tk.Label(self.__topBarFrameL,text ="Carcassonne").pack()
-        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__pause).pack()
-        tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy).pack()
+        tk.Label(self.__topBarFrameL,text ="Carcassonne").pack(side="left")
+        tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__pause).pack(side="right")
 
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
@@ -61,7 +61,7 @@ class mainWindow:
         selectPlayers(self.__bottomFrame, gameSlot, self.__loadGame)
 
     def __loadGame(self, gameFile):
-        gameWindow(gameFile)
+        gameWindow(self.__bottomFrame, gameFile)
 
     def run(self):
         self.__window.mainloop()

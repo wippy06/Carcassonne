@@ -31,3 +31,6 @@ class tileStack:
     
     def getSize(self):
         return self.__topPointer
+    
+    def getMaxSize(self):
+        return self.__space

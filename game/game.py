@@ -6,13 +6,15 @@ from .tileStack import tileStack
 from .player import player
 
 class game:
-    def __init__(self, gameFile):
+    def __init__(self, gameFileDir):
+
+        self.__gameFileDir = gameFileDir
         
-        fileObj = open(gameFile, "r")
+        fileObj = open(self.__gameFileDir, "r")
         self.__gameFile = json.loads(fileObj.read())
         fileObj.close()
 
-        random.seed(self.__gameFile["Seed"])
+        random.seed(self.__gameFile["seed"])
 
         self.__tileList = []
         self.__playerDict = {}
@@ -40,6 +42,44 @@ class game:
             print(self.__tileStack.getItem().getOrder(),self.__tileStack.getItem().getKey())
             self.__tileStack.stackPop()
         '''
+    def drawTilePreview(self,canvas):
+        self.__tileStack.getItem().draw(canvas)
+
+    def rotatePreview(self,anticlockwise,canvas):
+        if anticlockwise:
+            self.__tileStack.getItem().rotate()
+        else:
+            self.__tileStack.getItem().rotate()
+            self.__tileStack.getItem().rotate()
+            self.__tileStack.getItem().rotate()
+        self.drawTilePreview(canvas)
+
+    def getPlayerLeaderboard(self):
+        playerScores = {}
+        for player in self.__playerKeys:
+            playerScores[self.__playerDict[player].getName()] = self.__playerDict[player].getScore()
+
+        return playerScores
+    
+    def getTurnPlayerName(self):
+        return self.__playerDict[self.__playerKeys[0]].getName()
+    
+    def getTurnPlayerMeeplesRemaining(self):
+        return self.__playerDict[self.__playerKeys[0]].getRemainingMeeples()
+
+    def getNumPlayers(self):
+        return len(self.__playerKeys)
+    
+    def getTurnCount(self):
+        return self.__tileStack.getMaxSize()-self.__tileStack.getSize()
+    
+    def getTilesRemaining(self):
+        return self.__tileStack.getSize()
+
+    def __updateGameFile(self):
+        fileObj = open(self.__gameFileDir, "w")
+        fileObj.write(json.dumps(self.__gameFile, indent=4))
+        fileObj.close()
 
     def __loadPreviousMoves(self):
         pass
@@ -55,13 +95,15 @@ class game:
         return self.__playerKeys
 
     def __generatePlayerDict(self):
-        playerList = self.__gameFile["Players"]
+        playerList = self.__gameFile["players"]
         for i in range(len(playerList)):
             self.__playerDict[i] = player(playerList[i])
             self.__playerKeys.append(i)
 
     def __generateTileStack(self):
         tileCount = self.__generateTiles()
+        self.__gameFile["tileNum"] = tileCount
+        self.__updateGameFile()
         randomList = self.__generateList(tileCount)
         self.__assignTileOrder(randomList)
         randomTileList = self.__mergeSort(self.__tileList)
@@ -129,7 +171,7 @@ class game:
         j=0
         
         while i < len(leftHalf) and j < len(rightHalf):
-            if leftHalf[i].getOrder() >= rightHalf[j].getOrder():
+            if leftHalf[i].getScore() >= rightHalf[j].getScore():
                 sortedList.append(leftHalf[i])
                 i += 1
             else:

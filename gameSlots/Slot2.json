@@ -1,6 +1,6 @@
 {
-    "Seed": "26825",
-    "Players": [
+    "seed": "26825",
+    "players": [
         {
             "Name": "kil",
             "Type": "bot"
@@ -26,5 +26,6 @@
             "Type": "player"
         }
     ],
-    "Moves": []
+    "moves": [],
+    "tileNum": 71
 }

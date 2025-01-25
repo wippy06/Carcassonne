@@ -1,22 +1,25 @@
 import tkinter as tk
+import json
 
 class selectGame:
     def __init__(self, frame, playerFunc, loadGameFunc):
-        self.__frame = frame
+        self.__mainFrame = frame
+        self.__frame = tk.Frame(frame)
+        self.__frame.pack(side="top")
         self.__playerFunc = playerFunc
         self.__loadGameFunc = loadGameFunc
 
         #set tk vars
-        tk.Label(self.__frame,text ="Choose save slot").pack()
+        tk.Label(self.__frame,text ="Choose save slot").grid(column=1,row=0)
 
         self.__slot1Frame = tk.Frame(self.__frame)
-        self.__slot1Frame.pack(side="top")
+        self.__slot1Frame.grid(column=0,row=1)
 
         self.__slot2Frame = tk.Frame(self.__frame)
-        self.__slot2Frame.pack(side="top")
+        self.__slot2Frame.grid(column=1,row=1)
 
         self.__slot3Frame = tk.Frame(self.__frame)
-        self.__slot3Frame.pack(side="top")
+        self.__slot3Frame.grid(column=2,row=1)
 
         #create button options
         self.__createSlotDisplay(1, self.__slot1Frame)
@@ -26,10 +29,17 @@ class selectGame:
     def __createSlotDisplay(self, slot, frame):
         #check if slot filled
         slotFile = open("gameSlots/slot"+str(slot)+".json", "r")
+        fileString = slotFile.read()
 
-        if slotFile.read() == "":
+        tk.Label(frame,text="Save Slot " + str(slot)).pack()
+
+        if fileString == "":
             tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot)).pack()
         else:
+            fileData = json.loads(fileString)
+            tk.Label(frame,text="Players : " + str(len(fileData["players"]))).pack()
+            tk.Label(frame,text="Turn : " + str(len(fileData["moves"])+1)).pack()
+            tk.Label(frame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"])))).pack()
             tk.Button(frame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot)).pack()
             tk.Button(frame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame)).pack()
 
@@ -44,7 +54,7 @@ class selectGame:
         self.__createSlotDisplay(slot, frame)
         
     def __slotChoice(self, slot):
-        for widget in self.__frame.winfo_children():
+        for widget in self.__mainFrame.winfo_children():
             widget.destroy()
 
         slotFile = open("gameSlots/slot"+str(slot)+".json", "r")

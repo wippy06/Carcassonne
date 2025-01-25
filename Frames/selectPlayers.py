@@ -6,14 +6,13 @@ import json, random
 
 class selectPlayers:
     def __init__(self, frame, gameSlot, gameFunc):
-        self.__frame = frame
         self.__gameSlot = gameSlot
         self.__fileName = "gameSlots/slot"+str(self.__gameSlot)+".json"
         self.__gameFile = open(self.__fileName, "r+")
         self.__gameFunc = gameFunc
 
         self.__playerFrame = tk.Frame(frame)
-        self.__playerFrame.pack()
+        self.__playerFrame.pack(side="top")
 
         self.__topLFrame = tk.Frame(self.__playerFrame)
         self.__topLFrame.grid(column=0,row=0)
@@ -44,7 +43,7 @@ class selectPlayers:
         
         self.__playerList = [self.__player1, self.__player2, self.__player3, self.__player4, self.__player5, self.__player6]
 
-        tk.Button(self.__frame, text = "Continue", command = lambda: self.__confirmChoice()).pack()
+        tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice()).grid(column=1, row=2)
 
     def __changeOrderButtons(self):
         orderList = []      
@@ -100,9 +99,9 @@ class selectPlayers:
                 playerDict = {"Name" : player.getName(), "Type" : player.getType()}
                 fullPlayerList.append(playerDict)         
 
-        self.__gameFile.write(json.dumps({"Seed":seed,"Players":fullPlayerList,"Moves":[]}, indent=4))
+        self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[], "tileNum":0}, indent=4))
 
-        for widget in self.__frame.winfo_children():
+        for widget in self.__playerFrame.winfo_children():
             widget.destroy()
         self.__gameFile.close()
         self.__gameFunc(self.__fileName)

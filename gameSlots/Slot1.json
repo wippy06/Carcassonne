@@ -1,6 +1,6 @@
 {
-    "Seed": "79297",
-    "Players": [
+    "seed": "79297",
+    "players": [
         {
             "Name": "wik",
             "Type": "player"
@@ -14,5 +14,6 @@
             "Type": "player"
         }
     ],
-    "Moves": []
+    "moves": [],
+    "tileNum": 71
 }
