@@ -1,6 +1,6 @@
 import tkinter as tk
 from game.game import game
-from constants import TILE_SIZE
+from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
 
 class gameWindow:
     def __init__(self,frame, gameFile):
@@ -25,8 +25,9 @@ class gameWindow:
         self.__tilePreviewFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
         self.__tilePreviewFrame.grid(column=0, row=1)
 
-        self.__tileCanvas = tk.Canvas(self.__tilePreviewFrame, width=TILE_SIZE, height=TILE_SIZE, bg='green')
+        self.__tileCanvas = tk.Canvas(self.__tilePreviewFrame, width=TILE_SIZE, height=TILE_SIZE)
         self.__tileCanvas.pack(side = "top")
+        self.__tileCanvas.bind("<Button-1>",lambda event:self.__placeMeeple(event.x,event.y))
 
         self.__rotateButtonFrame = tk.Frame(self.__tilePreviewFrame)
         self.__rotateButtonFrame.pack()
@@ -53,16 +54,55 @@ class gameWindow:
         self.__mainGameFrame = tk.Frame(frame)
         self.__mainGameFrame.pack(side="right")
 
-        self.__updateDisplay()
+        self.__tileGridFrame = tk.Frame(self.__mainGameFrame,highlightbackground="black",highlightthickness=1)
+        self.__tileGridFrame.pack(side ="top")
 
+        self.__tileGridCanvasList = []
+        self.__coordOffsetX = TILE_GRID_X//2
+        self.__coordOffsetY = TILE_GRID_Y//2
+
+        self.__generateTileGridCanvas()
+        self.__updateDisplay()
+    
     def __updateDisplay(self):
         self.__updateScores()
         self.__tileRemainingLable.config(text="Tiles remaining: " + str(self.__game.getTilesRemaining()))
-        self.__game.drawTilePreview(self.__tileCanvas)
+        self.__game.drawTile(self.__tileCanvas,True)
         self.__turnCountLable.config(text="Turn number: " +str(self.__game.getTurnCount()))
         self.__turnPlayerLable.config(text="Turn player: " + str(self.__game.getTurnPlayerName()))
         self.__MeepleCountLable.config(text="Meeples remaining: " + str(self.__game.getTurnPlayerMeeplesRemaining()))
 
+    def __generateTileGridCanvas(self):
+        for i in range(TILE_GRID_X):
+            self.__tileGridCanvasList.append([])
+            for j in range(TILE_GRID_Y):
+                self.__tileGridCanvasList[i].append(tk.Canvas(self.__tileGridFrame, width=TILE_SIZE, height=TILE_SIZE,highlightthickness=1, highlightbackground="black"))
+
+        for i in range(len(self.__tileGridCanvasList)):
+            for j in range(len(self.__tileGridCanvasList[i])):
+                self.__tileGridCanvasList[i][j].grid(row=j,column=i)
+                self.__tileGridCanvasList[i][j].bind("<Button-1>", lambda event, i=i, j=j: self.__placeTempTile(self.__tileGridCanvasList[i][j],(i - self.__coordOffsetX, j - self.__coordOffsetY)))
+
+        self.__game.setupBoard(self.__tileGridCanvasList[TILE_GRID_X//2][TILE_GRID_Y//2])
+
+    def __placeTempTile(self, canvas, coord):
+        self.__redrawBoard()
+        self.__game.placeTempTile(canvas,coord)
+
+    def __redrawBoard(self):
+        board = self.__game.getBoard()
+        for i in range(len(self.__tileGridCanvasList)):
+            for j in range(len(self.__tileGridCanvasList[i])):
+                self.__tileGridCanvasList[i][j].delete("all")
+
+        tileCoordList = list(board.keys())
+
+        for coord in tileCoordList:
+            self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
+
+    def __placeMeeple(self,cursorX,cursorY):
+        #to do
+        print(cursorX,cursorY)
 
     def __packScoreLables(self):
         for i in range(self.__game.getNumPlayers()):

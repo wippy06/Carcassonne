@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import MONESTRY_COLOUR,CASTLE_COLOUR,FIELD_COLOUR,ROAD_COLOUR,COA_COLOUR_1,COA_COLOUR_2
+from constants import MONESTRY_COLOUR,CASTLE_COLOUR,FIELD_COLOUR,ROAD_COLOUR,COA_COLOUR_1,COA_COLOUR_2,UNCLAIMED_BG_COLOUR
 
 class tile:
     def __init__(self, tileDict, key):
@@ -22,6 +22,18 @@ class tile:
 
         self.__tileOrder = 0
 
+    def getNorth(self):
+        return self.__north
+    
+    def getSouth(self):
+        return self.__south
+    
+    def getEast(self):
+        return self.__east
+    
+    def getWest(self):
+        return self.__west
+
     def rotate(self):
         #anti clockwise
         self.__north, self.__east, self.__south, self.__west = self.__east, self.__south, self.__west, self.__north
@@ -40,7 +52,7 @@ class tile:
                 elif self.__connections[key][i] == "West":
                     self.__connections[key][i] = "South"
 
-    def draw(self, canvas):
+    def draw(self, canvas, preview):
         canvas.update()
         width = canvas.winfo_width()
         height = canvas.winfo_height()
@@ -103,9 +115,22 @@ class tile:
             canvas.create_rectangle((width/8*3,height/8*3), (width/8*5,height/8*5), fill=FIELD_COLOUR,width = 0)
 
         if self.__CoA:
-            canvas.create_rectangle((width/16,height/16), (width/16*5,height/16*5), fill=COA_COLOUR_1,width = 0)
-            canvas.create_rectangle((width/16,height/16), (width/16*3,height/16*3), fill=COA_COLOUR_2,width = 0)
-            canvas.create_rectangle((width/16*3,height/16*3), (width/16*5,height/16*5), fill=COA_COLOUR_2,width = 0)
+            canvas.create_rectangle((width/16,height/16), (width/16*3,height/16*3), fill=COA_COLOUR_1,width = 0)
+            canvas.create_rectangle((width/16,height/16), (width/8,height/8), fill=COA_COLOUR_2,width = 0)
+            canvas.create_rectangle((width/8,height/8), (width/16*3,height/16*3), fill=COA_COLOUR_2,width = 0)
+
+        if preview:
+            if self.__north:
+                canvas.create_oval((width/16*7,height/16),(width/16*9,height/16*3),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+            if self.__south:
+                canvas.create_oval((width/16*7,height/16*15),(width/16*9,height/16*13),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+            if self.__east:
+                canvas.create_oval((width/16*15,height/16*7),(width/16*13,height/16*9),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+            if self.__west:
+                canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+            if self.__centre=="Monestry":
+                canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+
 
     def getScore(self):
         return self.__tileOrder

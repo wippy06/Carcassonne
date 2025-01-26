@@ -11,6 +11,9 @@ class tile:
         self.__west = tileDict["West"]
         self.__centre = tileDict["Centre"]
 
+        self.__claimedSide = None
+        self.__claimedPlayer = None
+
         self.__connections = {
             "North" : tileDict["Connections"]["North"],
             "South" : tileDict["Connections"]["South"],
@@ -49,7 +52,7 @@ class tile:
                 elif self.__connections[key][i] == "West":
                     self.__connections[key][i] = "South"
 
-    def draw(self, canvas):
+    def draw(self, canvas, preview):
         canvas.update()
         width = canvas.winfo_width()
         height = canvas.winfo_height()
@@ -61,7 +64,6 @@ class tile:
             negCastle = True
             canvas.create_rectangle((width,height),(0,0),fill="orange",width = 0)
             if self.__north != "Castle":
-                canvas.create_oval()
                 canvas.create_arc((width, -height/4),(0, height/4),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
             if self.__south != "Castle":
                 canvas.create_arc((width, height/4*3),(0, height/4*5),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
@@ -115,6 +117,18 @@ class tile:
             canvas.create_rectangle((width/16,height/16), (width/8,height/8), fill="blue",width = 0)
             canvas.create_rectangle((width/8,height/8), (width/16*3,height/16*3), fill="blue",width = 0)
 
+        if preview:
+            if self.__north:
+                canvas.create_oval((width/16*7,height/16),(width/16*9,height/16*3),fill="white",outline="black",width=width/100)
+            if self.__south:
+                canvas.create_oval((width/16*7,height/16*15),(width/16*9,height/16*13),fill="white",outline="black",width=width/100)
+            if self.__east:
+                canvas.create_oval((width/16*15,height/16*7),(width/16*13,height/16*9),fill="white",outline="black",width=width/100)
+            if self.__west:
+                canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill="white",outline="black",width=width/100)
+            if self.__centre=="Monestry":
+                canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill="white",outline="black",width=width/100)
+
 
 size = 200
 
@@ -127,14 +141,11 @@ tileData = open("tiles/tileData.json", "r")
 tileDataDict = json.loads(tileData.read())
 tileData.close()
 
-tileObj = tile(tileDataDict["V"], "A")
+tileObj = tile(tileDataDict["F"], "C")
 
 canvas = tk.Canvas(window, width=size, height=size, bg='green')
 canvas.pack(anchor=tk.CENTER, expand=True)
 
-tileObj.rotate()
-tileObj.rotate()
-tileObj.rotate()
-tileObj.draw(canvas)
+tileObj.draw(canvas, True)
 
 window.mainloop()

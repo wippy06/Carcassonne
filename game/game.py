@@ -1,6 +1,7 @@
 from constants import STARTING_TILE
 import random
 import json
+from .board import board
 from .tile import tile
 from .tileStack import tileStack
 from .player import player
@@ -24,6 +25,8 @@ class game:
         self.__generateTileStack()
         self.__generatePlayerDict()
 
+        self.__board = board()
+
         if self.__moves != 0:
             self.__loadPreviousMoves()
 
@@ -41,9 +44,25 @@ class game:
         for i in range(self.__tileStack.getSize()):
             print(self.__tileStack.getItem().getOrder(),self.__tileStack.getItem().getKey())
             self.__tileStack.stackPop()
-        '''
-    def drawTilePreview(self,canvas):
-        self.__tileStack.getItem().draw(canvas)
+        '''  
+
+    def setupBoard(self,canvas):
+        self.drawTile(canvas,False)
+        self.__board.placeTile(self.__tileStack.getItem(), (0,0))
+        self.__tileStack.stackPop()
+
+    def drawTile(self,canvas,preview):
+        self.__tileStack.getItem().draw(canvas, preview)
+
+    def placeTempTile(self, canvas, coord):
+        if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
+            self.drawTile(canvas, False)
+
+    def tileRedraw(self,canvas,tile):
+        tile.draw(canvas, False)
+
+    def getBoard(self):
+        return self.__board.getBoard()
 
     def rotatePreview(self,anticlockwise,canvas):
         if anticlockwise:
@@ -52,7 +71,7 @@ class game:
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
-        self.drawTilePreview(canvas)
+        self.drawTile(canvas,True)
 
     def getPlayerLeaderboard(self):
         playerScores = {}
