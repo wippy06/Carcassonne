@@ -33,12 +33,6 @@ class mainWindow:
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
 
-
-        #set game info as vars
-        self.gameSlot = 0
-        self.playerNo = 0
-        self.playerQueue = []
-
         #start program
         self.__startScreen()
 

@@ -1,0 +1,15 @@
+{
+    "seed": "73514",
+    "players": [
+        {
+            "Name": "1",
+            "Type": "player"
+        },
+        {
+            "Name": "2",
+            "Type": "player"
+        }
+    ],
+    "moves": [],
+    "tileNum": 71
+}

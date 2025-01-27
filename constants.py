@@ -6,6 +6,8 @@ BG_DEFAULT_COLOUR = "gray94"
 
 STARTING_TILE = "D"
 
+PLAYER_COLOUR_LIST = ["Red", "Blue", "Green", "Yellow", "Pink", "Cyan"]
+
 CASTLE_COLOUR = "Orange"
 ROAD_COLOUR = "Grey"
 FIELD_COLOUR = "Green"

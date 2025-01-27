@@ -101,8 +101,26 @@ class gameWindow:
             self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
 
     def __placeMeeple(self,cursorX,cursorY):
-        #to do
-        print(cursorX,cursorY)
+        self.__tileCanvas.update()
+        width = self.__tileCanvas.winfo_width()
+        height = self.__tileCanvas.winfo_height()
+
+        if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*3 and cursorY >= height/16:
+            self.__game.claimFeature("North")
+
+        if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*15 and cursorY >= height/16*13:
+            self.__game.claimFeature("South")
+
+        if cursorX >= width/16*13 and cursorX <= width/16*15 and cursorY <= height/16*9 and cursorY >= height/16*7:
+            self.__game.claimFeature("East")
+
+        if cursorX >= width/16 and cursorX <= width/16*3 and cursorY <= height/16*9 and cursorY >= height/16*7:
+            self.__game.claimFeature("West")
+
+        if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*9 and cursorY >= height/16*7:
+            self.__game.claimFeature("Centre")
+
+        self.__game.drawTile(self.__tileCanvas,True)
 
     def __packScoreLables(self):
         for i in range(self.__game.getNumPlayers()):

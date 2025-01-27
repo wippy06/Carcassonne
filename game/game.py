@@ -1,4 +1,4 @@
-from constants import STARTING_TILE
+from constants import STARTING_TILE, PLAYER_COLOUR_LIST
 import random
 import json
 from .board import board
@@ -73,6 +73,9 @@ class game:
             self.__tileStack.getItem().rotate()
         self.drawTile(canvas,True)
 
+    def claimFeature(self, side):
+        self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+
     def getPlayerLeaderboard(self):
         playerScores = {}
         for player in self.__playerKeys:
@@ -101,6 +104,7 @@ class game:
         fileObj.close()
 
     def __loadPreviousMoves(self):
+        #to do
         pass
 
     def __nextPlayer(self):
@@ -116,7 +120,7 @@ class game:
     def __generatePlayerDict(self):
         playerList = self.__gameFile["players"]
         for i in range(len(playerList)):
-            self.__playerDict[i] = player(playerList[i])
+            self.__playerDict[i] = player(playerList[i], PLAYER_COLOUR_LIST[i])
             self.__playerKeys.append(i)
 
     def __generateTileStack(self):

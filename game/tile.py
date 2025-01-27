@@ -22,6 +22,9 @@ class tile:
 
         self.__tileOrder = 0
 
+        self.__claimedBy = None
+        self.__claimedSide = None
+
     def getNorth(self):
         return self.__north
     
@@ -33,6 +36,10 @@ class tile:
     
     def getWest(self):
         return self.__west
+    
+    def claimFeature(self,side,player):
+        self.__claimedBy = player
+        self.__claimedSide = side
 
     def rotate(self):
         #anti clockwise
@@ -51,6 +58,15 @@ class tile:
                     self.__connections[key][i] = "North"
                 elif self.__connections[key][i] == "West":
                     self.__connections[key][i] = "South"
+
+        if self.__claimedSide == "North":
+            self.__claimedSide = "West"
+        elif self.__claimedSide == "East":
+            self.__claimedSide = "North"
+        elif self.__claimedSide == "South":
+            self.__claimedSide = "East"
+        elif self.__claimedSide == "West":
+            self.__claimedSide = "South"
 
     def draw(self, canvas, preview):
         canvas.update()
@@ -130,6 +146,19 @@ class tile:
                 canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
             if self.__centre=="Monestry":
                 canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=UNCLAIMED_BG_COLOUR,outline="black",width=width/100)
+
+        if self.__claimedBy and self.__claimedSide:
+            if self.__claimedSide == "North":
+                canvas.create_oval((width/16*7,height/16),(width/16*9,height/16*3),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+            if self.__claimedSide == "South":
+                canvas.create_oval((width/16*7,height/16*15),(width/16*9,height/16*13),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+            if self.__claimedSide == "East":
+                canvas.create_oval((width/16*15,height/16*7),(width/16*13,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+            if self.__claimedSide == "West":
+                canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+            if self.__claimedSide == "Centre":
+                canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+ 
 
 
     def getScore(self):

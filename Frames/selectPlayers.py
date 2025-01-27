@@ -10,6 +10,7 @@ class selectPlayers:
         self.__fileName = "gameSlots/slot"+str(self.__gameSlot)+".json"
         self.__gameFile = open(self.__fileName, "r+")
         self.__gameFunc = gameFunc
+        self.__mainFrame = frame
 
         self.__playerFrame = tk.Frame(frame)
         self.__playerFrame.pack(side="top")
@@ -101,7 +102,7 @@ class selectPlayers:
 
         self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[], "tileNum":0}, indent=4))
 
-        for widget in self.__playerFrame.winfo_children():
+        for widget in self.__mainFrame.winfo_children():
             widget.destroy()
         self.__gameFile.close()
         self.__gameFunc(self.__fileName)
