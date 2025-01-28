@@ -6,12 +6,12 @@ BG_DEFAULT_COLOUR = "gray94"
 
 STARTING_TILE = "D"
 
-PLAYER_COLOUR_LIST = ["Red", "Blue", "Green", "Yellow", "Pink", "Cyan"]
+PLAYER_COLOUR_LIST = ["Red", "Blue", "Lime", "Yellow", "Magenta", "Cyan"]
 
 CASTLE_COLOUR = "Orange"
 ROAD_COLOUR = "Grey"
 FIELD_COLOUR = "Green"
-MONESTRY_COLOUR = "Red"
+MONESTRY_COLOUR = "indianred1"
 COA_COLOUR_1 = "White"
 COA_COLOUR_2 = "Blue"
 UNCLAIMED_BG_COLOUR = "White"

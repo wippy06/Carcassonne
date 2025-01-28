@@ -33,11 +33,13 @@ class mainWindow:
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
 
+        self.__playingGame = False
+
         #start program
         self.__startScreen()
 
     def __pause(self):
-        pause(self.__window)
+        pause(self.__window,self.__playingGame, self.__saveGame)
 
     def __endFullscreen(self, event):
         self.__window.attributes("-fullscreen", False)
@@ -55,7 +57,11 @@ class mainWindow:
         selectPlayers(self.__bottomFrame, gameSlot, self.__loadGame)
 
     def __loadGame(self, gameFile):
-        gameWindow(self.__bottomFrame, gameFile)
+        self.__playingGame = True
+        self.__gameWindowObj = gameWindow(self.__bottomFrame, gameFile)
+
+    def __saveGame(self):
+        self.__gameWindowObj.saveGame()
 
     def run(self):
         self.__window.mainloop()

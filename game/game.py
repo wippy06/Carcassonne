@@ -20,43 +20,36 @@ class game:
         self.__tileList = []
         self.__playerDict = {}
         self.__playerKeys = []
-        self.__moves = self.__gameFile["moves"]
 
         self.__generateTileStack()
         self.__generatePlayerDict()
 
         self.__board = board()
 
-        if self.__moves != 0:
-            self.__loadPreviousMoves()
-
-        '''
-        #test player generation and list rotation for next turn
-        for key in self.__playerKeys:
-            print(self.__playerDict[key].getName())
-
-        self.__nextPlayer()
-
-        for key in self.__playerKeys:
-            print(self.__playerDict[key].getName())
-        
-        #testing tile shuffle
-        for i in range(self.__tileStack.getSize()):
-            print(self.__tileStack.getItem().getOrder(),self.__tileStack.getItem().getKey())
-            self.__tileStack.stackPop()
-        '''  
+        #for keeping track of move
+        self.__placementMade = False
+        self.__currentCoord = (0,0)
+        self.__currentRotations = 0
+        self.__currentClaimSide = None
 
     def setupBoard(self,canvas):
         self.drawTile(canvas,False)
         self.__board.placeTile(self.__tileStack.getItem(), (0,0))
         self.__tileStack.stackPop()
 
+        if self.__gameFile["moves"] != []:
+            self.__loadPreviousMoves()
+
     def drawTile(self,canvas,preview):
         self.__tileStack.getItem().draw(canvas, preview)
 
     def placeTempTile(self, canvas, coord):
         if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
+            self.__currentCoord = coord
+            self.__placementMade = True
             self.drawTile(canvas, False)
+        else:
+            self.__placementMade = False
 
     def tileRedraw(self,canvas,tile):
         tile.draw(canvas, False)
@@ -67,13 +60,16 @@ class game:
     def rotatePreview(self,anticlockwise,canvas):
         if anticlockwise:
             self.__tileStack.getItem().rotate()
+            self.__currentRotations += 1
         else:
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
+            self.__currentRotations -= 1
         self.drawTile(canvas,True)
 
     def claimFeature(self, side):
+        self.__currentClaimSide = side
         self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
 
     def getPlayerLeaderboard(self):
@@ -98,14 +94,29 @@ class game:
     def getTilesRemaining(self):
         return self.__tileStack.getSize()
 
-    def __updateGameFile(self):
+    def updateGameFile(self):
         fileObj = open(self.__gameFileDir, "w")
         fileObj.write(json.dumps(self.__gameFile, indent=4))
         fileObj.close()
 
     def __loadPreviousMoves(self):
-        #to do
-        pass
+        for move in self.__gameFile["moves"]:
+            for i in range(move[0]):
+                self.__tileStack.getItem().rotate()
+            if move[1] != None:
+                self.claimFeature(move[1])
+            self.__board.placeTile(self.__tileStack.getItem(), tuple(move[2]))
+            print(move)
+
+            #increase player scores
+            self.__nextPlayer()
+            self.__tileStack.stackPop()
+
+        self.__placementMade = False
+        self.__currentCoord = (0,0)
+        self.__currentRotations = 0
+        self.__currentClaimSide = None
+            
 
     def __nextPlayer(self):
         firstPlayer = self.__playerKeys[0]
@@ -126,7 +137,7 @@ class game:
     def __generateTileStack(self):
         tileCount = self.__generateTiles()
         self.__gameFile["tileNum"] = tileCount
-        self.__updateGameFile()
+        self.updateGameFile()
         randomList = self.__generateList(tileCount)
         self.__assignTileOrder(randomList)
         randomTileList = self.__mergeSort(self.__tileList)
@@ -221,3 +232,22 @@ class game:
         startTile.setOrder(0)
         self.__tileStack.stackAppend(startTile)
 
+    def completeTurn(self):
+        move = []
+        if self.__placementMade:
+            move.append(self.__currentRotations%4)
+            move.append(self.__currentClaimSide)
+            move.append(self.__currentCoord)
+
+            self.__gameFile["moves"].append(move)
+
+            self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
+
+            self.__placementMade = False
+            self.__currentCoord = (0,0)
+            self.__currentRotations = 0
+            self.__currentClaimSide = None
+
+            #increase player scores
+            self.__nextPlayer()
+            self.__tileStack.stackPop()

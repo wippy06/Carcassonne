@@ -51,6 +51,24 @@ class gameWindow:
         self.__turnPlayerLable.pack()
         self.__MeepleCountLable.pack()
 
+        self.__mapViewKeypadFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
+        self.__mapViewKeypadFrame.grid(column=0,row=3)
+
+        self.__viewUpButton = tk.Button(self.__mapViewKeypadFrame, text="Up", command= lambda:self.__moveView("Up"))
+        self.__viewUpButton.pack()
+
+        self.__viewDownButton = tk.Button(self.__mapViewKeypadFrame, text="Down", command= lambda:self.__moveView("Down"))
+        self.__viewDownButton.pack()
+
+        self.__viewLeftButton = tk.Button(self.__mapViewKeypadFrame, text="Left", command= lambda:self.__moveView("Left"))
+        self.__viewLeftButton.pack()
+
+        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Right", command= lambda:self.__moveView("Right"))
+        self.__viewRightButton.pack()
+
+        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= lambda:self.__confirmPlacement())
+        self.__viewRightButton.pack()
+
         self.__mainGameFrame = tk.Frame(frame)
         self.__mainGameFrame.pack(side="right")
 
@@ -63,6 +81,11 @@ class gameWindow:
 
         self.__generateTileGridCanvas()
         self.__updateDisplay()
+        self.__redrawBoard()
+
+    def __confirmPlacement(self):
+        self.__game.completeTurn()
+        self.__updateDisplay()
     
     def __updateDisplay(self):
         self.__updateScores()
@@ -71,6 +94,18 @@ class gameWindow:
         self.__turnCountLable.config(text="Turn number: " +str(self.__game.getTurnCount()))
         self.__turnPlayerLable.config(text="Turn player: " + str(self.__game.getTurnPlayerName()))
         self.__MeepleCountLable.config(text="Meeples remaining: " + str(self.__game.getTurnPlayerMeeplesRemaining()))
+
+    def __moveView(self, direction):
+        if direction == "Up":
+            self.__coordOffsetY += 1
+        if direction == "Down":
+            self.__coordOffsetY -= 1
+        if direction == "Left":
+            self.__coordOffsetX += 1
+        if direction == "Right":
+            self.__coordOffsetX -= 1
+        self.__redrawBoard()
+        
 
     def __generateTileGridCanvas(self):
         for i in range(TILE_GRID_X):
@@ -98,7 +133,9 @@ class gameWindow:
         tileCoordList = list(board.keys())
 
         for coord in tileCoordList:
-            self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
+            if coord[0]+self.__coordOffsetX < len(self.__tileGridCanvasList) and coord[0]+self.__coordOffsetX >=0:
+                if coord[1]+self.__coordOffsetY < len(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX]) and coord[1]+self.__coordOffsetY >=0:
+                    self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
 
     def __placeMeeple(self,cursorX,cursorY):
         self.__tileCanvas.update()
@@ -141,4 +178,7 @@ class gameWindow:
 
         for i in range(len(playerNames)):
             self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+str(playerScoreDict[playerNames[i]]))
+
+    def saveGame(self):
+        self.__game.updateGameFile()
 

@@ -17,3 +17,6 @@ class player:
     
     def getColour(self):
         return self.__colour
+    
+    def increaseScore(self, increase):
+        self.__score += increase
