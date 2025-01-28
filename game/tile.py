@@ -37,6 +37,9 @@ class tile:
     def getWest(self):
         return self.__west
     
+    def getClaimingPlayer(self):
+        return self.__claimedBy
+    
     def claimFeature(self,side,player):
         self.__claimedBy = player
         self.__claimedSide = side

@@ -69,8 +69,12 @@ class game:
         self.drawTile(canvas,True)
 
     def claimFeature(self, side):
-        self.__currentClaimSide = side
-        self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+        if self.__tileStack.getItem().getClaimingPlayer() == None:
+            self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+            self.__currentClaimSide = side
+        else:
+            self.__tileStack.getItem().claimFeature(None, None)
+            self.__currentClaimSide = None
 
     def getPlayerLeaderboard(self):
         playerScores = {}
@@ -106,7 +110,6 @@ class game:
             if move[1] != None:
                 self.claimFeature(move[1])
             self.__board.placeTile(self.__tileStack.getItem(), tuple(move[2]))
-            print(move)
 
             #increase player scores
             self.__nextPlayer()
