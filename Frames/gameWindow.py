@@ -34,8 +34,8 @@ class gameWindow:
         
         self.__tileRotateClock = tk.Button(self.__rotateButtonFrame, text = "clockwise", command = lambda:self.__game.rotatePreview(False, self.__tileCanvas))
         self.__tileRotateAntiClock = tk.Button(self.__rotateButtonFrame, text = "anticlockwise", command = lambda:self.__game.rotatePreview(True, self.__tileCanvas))
-        self.__tileRotateClock.pack(side="left")
-        self.__tileRotateAntiClock.pack(side="right")
+        self.__tileRotateClock.pack(side="right")
+        self.__tileRotateAntiClock.pack(side="left")
 
         self.__tileRemainingLable = tk.Label(self.__tilePreviewFrame, text = "Tiles remaining: ")
         self.__tileRemainingLable.pack()
@@ -68,6 +68,11 @@ class gameWindow:
 
         self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= lambda:self.__confirmPlacement())
         self.__viewRightButton.pack()
+
+        ###
+        self.__testButton = tk.Button(self.__mapViewKeypadFrame, text="Test", command= lambda:self.__game.test())
+        self.__testButton.pack()
+        ###
 
         self.__mainGameFrame = tk.Frame(frame)
         self.__mainGameFrame.pack(side="right")
@@ -145,16 +150,16 @@ class gameWindow:
         if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*3 and cursorY >= height/16:
             self.__game.claimFeature("North")
 
-        if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*15 and cursorY >= height/16*13:
+        elif cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*15 and cursorY >= height/16*13:
             self.__game.claimFeature("South")
 
-        if cursorX >= width/16*13 and cursorX <= width/16*15 and cursorY <= height/16*9 and cursorY >= height/16*7:
+        elif cursorX >= width/16*13 and cursorX <= width/16*15 and cursorY <= height/16*9 and cursorY >= height/16*7:
             self.__game.claimFeature("East")
 
-        if cursorX >= width/16 and cursorX <= width/16*3 and cursorY <= height/16*9 and cursorY >= height/16*7:
+        elif cursorX >= width/16 and cursorX <= width/16*3 and cursorY <= height/16*9 and cursorY >= height/16*7:
             self.__game.claimFeature("West")
 
-        if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*9 and cursorY >= height/16*7:
+        elif cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*9 and cursorY >= height/16*7:
             self.__game.claimFeature("Centre")
 
         self.__game.drawTile(self.__tileCanvas,True)

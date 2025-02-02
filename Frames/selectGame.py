@@ -9,7 +9,7 @@ class selectGame:
         self.__playerFunc = playerFunc
         self.__loadGameFunc = loadGameFunc
 
-        #set tk vars
+        #set tk frames for game slot options
         tk.Label(self.__frame,text ="Choose save slot").grid(column=1,row=0)
 
         self.__slot1Frame = tk.Frame(self.__frame)
@@ -21,13 +21,13 @@ class selectGame:
         self.__slot3Frame = tk.Frame(self.__frame)
         self.__slot3Frame.grid(column=2,row=1)
 
-        #create button options
+        #create button options for slots not done as for loop to specify tk frames
         self.__createSlotDisplay(1, self.__slot1Frame)
         self.__createSlotDisplay(2, self.__slot2Frame)
         self.__createSlotDisplay(3, self.__slot3Frame)
 
     def __createSlotDisplay(self, slot, frame):
-        #check if slot filled
+        #check if slot filled then display data associated to game slot
         slotFile = open("gameSlots/slot"+str(slot)+".json", "r")
         fileString = slotFile.read()
 
@@ -46,14 +46,17 @@ class selectGame:
         slotFile.close()
 
     def __clearSlot(self, slotFile, slot, frame):
+        #delete data from game slots by accessing file
         slotFile.close()
         slotFile = open("gameSlots/slot"+str(slot)+".json", "w")
         slotFile.close()
+
         for widget in frame.winfo_children():
             widget.destroy()
         self.__createSlotDisplay(slot, frame)
         
     def __slotChoice(self, slot):
+        #removes tk children to prepare for next window
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
 

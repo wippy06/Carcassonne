@@ -8,12 +8,13 @@ from constants import START_FULLSCREEN
 
 class mainWindow:
     def __init__(self):
-        #set tk vars
+        #set tk window vars
         self.__window = tk.Tk()
         self.__window.attributes("-fullscreen", START_FULLSCREEN)
 
         self.__window.title("Carcassonne")
 
+        #set tk frames for tk children
         self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1)
         self.__topBarFrame.pack(side="top", fill ="x")
 
@@ -30,6 +31,7 @@ class mainWindow:
         tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy).pack(side="right")
         tk.Button(self.__topBarFrameR, text = "Pause", command = self.__pause).pack(side="right")
 
+        #for full screen mode
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
 
@@ -38,14 +40,16 @@ class mainWindow:
         #start program
         self.__startScreen()
 
-    def __pause(self):
-        pause(self.__window,self.__playingGame, self.__saveGame)
-
+    #full screen mode methods
     def __endFullscreen(self, event):
         self.__window.attributes("-fullscreen", False)
 
     def __beginFullscreen(self, event):
         self.__window.attributes("-fullscreen", True)
+
+    #methods to instantiate window objects
+    def __pause(self):
+        pause(self.__window,self.__playingGame, self.__saveGame)
 
     def __startScreen(self):
         start(self.__window, self.__bottomFrame, self.__selectGame)

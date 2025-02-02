@@ -15,7 +15,8 @@ class tile:
             "North" : tileDict["Connections"]["North"],
             "South" : tileDict["Connections"]["South"],
             "East" : tileDict["Connections"]["East"],
-            "West" : tileDict["Connections"]["West"]
+            "West" : tileDict["Connections"]["West"],
+            "Centre" : []
         }
 
         self.__CoA = tileDict["CoA"]
@@ -25,22 +26,41 @@ class tile:
         self.__claimedBy = None
         self.__claimedSide = None
 
-    def getNorth(self):
-        return self.__north
+    def getSide(self,side):
+        if side == "North":
+            return self.__north
+        elif side == "South":
+            return self.__south
+        elif side == "East":
+            return self.__east
+        elif side == "West":
+            return self.__west
+        elif side == "Centre":
+            return self.__centre
+        
+    def getCoA(self):
+        return self.__CoA
     
-    def getSouth(self):
-        return self.__south
-    
-    def getEast(self):
-        return self.__east
-    
-    def getWest(self):
-        return self.__west
+    def getConnections(self, side):
+        return self.__connections[side]
     
     def getClaimingPlayer(self):
         return self.__claimedBy
     
+    def getClaimedSide(self):
+        return self.__claimedSide
+
+    def getScore(self):
+        return self.__tileOrder
+    
+    def getKey(self):
+        return self.__tileKey
+    
+    def setOrder(self, order):
+        self.__tileOrder = order
+    
     def claimFeature(self,side,player):
+        #if side == "North" and self.__north != None or side == "South" and self.__south != None or side == "East" and self.__east != None or side == "West" and self.__west != None or side == "Centre" and self.__centre != None:
         self.__claimedBy = player
         self.__claimedSide = side
 
@@ -85,31 +105,30 @@ class tile:
             negCastle = True
             canvas.create_rectangle((width,height),(0,0),fill=CASTLE_COLOUR,width = 0)
             if self.__north != "Castle":
-                canvas.create_arc((width, -height/4),(0, height/4),  start = 0, extent = 359, style=tk.CHORD, fill=FIELD_COLOUR, width=0, outline = FIELD_COLOUR)
+                canvas.create_oval((-width/8,-height),(width/8*9, height/4), fill=FIELD_COLOUR, width=0)
             if self.__south != "Castle":
-                canvas.create_arc((width, height/4*3),(0, height/4*5),  start = 0, extent = 359, style=tk.CHORD, fill=FIELD_COLOUR, width=0, outline = FIELD_COLOUR)
+                canvas.create_oval((-width/8,2*height),(width/8*9, height/4*3), fill=FIELD_COLOUR, width=0)
             if self.__east != "Castle":
-                canvas.create_arc((width/4*3, 0),(width/4*5, height),  start = 0, extent = 359, style=tk.CHORD, fill=FIELD_COLOUR, width=0, outline = FIELD_COLOUR)
+                canvas.create_oval((width/4*3,-height/8),(width*2, height/8*9), fill=FIELD_COLOUR, width=0)
             if self.__west != "Castle":
-                canvas.create_arc((-width/4, 0),(width/4, height),  start = 0, extent = 359, style=tk.CHORD, fill=FIELD_COLOUR, width=0, outline = FIELD_COLOUR)
-
+                canvas.create_oval((width/4,-height/8),(-width, height/8*9), fill=FIELD_COLOUR, width=0)
         else:
             if self.__north == "Castle":
-                canvas.create_arc((width, -height/4),(0, height/4),  start = 0, extent = 359, style=tk.CHORD, fill=CASTLE_COLOUR, width=0, outline = CASTLE_COLOUR)
+                canvas.create_oval((-width/8,-height),(width/8*9, height/4), fill=CASTLE_COLOUR, width=0)
                 if "West" in self.__connections["North"]:
                     canvas.create_rectangle((0,0),(width/2,height/2),fill = CASTLE_COLOUR, width=0)
                 if "East" in self.__connections["North"]:
                     canvas.create_rectangle((width,0),(width/2,height/2),fill = CASTLE_COLOUR, width=0)
             if self.__south == "Castle":
-                canvas.create_arc((width, height/4*3),(0, height/4*5),  start = 0, extent = 359, style=tk.CHORD, fill=CASTLE_COLOUR, width=0, outline = CASTLE_COLOUR)
+                canvas.create_oval((-width/8,2*height),(width/8*9, height/4*3), fill=CASTLE_COLOUR, width=0)
                 if "West" in self.__connections["South"]:
                     canvas.create_rectangle((0,height),(width/2,height/2),fill = CASTLE_COLOUR, width=0)
                 if "East" in self.__connections["South"]:
                     canvas.create_rectangle((width,height),(width/2,height/2),fill = CASTLE_COLOUR, width=0)
             if self.__east == "Castle":
-                canvas.create_arc((width/4*3, 0),(width/4*5, height),  start = 0, extent = 359, style=tk.CHORD, fill=CASTLE_COLOUR, width=0, outline = CASTLE_COLOUR)
+                canvas.create_oval((width/4*3,-height/8),(width*2, height/8*9), fill=CASTLE_COLOUR, width=0)
             if self.__west == "Castle":
-                canvas.create_arc((-width/4, 0),(width/4, height),  start = 0, extent = 359, style=tk.CHORD, fill=CASTLE_COLOUR, width=0, outline = CASTLE_COLOUR)
+                canvas.create_oval((width/4,-height/8),(-width, height/8*9), fill=CASTLE_COLOUR, width=0)
             canvas.create_oval((width/4,height/4),(width/4*3,height/4*3), fill=FIELD_COLOUR, width=0)
                 
         if self.__north == "Road":
@@ -161,14 +180,3 @@ class tile:
                 canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
             if self.__claimedSide == "Centre":
                 canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
- 
-
-
-    def getScore(self):
-        return self.__tileOrder
-    
-    def getKey(self):
-        return self.__tileKey
-    
-    def setOrder(self, order):
-        self.__tileOrder = order

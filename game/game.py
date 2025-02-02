@@ -29,8 +29,12 @@ class game:
         #for keeping track of move
         self.__placementMade = False
         self.__currentCoord = (0,0)
+        self.__currentRotationsPreview = 0
         self.__currentRotations = 0
         self.__currentClaimSide = None
+
+    def test(self):
+        self.__board.generateFeature((0,0),"North")
 
     def setupBoard(self,canvas):
         self.drawTile(canvas,False)
@@ -46,6 +50,7 @@ class game:
     def placeTempTile(self, canvas, coord):
         if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
             self.__currentCoord = coord
+            self.__currentRotations = self.__currentRotationsPreview
             self.__placementMade = True
             self.drawTile(canvas, False)
         else:
@@ -58,20 +63,41 @@ class game:
         return self.__board.getBoard()
 
     def rotatePreview(self,anticlockwise,canvas):
+        print(self.__currentClaimSide)
         if anticlockwise:
             self.__tileStack.getItem().rotate()
-            self.__currentRotations += 1
+            self.__currentRotationsPreview += 1
+
+            if self.__currentClaimSide == "North":
+                self.__currentClaimSide = "West"
+            elif self.__currentClaimSide == "East":
+                self.__currentClaimSide = "North"
+            elif self.__currentClaimSide == "South":
+                self.__currentClaimSide = "East"
+            elif self.__currentClaimSide == "West":
+                self.__currentClaimSide = "South"
         else:
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
             self.__tileStack.getItem().rotate()
-            self.__currentRotations -= 1
+            self.__currentRotationsPreview -= 1
+
+            if self.__currentClaimSide == "North":
+                self.__currentClaimSide = "East"
+            elif self.__currentClaimSide == "East":
+                self.__currentClaimSide = "South"
+            elif self.__currentClaimSide == "South":
+                self.__currentClaimSide = "West"
+            elif self.__currentClaimSide == "West":
+                self.__currentClaimSide = "North"
         self.drawTile(canvas,True)
+        print(self.__currentClaimSide)
 
     def claimFeature(self, side):
-        if self.__tileStack.getItem().getClaimingPlayer() == None:
-            self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
-            self.__currentClaimSide = side
+        if self.__tileStack.getItem().getClaimedSide() != side:
+            if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") != None:
+                self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+                self.__currentClaimSide = side
         else:
             self.__tileStack.getItem().claimFeature(None, None)
             self.__currentClaimSide = None
@@ -105,11 +131,12 @@ class game:
 
     def __loadPreviousMoves(self):
         for move in self.__gameFile["moves"]:
-            for i in range(move[0]):
+            moveList = move.split(",")
+            for i in range(int(moveList[0])):
                 self.__tileStack.getItem().rotate()
-            if move[1] != None:
-                self.claimFeature(move[1])
-            self.__board.placeTile(self.__tileStack.getItem(), tuple(move[2]))
+            if moveList[1] != "None":
+                self.claimFeature(moveList[1])
+            self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))
 
             #increase player scores
             self.__nextPlayer()
@@ -118,6 +145,7 @@ class game:
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
+        self.__currentRotationsPreview = 0
         self.__currentClaimSide = None
             
 
@@ -240,15 +268,17 @@ class game:
         if self.__placementMade:
             move.append(self.__currentRotations%4)
             move.append(self.__currentClaimSide)
-            move.append(self.__currentCoord)
+            move.append(self.__currentCoord[0])
+            move.append(self.__currentCoord[1])
 
-            self.__gameFile["moves"].append(move)
+            self.__gameFile["moves"].append(",".join(str(i) for i in move))
 
             self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
 
             self.__placementMade = False
             self.__currentCoord = (0,0)
             self.__currentRotations = 0
+            self.__currentRotationsPreview = 0
             self.__currentClaimSide = None
 
             #increase player scores

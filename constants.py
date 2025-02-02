@@ -1,3 +1,5 @@
+#Set up to be easily changeable
+
 PAUSE_SIZE = '200x150'
 
 START_FULLSCREEN = True

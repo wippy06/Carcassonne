@@ -13,6 +13,7 @@ class selectPlayers:
         self.__gameFunc = gameFunc
         self.__mainFrame = frame
 
+        #set up tk frames for children placement
         self.__playerFrame = tk.Frame(frame)
         self.__playerFrame.pack(side="top")
 
@@ -36,6 +37,7 @@ class selectPlayers:
 
         self.__playerList = []
 
+        #instantiate player selection boxes and stored in a list for ease of access
         self.__player1 = playerSelectBox(self.__topLFrame, self.__changeOrderButtons)
         self.__player2 = playerSelectBox(self.__topMFrame, self.__changeOrderButtons)
         self.__player3 = playerSelectBox(self.__topRFrame, self.__changeOrderButtons)
@@ -48,6 +50,7 @@ class selectPlayers:
         tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice()).grid(column=1, row=2)
 
     def __changeOrderButtons(self):
+        #currently not in use
         orderList = []      
         if self.__playerList != []:
             for player in self.__playerList:
@@ -59,6 +62,11 @@ class selectPlayers:
                 player.deactivateOrderBs(orderList)'''
         
     def __confirmChoice(self):
+        #used to check whether options are valid
+        #all players must have a unique order
+        #all players must have a unique none "" name
+        #there must be 2<=No of players<=6
+
         orderList = []
         nameList = []
         typeList = []
@@ -73,6 +81,9 @@ class selectPlayers:
             self.__continue()
 
     def __bubbleSort(self, playerList):
+        #standard bubble sort used for sorting players into playing order
+        #includes optimisations to stop if no swaps
+
         for i in range(len(playerList)):
             swaps = False
 
@@ -87,14 +98,20 @@ class selectPlayers:
         return playerList
 
     def __continue(self):
+        #seed giving max of 100000 different games
+        #seed used for loading game so tile order does not have to be stored 
         seed = str(random.randint(0,99999))
+
+        #to fill seed with leading 0 as random is int initially
         while(len(seed) != 5):
             seed = "0" + seed
 
+        #to sort players into playing order to be loaded into the file
         sortedPlayerList = self.__bubbleSort(self.__playerList)
 
         fullPlayerList = []
 
+        #setting up and writing data to save file
         for player in sortedPlayerList:
             if player.getIsPlaying():
                 playerDict = {"Name" : player.getName(), "Type" : player.getType()}
@@ -102,8 +119,10 @@ class selectPlayers:
 
         self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[], "tileNum":0}, indent=4))
 
+        #removes tk children to prepare for next window
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
+            
         self.__gameFile.close()
         self.__gameFunc(self.__fileName)
  

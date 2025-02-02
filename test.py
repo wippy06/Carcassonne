@@ -64,13 +64,13 @@ class tile:
             negCastle = True
             canvas.create_rectangle((width,height),(0,0),fill="orange",width = 0)
             if self.__north != "Castle":
-                canvas.create_arc((width, -height/4),(0, height/4),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
+                canvas.create_oval((-width/8,-height),(width/8*9, height/4), fill="Green", width=0)
             if self.__south != "Castle":
-                canvas.create_arc((width, height/4*3),(0, height/4*5),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
+                canvas.create_oval((-width/8,2*height),(width/8*9, height/4*3), fill="Green", width=0)
             if self.__east != "Castle":
-                canvas.create_arc((width/4*3, 0),(width/4*5, height),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
+                canvas.create_oval((width/4*3,-height/8),(width*2, height/8*9), fill="Green", width=0)
             if self.__west != "Castle":
-                canvas.create_arc((-width/4, 0),(width/4, height),  start = 0, extent = 359, style=tk.CHORD, fill="green", width=0, outline = "green")
+                canvas.create_oval((width/4,-height/8),(-width, height/8*9), fill="Green", width=0)
 
         else:
             if self.__north == "Castle":
@@ -129,22 +129,22 @@ class tile:
             if self.__centre=="Monestry":
                 canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill="white",outline="black",width=width/100)
 
-
 size = 200
 
 window = tk.Tk()
-#canvas = tk.Canvas(window, width=size, height=size, bg='black')
-#canvas.pack(anchor=tk.CENTER, expand=True)
-canvas = 0
+canvas = tk.Canvas(window, width=size, height=size, bg='black')
+canvas.pack(anchor=tk.CENTER, expand=True)
 
 tileData = open("tiles/tileData.json", "r")
 tileDataDict = json.loads(tileData.read())
 tileData.close()
 
-tileObj = tile(tileDataDict["F"], "C")
+tileObj = tile(tileDataDict["S"], "S")
 
-canvas = tk.Canvas(window, width=size, height=size, bg='green')
-canvas.pack(anchor=tk.CENTER, expand=True)
+tileObj.rotate()
+tileObj.rotate()
+tileObj.rotate()
+tileObj.rotate()
 
 tileObj.draw(canvas, True)
 
