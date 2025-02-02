@@ -4,6 +4,88 @@ class board:
     def __init__(self):
         self.__board = {}
 
+    def __generateFeature(self,coord,side):
+        #requires a known point of coord and side then generates a feature object linking all the tiles
+        featureType = self.__board[coord].getSide(side)
+        tiles,completed,meeples = self.__generateFeatureFeatures(coord,side,[],True,{})
+
+        #counts coat of arms in case of scoring castles
+        CoAs = 0
+        for tile in tiles:
+            if self.__board[tile].getCoA():
+                CoAs +=1
+
+        return feature(featureType,tiles,meeples,CoAs,completed)
+    
+    def __generateFeatureFeatures(self,coord,side,tileList, completed, meeples):
+        #recursive algorithm, acts as depth first search
+        #nodes as sides of tile
+        #edges as connections between tiles and tile sides
+
+        #tileList acts as visited nodes list
+        #base case when coord is in tileList
+        if coord not in tileList and coord in list(self.__board.keys()):
+            tileList.append(coord)
+
+            #append results for current side
+            if side == "North":
+                result = self.__generateFeatureFeatures((coord[0],coord[1]-1),"South",tileList, completed,meeples)
+                tileList += result[0]
+                completed = result[1]
+                meeples.update(result[2])
+            elif side == "South":
+                result = self.__generateFeatureFeatures((coord[0],coord[1]+1),"North",tileList, completed,meeples)
+                tileList += result[0]
+                completed = result[1]
+                meeples.update(result[2])
+            elif side == "East":
+                result = self.__generateFeatureFeatures((coord[0]+1,coord[1]),"West",tileList, completed,meeples)
+                tileList += result[0]
+                completed = result[1]
+                meeples.update(result[2])
+            elif side == "West":
+                result = self.__generateFeatureFeatures((coord[0]-1,coord[1]),"East",tileList, completed,meeples)
+                tileList += result[0]
+                completed = result[1]
+                meeples.update(result[2])
+
+            connectionsList = self.__board[coord].getConnections(side)
+
+            #append results for side connections on tiles, for loop used incase of multiple connected sides
+            for connections in connectionsList:
+                if connections == "North":
+                    result = self.__generateFeatureFeatures((coord[0],coord[1]-1),"South",tileList, completed,meeples)
+                    tileList += result[0]
+                    completed = result[1]
+                    meeples.update(result[2])
+                elif connections == "South":
+                    result = self.__generateFeatureFeatures((coord[0],coord[1]+1),"North",tileList, completed,meeples)
+                    tileList += result[0]
+                    completed = result[1]
+                    meeples.update(result[2])
+                elif connections == "East":
+                    result = self.__generateFeatureFeatures((coord[0]+1,coord[1]),"West",tileList, completed,meeples)
+                    tileList += result[0]
+                    completed = result[1]
+                    meeples.update(result[2])
+                elif connections == "West":
+                    result = self.__generateFeatureFeatures((coord[0]-1,coord[1]),"East",tileList, completed,meeples)
+                    tileList += result[0]
+                    completed = result[1]
+                    meeples.update(result[2])
+
+            #updating meeple dictionary, key as (coord,side) to prevent duplication of counting
+            if self.__board[coord].getClaimingPlayer() != None:
+                if side == self.__board[coord].getClaimedSide() or side in self.__board[coord].getConnections(self.__board[coord].getClaimedSide()):
+                    meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer().getColour()
+
+        #storing completed state in case of scoring feature later on
+        if coord not in list(self.__board.keys()):
+            completed = False 
+        
+        return list(set(tileList)),completed,meeples
+
+    #programming to interface
     def placeTile(self,tile,coordinate):
         self.checkValidPlacement(tile,coordinate)
         self.__board[coordinate] = tile
@@ -11,84 +93,23 @@ class board:
     def getBoard(self):
         return self.__board
     
-    def generateFeature(self,coord,side):
-        featureType = self.__board[coord].getSide(side)
-        tiles,completed,meeples = self.__generateTilesInFeature(coord,side,[],True,{})
-
-        CoAs = 0
-        for tile in tiles:
-            if self.__board[tile].getCoA():
-                CoAs +=1
-
-        print(tiles,completed,CoAs,featureType,meeples)
-
-    
-    def __generateTilesInFeature(self,coord,side,tileList, completed, meeples):
-        if coord not in tileList and coord in list(self.__board.keys()):
-            tileList.append(coord)
-
-            if side == "North":
-                result = self.__generateTilesInFeature((coord[0],coord[1]-1),"South",tileList, completed,meeples)
-                tileList += result[0]
-                completed = result[1]
-                meeples.update(result[2])
-            elif side == "South":
-                result = self.__generateTilesInFeature((coord[0],coord[1]+1),"North",tileList, completed,meeples)
-                tileList += result[0]
-                completed = result[1]
-                meeples.update(result[2])
-            elif side == "East":
-                result = self.__generateTilesInFeature((coord[0]+1,coord[1]),"West",tileList, completed,meeples)
-                tileList += result[0]
-                completed = result[1]
-                meeples.update(result[2])
-            elif side == "West":
-                result = self.__generateTilesInFeature((coord[0]-1,coord[1]),"East",tileList, completed,meeples)
-                tileList += result[0]
-                completed = result[1]
-                meeples.update(result[2])
-
-            connectionsList = self.__board[coord].getConnections(side)
-
-            for connections in connectionsList:
-                if connections == "North":
-                    result = self.__generateTilesInFeature((coord[0],coord[1]-1),"South",tileList, completed,meeples)
-                    tileList += result[0]
-                    completed = result[1]
-                    meeples.update(result[2])
-                elif connections == "South":
-                    result = self.__generateTilesInFeature((coord[0],coord[1]+1),"North",tileList, completed,meeples)
-                    tileList += result[0]
-                    completed = result[1]
-                    meeples.update(result[2])
-                elif connections == "East":
-                    result = self.__generateTilesInFeature((coord[0]+1,coord[1]),"West",tileList, completed,meeples)
-                    tileList += result[0]
-                    completed = result[1]
-                    meeples.update(result[2])
-                elif connections == "West":
-                    result = self.__generateTilesInFeature((coord[0]-1,coord[1]),"East",tileList, completed,meeples)
-                    tileList += result[0]
-                    completed = result[1]
-                    meeples.update(result[2])
-
-            if side == self.__board[coord].getClaimedSide() :
-                meeples[(coord,side)] = self.__board[coord].getClaimingPlayer().getColour()
-
-        if coord not in list(self.__board.keys()):
-            completed = False 
-        
-        return list(set(tileList)),completed,meeples
-    
-    def __getFeatureClaim(self):
-        #to do
-        return None
-
     def checkValidPlacement(self,tile,coordinate):
-        if self.__getFeatureClaim() != None:
-            return False
-
+        # list to reduce redundancy of coord checking
         coordinateCheckList = [coordinate,(coordinate[0],coordinate[1]-1),(coordinate[0],coordinate[1]+1),(coordinate[0]-1,coordinate[1]),(coordinate[0]+1,coordinate[1])]
+
+        #to check if prexisting meeple attached to feature
+        if tile.getClaimingPlayer():
+            claimedSide = tile.getClaimedSide()
+            if claimedSide == "North" and coordinateCheckList[1] in self.__board and self.__generateFeature(coordinateCheckList[1],"South").getMeepleList() != []:
+                return False
+            elif claimedSide == "South" and coordinateCheckList[2] in self.__board and self.__generateFeature(coordinateCheckList[2],"North").getMeepleList() != []:
+                return False
+            elif claimedSide == "East" and coordinateCheckList[4] in self.__board and self.__generateFeature(coordinateCheckList[4],"West").getMeepleList() != []:
+                return False
+            elif claimedSide == "West" and coordinateCheckList[3]in self.__board and self.__generateFeature(coordinateCheckList[3],"East").getMeepleList() != []:
+                return False
+
+        #checks adjacencies of tiles
         tileAdjecent = False
 
         if coordinateCheckList[0] in self.__board:
@@ -112,7 +133,8 @@ class board:
                 return False  
 
         if not tileAdjecent:
-            return False        
+            return False
+          
         return True
             
         

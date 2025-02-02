@@ -35,6 +35,7 @@ class mainWindow:
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
 
+        #playing game attribute to indicate game window, used for showing save button on pause menu
         self.__playingGame = False
 
         #start program

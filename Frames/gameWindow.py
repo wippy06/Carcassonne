@@ -69,11 +69,6 @@ class gameWindow:
         self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= lambda:self.__confirmPlacement())
         self.__viewRightButton.pack()
 
-        ###
-        self.__testButton = tk.Button(self.__mapViewKeypadFrame, text="Test", command= lambda:self.__game.test())
-        self.__testButton.pack()
-        ###
-
         self.__mainGameFrame = tk.Frame(frame)
         self.__mainGameFrame.pack(side="right")
 

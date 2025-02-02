@@ -26,15 +26,12 @@ class game:
 
         self.__board = board()
 
-        #for keeping track of move
+        #for keeping track of move for saving and loading game
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotationsPreview = 0
         self.__currentRotations = 0
         self.__currentClaimSide = None
-
-    def test(self):
-        self.__board.generateFeature((0,0),"North")
 
     def setupBoard(self,canvas):
         self.drawTile(canvas,False)
@@ -63,7 +60,6 @@ class game:
         return self.__board.getBoard()
 
     def rotatePreview(self,anticlockwise,canvas):
-        print(self.__currentClaimSide)
         if anticlockwise:
             self.__tileStack.getItem().rotate()
             self.__currentRotationsPreview += 1
@@ -90,8 +86,8 @@ class game:
                 self.__currentClaimSide = "West"
             elif self.__currentClaimSide == "West":
                 self.__currentClaimSide = "North"
+
         self.drawTile(canvas,True)
-        print(self.__currentClaimSide)
 
     def claimFeature(self, side):
         if self.__tileStack.getItem().getClaimedSide() != side:

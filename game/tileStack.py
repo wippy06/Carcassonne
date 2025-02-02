@@ -2,10 +2,13 @@ import numpy as np
 
 class tileStack:
     def __init__(self, x):
+        #stack as a numpy array
         self.__stack = np.empty(shape=(x), dtype=object)
+        #top pointer is array index with [0] being bottom of stack
         self.__topPointer = 0
         self.__space = x
-    
+
+    #Stack methods    
     def stackAppend(self, item):
         if self.__topPointer != self.__space:
             self.__stack[self.__topPointer] = item
