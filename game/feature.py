@@ -6,7 +6,7 @@ class feature:
         self.__CoAs = CoAs
         self.__completed = completed
 
-    #programming to interface
+    #programming to interface and encapsulating what varies
     #attributes are not altered as feature is discarded once not needed
     #done this way to not have to keep track and update features whenever board changes, reduces code
     def getMeepleList(self):

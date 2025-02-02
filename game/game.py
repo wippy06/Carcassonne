@@ -8,7 +8,9 @@ from .player import player
 
 class game:
     def __init__(self, gameFileDir):
-
+        #load file to check whether game needs to be loaded or not
+        #also sets seed for random lib so that game is the same when loaded
+        #as well as player info
         self.__gameFileDir = gameFileDir
         
         fileObj = open(self.__gameFileDir, "r")
@@ -17,13 +19,19 @@ class game:
 
         random.seed(self.__gameFile["seed"])
 
+        #tile list used for shuffling tiles and loading tiles into stack
         self.__tileList = []
+
+        #players stored in dictionary with keys being 1-6
+        #player keys are to store the order of players
+        #so that list rotation for next player only has to rotate intagers
         self.__playerDict = {}
         self.__playerKeys = []
 
         self.__generateTileStack()
         self.__generatePlayerDict()
 
+        #board obj handles board methods eg checking if move is valid
         self.__board = board()
 
         #for keeping track of move for saving and loading game
@@ -34,6 +42,7 @@ class game:
         self.__currentClaimSide = None
 
     def setupBoard(self,canvas):
+        #drawing start tile
         self.drawTile(canvas,False)
         self.__board.placeTile(self.__tileStack.getItem(), (0,0))
         self.__tileStack.stackPop()
@@ -45,6 +54,7 @@ class game:
         self.__tileStack.getItem().draw(canvas, preview)
 
     def placeTempTile(self, canvas, coord):
+        #checks if placement is valid then changes current placement vars
         if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
             self.__currentCoord = coord
             self.__currentRotations = self.__currentRotationsPreview
@@ -64,6 +74,7 @@ class game:
             self.__tileStack.getItem().rotate()
             self.__currentRotationsPreview += 1
 
+            #rotates currentClaimSide to keep track for placement saving and loading
             if self.__currentClaimSide == "North":
                 self.__currentClaimSide = "West"
             elif self.__currentClaimSide == "East":
@@ -73,9 +84,9 @@ class game:
             elif self.__currentClaimSide == "West":
                 self.__currentClaimSide = "South"
         else:
-            self.__tileStack.getItem().rotate()
-            self.__tileStack.getItem().rotate()
-            self.__tileStack.getItem().rotate()
+            #done 3 times as 3 lefts make a right done if for loop to reduce code
+            for i in range(3):
+                self.__tileStack.getItem().rotate()
             self.__currentRotationsPreview -= 1
 
             if self.__currentClaimSide == "North":
@@ -90,11 +101,16 @@ class game:
         self.drawTile(canvas,True)
 
     def claimFeature(self, side):
+        #first checks if side picked is not already claimed
+        #then checks if feature on side picked
+        #then checks if meeples avaliable
         if self.__tileStack.getItem().getClaimedSide() != side:
             if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") != None:
-                self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
-                self.__currentClaimSide = side
+                if self.__playerDict[self.__playerKeys[0]].getRemainingMeeples() != 0:
+                    self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+                    self.__currentClaimSide = side
         else:
+            #removes claim
             self.__tileStack.getItem().claimFeature(None, None)
             self.__currentClaimSide = None
 
@@ -126,6 +142,8 @@ class game:
         fileObj.close()
 
     def __loadPreviousMoves(self):
+        #iterates through move list loaded, decodes and plays move
+        #moves encoded as string "rotations,meeplePlacement,xCoord,yCoord"
         for move in self.__gameFile["moves"]:
             moveList = move.split(",")
             for i in range(int(moveList[0])):
@@ -134,10 +152,11 @@ class game:
                 self.claimFeature(moveList[1])
             self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))
 
-            #increase player scores
+            #           increase player scores
             self.__nextPlayer()
             self.__tileStack.stackPop()
 
+        #resets placment vars
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
@@ -146,8 +165,11 @@ class game:
             
 
     def __nextPlayer(self):
+        #left list rotation
+        #firstPlayer as place holder
         firstPlayer = self.__playerKeys[0]
 
+        #iterates and swaps positions then adds placeHolder onto end
         for i in range(1, len(self.__playerKeys)):
             self.__playerKeys[i-1] = self.__playerKeys[i]
 
@@ -162,6 +184,8 @@ class game:
             self.__playerKeys.append(i)
 
     def __generateTileStack(self):
+        #method of methods to generate tile stack
+        #tiles then random list the assign tiles to random list then sorts then push to stack
         tileCount = self.__generateTiles()
         self.__gameFile["tileNum"] = tileCount
         self.updateGameFile()
@@ -185,6 +209,7 @@ class game:
         return generatedList
 
     def __fisherYates(self, NumList):
+        #used to randomise list
         for i in range(len(NumList) - 1,0,-1):
             j = random.randint(0, i)
             NumList[i], NumList[j] = NumList[j], NumList[i]
@@ -211,9 +236,14 @@ class game:
         return tileCount
 
     def __mergeSort(self, arr):
+        #used to sort tiles based on tileOrder
+        #uses recursion
+
+        #base case for divisions
         if len(arr) == 1:
             return arr
         
+        #split list in half, mid is middle and fills left and right
         mid = len(arr) // 2
         leftHalf = []
         rightHalf = []
@@ -224,21 +254,25 @@ class game:
         for i in range(len(arr)-mid):
             rightHalf.append(arr[i + mid])
 
+        #recursion for splits
         leftHalf = self.__mergeSort(leftHalf)
         rightHalf = self.__mergeSort(rightHalf)
         
         sortedList = []
-        i = 0
-        j=0
+        i= 0
+        j= 0
         
+        #merging list using while loop, i,j as index for left and right
         while i < len(leftHalf) and j < len(rightHalf):
-            if leftHalf[i].getScore() >= rightHalf[j].getScore():
+            #puts in higher score to sortedList
+            if leftHalf[i].getScore()>=rightHalf[j].getScore():
                 sortedList.append(leftHalf[i])
-                i += 1
+                i+=1
             else:
                 sortedList.append(rightHalf[j])
-                j += 1
+                j+=1
 
+        #appends remaining ends of lists
         for index in range(len(leftHalf)-i):
             sortedList.append(leftHalf[index + i])
 
@@ -248,13 +282,16 @@ class game:
         return sortedList
     
     def __populateTileStack(self,tileList):
+        #to get starting tile
         tileData = open("tiles/tileData.json", "r")
         tileDataDict = json.loads(tileData.read())
         tileData.close()
 
+        #push to stack
         for tileObj in tileList:
             self.__tileStack.stackAppend(tileObj)
 
+        #add start tile
         startTile = tile(tileDataDict[STARTING_TILE],STARTING_TILE)
         startTile.setOrder(0)
         self.__tileStack.stackAppend(startTile)
@@ -262,6 +299,7 @@ class game:
     def completeTurn(self):
         move = []
         if self.__placementMade:
+            #sets up move to be appended to move queue to be saved and loaded
             move.append(self.__currentRotations%4)
             move.append(self.__currentClaimSide)
             move.append(self.__currentCoord[0])
@@ -269,14 +307,19 @@ class game:
 
             self.__gameFile["moves"].append(",".join(str(i) for i in move))
 
+            #alters board and current player attributes
             self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
 
+            if self.__currentClaimSide != None:
+                self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
+
+            #resets placement vars
             self.__placementMade = False
             self.__currentCoord = (0,0)
             self.__currentRotations = 0
             self.__currentRotationsPreview = 0
             self.__currentClaimSide = None
 
-            #increase player scores
+            #       increase player scores
             self.__nextPlayer()
             self.__tileStack.stackPop()

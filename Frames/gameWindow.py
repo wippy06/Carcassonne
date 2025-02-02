@@ -4,24 +4,23 @@ from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
 
 class gameWindow:
     def __init__(self,frame, gameFile):
+        #init game object, gameWindow handles user interface, game obj handles game operations
         self.__game = game(gameFile)
 
+        #creating frames
         self.__leftSideBarFrame = tk.Frame(frame)
         self.__leftSideBarFrame.pack(side="left")
 
         self.__scoreFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
         self.__scoreFrame.grid(column=0, row=0)
 
-        self.__score1 = tk.Label(self.__scoreFrame, text="1. ")
-        self.__score2 = tk.Label(self.__scoreFrame, text="2. ")
-        self.__score3 = tk.Label(self.__scoreFrame, text="3. ")
-        self.__score4 = tk.Label(self.__scoreFrame, text="4. ")
-        self.__score5 = tk.Label(self.__scoreFrame, text="5. ")
-        self.__score6 = tk.Label(self.__scoreFrame, text="6. ")
+        #done as list to reduce code
+        self.__scoreLableList = []
+        for i in range(self.__game.getNumPlayers()):
+            self.__scoreLableList.append(tk.Label(self.__scoreFrame, text=str(i)+". "))
+            self.__scoreLableList[i].pack(side = "top")
 
-        self.__scoreLableList = [self.__score1,self.__score2,self.__score3,self.__score4,self.__score5,self.__score6]
-        self.__packScoreLables()
-
+        #tile preview frame
         self.__tilePreviewFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
         self.__tilePreviewFrame.grid(column=0, row=1)
 
@@ -40,6 +39,7 @@ class gameWindow:
         self.__tileRemainingLable = tk.Label(self.__tilePreviewFrame, text = "Tiles remaining: ")
         self.__tileRemainingLable.pack()
 
+        #extra info frame
         self.__extraInfoFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
         self.__extraInfoFrame.grid(column=0, row=2)
 
@@ -51,6 +51,7 @@ class gameWindow:
         self.__turnPlayerLable.pack()
         self.__MeepleCountLable.pack()
 
+        #map movement frame
         self.__mapViewKeypadFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
         self.__mapViewKeypadFrame.grid(column=0,row=3)
 
@@ -69,12 +70,15 @@ class gameWindow:
         self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= lambda:self.__confirmPlacement())
         self.__viewRightButton.pack()
 
+        #main game grid frame
         self.__mainGameFrame = tk.Frame(frame)
         self.__mainGameFrame.pack(side="right")
 
         self.__tileGridFrame = tk.Frame(self.__mainGameFrame,highlightbackground="black",highlightthickness=1)
         self.__tileGridFrame.pack(side ="top")
 
+        #offset used to translate user game grid to coords
+        #//2 puts starting tile into centre
         self.__tileGridCanvasList = []
         self.__coordOffsetX = TILE_GRID_X//2
         self.__coordOffsetY = TILE_GRID_Y//2
@@ -88,6 +92,7 @@ class gameWindow:
         self.__updateDisplay()
     
     def __updateDisplay(self):
+        #reloads ui
         self.__updateScores()
         self.__tileRemainingLable.config(text="Tiles remaining: " + str(self.__game.getTilesRemaining()))
         self.__game.drawTile(self.__tileCanvas,True)
@@ -105,9 +110,9 @@ class gameWindow:
         if direction == "Right":
             self.__coordOffsetX -= 1
         self.__redrawBoard()
-        
 
     def __generateTileGridCanvas(self):
+        #grid stored as 2D array
         for i in range(TILE_GRID_X):
             self.__tileGridCanvasList.append([])
             for j in range(TILE_GRID_Y):
@@ -118,6 +123,7 @@ class gameWindow:
                 self.__tileGridCanvasList[i][j].grid(row=j,column=i)
                 self.__tileGridCanvasList[i][j].bind("<Button-1>", lambda event, i=i, j=j: self.__placeTempTile(self.__tileGridCanvasList[i][j],(i - self.__coordOffsetX, j - self.__coordOffsetY)))
 
+        #places start tile
         self.__game.setupBoard(self.__tileGridCanvasList[TILE_GRID_X//2][TILE_GRID_Y//2])
 
     def __placeTempTile(self, canvas, coord):
@@ -125,23 +131,29 @@ class gameWindow:
         self.__game.placeTempTile(canvas,coord)
 
     def __redrawBoard(self):
+        #clears and reloads tiles in tile grid
         board = self.__game.getBoard()
+
+        #tile clears
         for i in range(len(self.__tileGridCanvasList)):
             for j in range(len(self.__tileGridCanvasList[i])):
                 self.__tileGridCanvasList[i][j].delete("all")
 
         tileCoordList = list(board.keys())
 
+        #redraws tile that are within the grid to avoid index out of range errors
         for coord in tileCoordList:
             if coord[0]+self.__coordOffsetX < len(self.__tileGridCanvasList) and coord[0]+self.__coordOffsetX >=0:
                 if coord[1]+self.__coordOffsetY < len(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX]) and coord[1]+self.__coordOffsetY >=0:
                     self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
 
     def __placeMeeple(self,cursorX,cursorY):
+        #preview tile canvas
         self.__tileCanvas.update()
         width = self.__tileCanvas.winfo_width()
         height = self.__tileCanvas.winfo_height()
 
+        #locates cursor position on click and determines which side the user clicks on
         if cursorX >= width/16*7 and cursorX <= width/16*9 and cursorY <= height/16*3 and cursorY >= height/16:
             self.__game.claimFeature("North")
 
@@ -159,14 +171,13 @@ class gameWindow:
 
         self.__game.drawTile(self.__tileCanvas,True)
 
-    def __packScoreLables(self):
-        for i in range(self.__game.getNumPlayers()):
-            self.__scoreLableList[i].pack(side="top")
-
     def __updateScores(self):
+        #playerScoreDict is dictionary, keys is player names, values are player scores
         playerScoreDict = self.__game.getPlayerLeaderboard()
         playerNames = list(playerScoreDict.keys())
 
+        #bubble sort to sort playerNames list into order based on scores
+        #includes optimisations to stop if no swaps
         for i in range(len(playerNames)):
             swaps = False
             for j in range(len(playerNames)-i-1):
@@ -176,6 +187,7 @@ class gameWindow:
             if not swaps:
                 break
 
+        #updates player scoreboard using loop to reduce code
         for i in range(len(playerNames)):
             self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+str(playerScoreDict[playerNames[i]]))
 
