@@ -26,8 +26,8 @@ class tile:
 
         self.__tileOrder = 0
 
-        self.__claimedBy = None
-        self.__claimedSide = None
+        self.__claimedBy = ""
+        self.__claimedSide = ""
 
     #programming to interface
     def getSide(self,side):

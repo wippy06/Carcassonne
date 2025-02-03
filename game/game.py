@@ -22,9 +22,9 @@ class game:
         #tile list used for shuffling tiles and loading tiles into stack
         self.__tileList = []
 
-        #players stored in dictionary with keys being 1-6
+        #players stored in dictionary with keys being colours
         #player keys are to store the order of players
-        #so that list rotation for next player only has to rotate intagers
+        #so that list rotation for next player only has to rotate colour strings not player objects
         self.__playerDict = {}
         self.__playerKeys = []
 
@@ -39,7 +39,7 @@ class game:
         self.__currentCoord = (0,0)
         self.__currentRotationsPreview = 0
         self.__currentRotations = 0
-        self.__currentClaimSide = None
+        self.__currentClaimSide = ""
 
     def setupBoard(self,canvas):
         #drawing start tile
@@ -71,10 +71,13 @@ class game:
 
     def rotatePreview(self,anticlockwise,canvas):
         if anticlockwise:
+            amount = 1
+        else:
+            amount = 3
+
+        for i in range(amount):
             self.__tileStack.getItem().rotate()
             self.__currentRotationsPreview += 1
-
-            #rotates currentClaimSide to keep track for placement saving and loading
             if self.__currentClaimSide == "North":
                 self.__currentClaimSide = "West"
             elif self.__currentClaimSide == "East":
@@ -83,20 +86,6 @@ class game:
                 self.__currentClaimSide = "East"
             elif self.__currentClaimSide == "West":
                 self.__currentClaimSide = "South"
-        else:
-            #done 3 times as 3 lefts make a right done if for loop to reduce code
-            for i in range(3):
-                self.__tileStack.getItem().rotate()
-            self.__currentRotationsPreview -= 1
-
-            if self.__currentClaimSide == "North":
-                self.__currentClaimSide = "East"
-            elif self.__currentClaimSide == "East":
-                self.__currentClaimSide = "South"
-            elif self.__currentClaimSide == "South":
-                self.__currentClaimSide = "West"
-            elif self.__currentClaimSide == "West":
-                self.__currentClaimSide = "North"
 
         self.drawTile(canvas,True)
 
@@ -111,8 +100,8 @@ class game:
                     self.__currentClaimSide = side
         else:
             #removes claim
-            self.__tileStack.getItem().claimFeature(None, None)
-            self.__currentClaimSide = None
+            self.__tileStack.getItem().claimFeature("", "")
+            self.__currentClaimSide = ""
 
     def getPlayerLeaderboard(self):
         playerScores = {}
@@ -148,11 +137,16 @@ class game:
             moveList = move.split(",")
             for i in range(int(moveList[0])):
                 self.__tileStack.getItem().rotate()
-            if moveList[1] != "None":
+            if moveList[1] != "":
                 self.claimFeature(moveList[1])
             self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))
 
-            #           increase player scores
+            #score
+            sideOptions = ["North","South","East","West","Centre"]
+            for side in sideOptions:
+                if self.__tileStack.getItem().getSide(side) != None:
+                    self.__scoreFeature(self.__currentCoord,side,False)
+
             self.__nextPlayer()
             self.__tileStack.stackPop()
 
@@ -161,7 +155,7 @@ class game:
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
         self.__currentRotationsPreview = 0
-        self.__currentClaimSide = None
+        self.__currentClaimSide = ""
             
 
     def __nextPlayer(self):
@@ -180,8 +174,8 @@ class game:
     def __generatePlayerDict(self):
         playerList = self.__gameFile["players"]
         for i in range(len(playerList)):
-            self.__playerDict[i] = player(playerList[i], PLAYER_COLOUR_LIST[i])
-            self.__playerKeys.append(i)
+            self.__playerDict[PLAYER_COLOUR_LIST[i]] = player(playerList[i], PLAYER_COLOUR_LIST[i])
+            self.__playerKeys.append(PLAYER_COLOUR_LIST[i])
 
     def __generateTileStack(self):
         #method of methods to generate tile stack
@@ -296,6 +290,19 @@ class game:
         startTile.setOrder(0)
         self.__tileStack.stackAppend(startTile)
 
+    def __scoreFeature(self,coord,side,isFinal):
+        score,playerList,completed = self.__board.getFeatureScore(coord,side)
+
+        print(score,playerList,completed)
+
+        if not isFinal:
+            if completed:
+                for player in playerList:
+                    self.__playerDict[player].increaseScore(score)
+        else:
+            for player in playerList:
+                self.__playerDict[player].increaseScore(score)
+
     def completeTurn(self):
         move = []
         if self.__placementMade:
@@ -310,7 +317,7 @@ class game:
             #alters board and current player attributes
             self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
 
-            if self.__currentClaimSide != None:
+            if self.__currentClaimSide != "":
                 self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
 
             #resets placement vars
@@ -318,8 +325,13 @@ class game:
             self.__currentCoord = (0,0)
             self.__currentRotations = 0
             self.__currentRotationsPreview = 0
-            self.__currentClaimSide = None
+            self.__currentClaimSide = ""
 
-            #       increase player scores
+            #score
+            sideOptions = ["North","South","East","West","Centre"]
+            for side in sideOptions:
+                if self.__tileStack.getItem().getSide(side) != None:
+                    self.__scoreFeature(self.__currentCoord,side,False)
+
             self.__nextPlayer()
             self.__tileStack.stackPop()

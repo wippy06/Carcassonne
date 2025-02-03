@@ -1,12 +1,12 @@
 {
-    "seed": "07078",
+    "seed": "27009",
     "players": [
         {
-            "Name": "p",
+            "Name": "w",
             "Type": "player"
         },
         {
-            "Name": "o",
+            "Name": "e",
             "Type": "player"
         }
     ],
