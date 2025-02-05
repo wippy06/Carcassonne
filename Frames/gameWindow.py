@@ -3,12 +3,14 @@ from game.game import game
 from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
 
 class gameWindow:
-    def __init__(self,frame, gameFile):
+    def __init__(self,frame, gameFile, leaderBoardFunc):
         #init game object, gameWindow handles user interface, game obj handles game operations
-        self.__game = game(gameFile)
+        self.__game = game(gameFile,self.__gameOver)
+        self.__leaderBoardFunc = leaderBoardFunc
+        self.__mainFrame = frame
 
         #creating frames
-        self.__leftSideBarFrame = tk.Frame(frame)
+        self.__leftSideBarFrame = tk.Frame(self.__mainFrame)
         self.__leftSideBarFrame.pack(side="left")
 
         self.__scoreFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
@@ -71,7 +73,7 @@ class gameWindow:
         self.__viewRightButton.pack()
 
         #main game grid frame
-        self.__mainGameFrame = tk.Frame(frame)
+        self.__mainGameFrame = tk.Frame(self.__mainFrame)
         self.__mainGameFrame.pack(side="right")
 
         self.__tileGridFrame = tk.Frame(self.__mainGameFrame,highlightbackground="black",highlightthickness=1)
@@ -90,6 +92,7 @@ class gameWindow:
     def __confirmPlacement(self):
         self.__game.completeTurn()
         self.__updateDisplay()
+        self.__redrawBoard()
     
     def __updateDisplay(self):
         #reloads ui
@@ -178,10 +181,11 @@ class gameWindow:
 
         #bubble sort to sort playerNames list into order based on scores
         #includes optimisations to stop if no swaps
+        #bubble sort used as number of items needed to be sorted is small
         for i in range(len(playerNames)):
             swaps = False
             for j in range(len(playerNames)-i-1):
-                if playerScoreDict[playerNames[j]]>playerScoreDict[playerNames[j+1]]:
+                if playerScoreDict[playerNames[j]]<playerScoreDict[playerNames[j+1]]:
                     playerNames[j],playerNames[j+1]=playerNames[j+1],playerNames[j]
                     swaps = True      
             if not swaps:
@@ -193,4 +197,13 @@ class gameWindow:
 
     def saveGame(self):
         self.__game.updateGameFile()
+
+    def __gameOver(self):
+        playerScoreDict = self.__game.getPlayerLeaderboard()
+
+        #removes tk children to prepare for next window
+        for widget in self.__mainFrame.winfo_children():
+            widget.destroy()
+
+        self.__leaderBoardFunc(playerScoreDict)
 

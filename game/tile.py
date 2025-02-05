@@ -195,12 +195,12 @@ class tile:
         #draws the meeple of the colour of the player claiming the side
         if self.__claimedBy and self.__claimedSide:
             if self.__claimedSide == "North":
-                canvas.create_oval((width/16*7,height/16),(width/16*9,height/16*3),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+                canvas.create_oval((width/16*7,height/16),(width/16*9,height/16*3),fill=self.__claimedBy,outline="black",width=width/100)
             if self.__claimedSide == "South":
-                canvas.create_oval((width/16*7,height/16*15),(width/16*9,height/16*13),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+                canvas.create_oval((width/16*7,height/16*15),(width/16*9,height/16*13),fill=self.__claimedBy,outline="black",width=width/100)
             if self.__claimedSide == "East":
-                canvas.create_oval((width/16*15,height/16*7),(width/16*13,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+                canvas.create_oval((width/16*15,height/16*7),(width/16*13,height/16*9),fill=self.__claimedBy,outline="black",width=width/100)
             if self.__claimedSide == "West":
-                canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+                canvas.create_oval((width/16,height/16*7),(width/16*3,height/16*9),fill=self.__claimedBy,outline="black",width=width/100)
             if self.__claimedSide == "Centre":
-                canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=self.__claimedBy.getColour(),outline="black",width=width/100)
+                canvas.create_oval((width/16*7,height/16*7),(width/16*9,height/16*9),fill=self.__claimedBy,outline="black",width=width/100)

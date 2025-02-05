@@ -1,3 +1,6 @@
+leaderboard for end
+make look pretty
+
 {
     "A":2,
     "B":4,
@@ -24,3 +27,4 @@
     "W":4,
     "X":1
 } 
+

@@ -83,6 +83,7 @@ class selectPlayers:
     def __bubbleSort(self, playerList):
         #standard bubble sort used for sorting players into playing order
         #includes optimisations to stop if no swaps
+        #bubble sort used as number of items needed to be sorted is small
 
         for i in range(len(playerList)):
             swaps = False

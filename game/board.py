@@ -1,4 +1,5 @@
 from .feature import feature
+from constants import PLAYER_COLOUR_LIST
 
 class board:
     def __init__(self):
@@ -27,7 +28,7 @@ class board:
             #add meeple if there is one on the centre
             meeples = {}
             if self.__board[coord].getClaimingPlayer() != "" and side == self.__board[coord].getClaimedSide():
-                meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer().getColour()
+                meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer()
 
         else:
             tiles,completed,meeples = self.__generateFeatureFeatures(coord,side,[],True,{})
@@ -51,7 +52,7 @@ class board:
             tileList.append(coord)
 
             connectionsList = self.__board[coord].getConnections(side)
-            connectionsList.append(side)
+            connectionsList.insert(0,side)
 
             #append results for side and connections on tiles, for loop used incase of multiple connected sides
             for connections in connectionsList:
@@ -79,7 +80,7 @@ class board:
             #updating meeple dictionary, key as (coord,side) to prevent duplication of counting
             if self.__board[coord].getClaimingPlayer() != "":
                 if side == self.__board[coord].getClaimedSide() or side in self.__board[coord].getConnections(self.__board[coord].getClaimedSide()):
-                    meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer().getColour()
+                    meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer()
 
         #storing completed state in case of scoring feature later on
         if coord not in list(self.__board.keys()):
@@ -105,14 +106,19 @@ class board:
         #to check if prexisting meeple attached to feature
         if tile.getClaimingPlayer():
             claimedSide = tile.getClaimedSide()
-            if claimedSide == "North" and coordinateCheckList[1] in self.__board and self.__generateFeature(coordinateCheckList[1],"South").getMeepleList() != []:
-                return False
-            elif claimedSide == "South" and coordinateCheckList[2] in self.__board and self.__generateFeature(coordinateCheckList[2],"North").getMeepleList() != []:
-                return False
-            elif claimedSide == "East" and coordinateCheckList[4] in self.__board and self.__generateFeature(coordinateCheckList[4],"West").getMeepleList() != []:
-                return False
-            elif claimedSide == "West" and coordinateCheckList[3]in self.__board and self.__generateFeature(coordinateCheckList[3],"East").getMeepleList() != []:
-                return False
+            connectedSidesList = tile.getConnections(claimedSide)
+            connectedSidesList.insert(0,claimedSide)
+            
+            for side in connectedSidesList:
+                if side == "North" and coordinateCheckList[1] in self.__board and self.__generateFeature(coordinateCheckList[1],"South").getMeepleList() != []:
+                    return False
+                elif side == "South" and coordinateCheckList[2] in self.__board and self.__generateFeature(coordinateCheckList[2],"North").getMeepleList() != []:
+                    return False
+                elif side == "East" and coordinateCheckList[4] in self.__board and self.__generateFeature(coordinateCheckList[4],"West").getMeepleList() != []:
+                    return False
+                elif side == "West" and coordinateCheckList[3]in self.__board and self.__generateFeature(coordinateCheckList[3],"East").getMeepleList() != []:
+                    return False
+            
 
         #checks adjacencies of tiles
         tileAdjecent = False
@@ -141,5 +147,11 @@ class board:
             return False
           
         return True
+    
+    def removeMeeple(self,tile):
+        #returns orriginal claimer to know whos meeple count to increase
+        currentClaimer = self.__board[tile].getClaimingPlayer()
+        self.__board[tile].claimFeature("","")
+        return currentClaimer
             
         

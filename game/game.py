@@ -1,26 +1,25 @@
 from constants import STARTING_TILE, PLAYER_COLOUR_LIST
 import random
 import json
+import copy
 from .board import board
 from .tile import tile
 from .tileStack import tileStack
 from .player import player
 
 class game:
-    def __init__(self, gameFileDir):
+    def __init__(self, gameFileDir, gameOverFunc):
         #load file to check whether game needs to be loaded or not
         #also sets seed for random lib so that game is the same when loaded
         #as well as player info
         self.__gameFileDir = gameFileDir
+        self.__gameOver = gameOverFunc
         
         fileObj = open(self.__gameFileDir, "r")
         self.__gameFile = json.loads(fileObj.read())
         fileObj.close()
 
         random.seed(self.__gameFile["seed"])
-
-        #tile list used for shuffling tiles and loading tiles into stack
-        self.__tileList = []
 
         #players stored in dictionary with keys being colours
         #player keys are to store the order of players
@@ -96,7 +95,7 @@ class game:
         if self.__tileStack.getItem().getClaimedSide() != side:
             if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") != None:
                 if self.__playerDict[self.__playerKeys[0]].getRemainingMeeples() != 0:
-                    self.__tileStack.getItem().claimFeature(side, self.__playerDict[self.__playerKeys[0]])
+                    self.__tileStack.getItem().claimFeature(side, self.__playerKeys[0])
                     self.__currentClaimSide = side
         else:
             #removes claim
@@ -139,13 +138,14 @@ class game:
                 self.__tileStack.getItem().rotate()
             if moveList[1] != "":
                 self.claimFeature(moveList[1])
-            self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))
+                self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
+            self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))               
 
             #score
             sideOptions = ["North","South","East","West","Centre"]
             for side in sideOptions:
                 if self.__tileStack.getItem().getSide(side) != None:
-                    self.__scoreFeature(self.__currentCoord,side,False)
+                    self.__scoreFeature((int(moveList[2]),int(moveList[3])),side,False)
 
             self.__nextPlayer()
             self.__tileStack.stackPop()
@@ -180,18 +180,18 @@ class game:
     def __generateTileStack(self):
         #method of methods to generate tile stack
         #tiles then random list the assign tiles to random list then sorts then push to stack
-        tileCount = self.__generateTiles()
+        tileList, tileCount = self.__generateTiles()
         self.__gameFile["tileNum"] = tileCount
         self.updateGameFile()
         randomList = self.__generateList(tileCount)
-        self.__assignTileOrder(randomList)
-        randomTileList = self.__mergeSort(self.__tileList)
+        self.__assignTileOrder(randomList,tileList)
+        randomTileList = self.__mergeSort(tileList)
         self.__tileStack = tileStack(len(randomTileList)+1)
         self.__populateTileStack(randomTileList)
 
-    def __assignTileOrder(self, randomList):
+    def __assignTileOrder(self, randomList,tileList):
         for i in range(len(randomList)):
-            self.__tileList[i].setOrder(randomList[i])
+            tileList[i].setOrder(randomList[i])
 
     def __generateList(self, tileCount):
         generatedList = []
@@ -222,15 +222,19 @@ class game:
         tileKeys = tileTypeCountDict.keys()
 
         tileCount = 0
+        tileList = []
         for key in tileKeys:
             for i in range(tileTypeCountDict[key]):
-                self.__tileList.append(tile(tileDataDict[key], key))
+                #use of deep copy so that tiles hold a new list rather than pointer to list
+                #separates tile attributes between tiles and avoids unwanted links between tiles
+                tileList.append(tile(copy.deepcopy(tileDataDict[key]), key))
                 tileCount += 1
 
-        return tileCount
+        return tileList, tileCount
 
     def __mergeSort(self, arr):
         #used to sort tiles based on tileOrder
+        #merge sort used as number of tiles needed to be sorted can potentially be large
         #uses recursion
 
         #base case for divisions
@@ -291,17 +295,37 @@ class game:
         self.__tileStack.stackAppend(startTile)
 
     def __scoreFeature(self,coord,side,isFinal):
-        score,playerList,completed = self.__board.getFeatureScore(coord,side)
+        #returns the score of the feature and whose score to increase
+        score,playerList,completed,meepleTiles = self.__board.getFeatureScore(coord,side)
 
-        print(score,playerList,completed)
-
+        #conditions for scoring
         if not isFinal:
             if completed:
                 for player in playerList:
                     self.__playerDict[player].increaseScore(score)
+                    self.__removeMeeples(meepleTiles)
         else:
             for player in playerList:
                 self.__playerDict[player].increaseScore(score)
+                self.__removeMeeples(meepleTiles)
+
+    def __removeMeeples(self,meepleTiles):
+        #removes the meeples in the tiles in the list
+        for tile in meepleTiles:
+            #self.__board.removeMeeple(tile) returns player key used to increase meeple count for player
+            self.__playerDict[self.__board.removeMeeple(tile)].alterMeepleCount(1)
+
+    def __checkGameEnd(self):
+        if self.__tileStack.emptyCheck():
+            boardDict = self.__board.getBoard()
+
+            #cycle through all tiles on board, if tiles have a meeple score that feature
+            for tile in list(boardDict.keys()):
+                if boardDict[tile].getClaimingPlayer() != "":
+                    self.__scoreFeature(tile,boardDict[tile].getClaimedSide(),True)
+
+            self.__gameOver()
+            
 
     def completeTurn(self):
         move = []
@@ -320,6 +344,12 @@ class game:
             if self.__currentClaimSide != "":
                 self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
 
+            #score
+            sideOptions = ["North","South","East","West","Centre"]
+            for side in sideOptions:
+                if self.__tileStack.getItem().getSide(side) != None:
+                    self.__scoreFeature(self.__currentCoord,side,False)
+
             #resets placement vars
             self.__placementMade = False
             self.__currentCoord = (0,0)
@@ -327,11 +357,6 @@ class game:
             self.__currentRotationsPreview = 0
             self.__currentClaimSide = ""
 
-            #score
-            sideOptions = ["North","South","East","West","Centre"]
-            for side in sideOptions:
-                if self.__tileStack.getItem().getSide(side) != None:
-                    self.__scoreFeature(self.__currentCoord,side,False)
-
             self.__nextPlayer()
             self.__tileStack.stackPop()
+            self.__checkGameEnd()

@@ -16,8 +16,10 @@ class feature:
         return self.__tileList
     
     def getScoreChanges(self):
+        #if no meeples on feature score should not change
         if self.__meepleDict == {}:
-            return 0,[],False
+            return 0,[],False,[]
+        
         #generate list of players that will increase scores
 
         #dictionary of playerKeys and haw many meeples for values
@@ -40,12 +42,18 @@ class feature:
         score = 0
         if self.__featureType == "Castle":
             if self.__completed:
-                score = len(self.__tileList) + self.__CoAs*2
+                score = (len(self.__tileList) + self.__CoAs)*2
             else:
                 score = len(self.__tileList) + self.__CoAs
         else:
             score = len(self.__tileList)
 
-        return score, playerList, self.__completed
+        #getting meeple tiles within feature
+        meepleTiles = []
+        for tile in list(self.__meepleDict.keys()):
+            #tile split into tile and side when stored in meepleDict so [0] to get tile coord
+            meepleTiles.append(tile[0])
+
+        return score, playerList, self.__completed, meepleTiles
 
             
