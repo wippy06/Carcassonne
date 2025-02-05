@@ -1,9 +1,10 @@
 import tkinter as tk
-from frames.start import start
-from frames.pause import pause
-from frames.selectGame import selectGame
-from frames.selectPlayers import selectPlayers
-from frames.gameWindow import gameWindow
+from frames.startFrame import startFrame
+from frames.pauseWindow import pauseWindow
+from frames.selectGameFrame import selectGameFrame
+from frames.selectPlayersFrame import selectPlayersFrame
+from frames.gameFrame import gameFrame
+from frames.leaderBoardFrame import leaderBoardFrame
 from constants import START_FULLSCREEN
 
 class mainWindow:
@@ -29,7 +30,7 @@ class mainWindow:
 
         tk.Label(self.__topBarFrameL,text ="Carcassonne").pack(side="left")
         tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__pause).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__displayPauseWindow).pack(side="right")
 
         #for full screen mode
         self.__window.bind("<Escape>", self.__endFullscreen)
@@ -39,7 +40,7 @@ class mainWindow:
         self.__playingGame = False
 
         #start program
-        self.__startScreen()
+        self.__displayStartFrame()
 
     #full screen mode methods
     def __endFullscreen(self, event):
@@ -49,21 +50,27 @@ class mainWindow:
         self.__window.attributes("-fullscreen", True)
 
     #methods to instantiate window objects
-    def __pause(self):
-        pause(self.__window,self.__playingGame, self.__saveGame)
+    def __displayPauseWindow(self):
+        pauseWindow(self.__window,self.__playingGame, self.__saveGame)
 
-    def __startScreen(self):
-        start(self.__window, self.__bottomFrame, self.__selectGame)
+    def __displayStartFrame(self):
+        for widget in self.__bottomFrame.winfo_children():
+            widget.destroy()
+        startFrame(self.__window, self.__bottomFrame, self.__displaySelectGameFrame)
 
-    def __selectGame(self):
-        selectGame(self.__bottomFrame, self.__selectPlayers, self.__loadGame)
+    def __displaySelectGameFrame(self):
+        selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame)
 
-    def __selectPlayers(self, gameSlot):
-        selectPlayers(self.__bottomFrame, gameSlot, self.__loadGame)
+    def __displaySelectPlayersFrame(self, gameSlot):
+        selectPlayersFrame(self.__bottomFrame, gameSlot, self.__displayGameFrame)
 
-    def __loadGame(self, gameFile):
+    def __displayGameFrame(self, gameFile):
         self.__playingGame = True
-        self.__gameWindowObj = gameWindow(self.__bottomFrame, gameFile)
+        self.__gameWindowObj = gameFrame(self.__bottomFrame, gameFile,self.__displayLeaderBoardFrame)
+
+    def __displayLeaderBoardFrame(self,playerScoreDict):
+        self.__playingGame = False
+        leaderBoardFrame(self.__window, self.__bottomFrame, playerScoreDict,self.__displayStartFrame)
 
     def __saveGame(self):
         self.__gameWindowObj.saveGame()

@@ -1,5 +1,6 @@
 leaderboard for end
 make look pretty
+display colour of players during turn
 
 {
     "A":2,
@@ -27,4 +28,3 @@ make look pretty
     "W":4,
     "X":1
 } 
-

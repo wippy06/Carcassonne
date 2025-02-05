@@ -1,7 +1,7 @@
 import tkinter as tk
 import json
 
-class selectGame:
+class selectGameFrame:
     def __init__(self, frame, playerFunc, loadGameFunc):
         self.__mainFrame = frame
         self.__frame = tk.Frame(frame)

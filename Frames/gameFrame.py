@@ -2,9 +2,9 @@ import tkinter as tk
 from game.game import game
 from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
 
-class gameWindow:
+class gameFrame:
     def __init__(self,frame, gameFile, leaderBoardFunc):
-        #init game object, gameWindow handles user interface, game obj handles game operations
+        #init game object, gameFrame handles user interface, game obj handles game operations
         self.__game = game(gameFile,self.__gameOver)
         self.__leaderBoardFunc = leaderBoardFunc
         self.__mainFrame = frame
@@ -19,7 +19,7 @@ class gameWindow:
         #done as list to reduce code
         self.__scoreLableList = []
         for i in range(self.__game.getNumPlayers()):
-            self.__scoreLableList.append(tk.Label(self.__scoreFrame, text=str(i)+". "))
+            self.__scoreLableList.append(tk.Label(self.__scoreFrame, text=str(i+1)+". "))
             self.__scoreLableList[i].pack(side = "top")
 
         #tile preview frame
@@ -91,8 +91,12 @@ class gameWindow:
 
     def __confirmPlacement(self):
         self.__game.completeTurn()
-        self.__updateDisplay()
-        self.__redrawBoard()
+        #fix for better solution for when game ends
+        try:
+            self.__updateDisplay()
+            self.__redrawBoard()
+        except:
+            pass
     
     def __updateDisplay(self):
         #reloads ui

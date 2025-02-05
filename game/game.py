@@ -324,6 +324,10 @@ class game:
                 if boardDict[tile].getClaimingPlayer() != "":
                     self.__scoreFeature(tile,boardDict[tile].getClaimedSide(),True)
 
+            #clear gameFile
+            fileObj = open(self.__gameFileDir, "w")
+            fileObj.close()
+
             self.__gameOver()
             
 

@@ -1,7 +1,7 @@
 import tkinter as tk
 from constants import PAUSE_SIZE
 
-class pause:
+class pauseWindow:
     def __init__(self, window, isPlaying, saveFunc):
         #opens new window and sets to root to prevent user from accessing main window
 

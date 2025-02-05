@@ -1,6 +1,6 @@
 import tkinter as tk
 
-class start:
+class startFrame:
     def __init__(self, window, frame, startFunc):
         #start window displays on program start up
         self.__frame = frame

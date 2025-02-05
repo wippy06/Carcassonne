@@ -5,7 +5,7 @@ import json, random
 
 #skipped deactivating buttons
 
-class selectPlayers:
+class selectPlayersFrame:
     def __init__(self, frame, gameSlot, gameFunc):
         self.__gameSlot = gameSlot
         self.__fileName = "gameSlots/slot"+str(self.__gameSlot)+".json"
