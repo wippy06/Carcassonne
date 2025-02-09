@@ -183,7 +183,7 @@ class gameFrame:
         self.__game.drawTile(self.__tileCanvas,True)
 
     def __updateScores(self):
-        #playerScoreDict is dictionary, keys is player names, values are player scores
+        #playerScoreDict is dictionary, keys is player names, values are [player scores,player colour]
         playerScoreDict = self.__game.getPlayerLeaderboard()
         playerNames = list(playerScoreDict.keys())
 
@@ -193,7 +193,7 @@ class gameFrame:
         for i in range(len(playerNames)):
             swaps = False
             for j in range(len(playerNames)-i-1):
-                if playerScoreDict[playerNames[j]]<playerScoreDict[playerNames[j+1]]:
+                if playerScoreDict[playerNames[j]][0]<playerScoreDict[playerNames[j+1]][0]:
                     playerNames[j],playerNames[j+1]=playerNames[j+1],playerNames[j]
                     swaps = True      
             if not swaps:
@@ -201,7 +201,7 @@ class gameFrame:
 
         #updates player scoreboard using loop to reduce code
         for i in range(len(playerNames)):
-            self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+str(playerScoreDict[playerNames[i]]))
+            self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+playerScoreDict[playerNames[i]][1]+" : "+str(playerScoreDict[playerNames[i]][0]))
 
     def saveGame(self):
         self.__game.updateGameFile()

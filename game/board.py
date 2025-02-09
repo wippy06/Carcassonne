@@ -31,7 +31,12 @@ class board:
                 meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer()
 
         else:
-            tiles,completed,meeples = self.__generateFeatureFeatures(coord,side,[],True,{})
+            tileSides,completed,meeples = self.__generateFeatureFeatures(coord,side,[],True,{})
+            
+            tiles = []
+            for tileSide in tileSides:
+                if tileSide[0] not in tiles:
+                    tiles.append(tileSide[0])
 
         #counts coat of arms in case of scoring castles
         CoAs = 0
@@ -48,8 +53,8 @@ class board:
 
         #tileList acts as visited nodes list
         #base case when coord is in tileList
-        if coord not in tileList and coord in list(self.__board.keys()):
-            tileList.append(coord)
+        if (coord,side) not in tileList and coord in list(self.__board.keys()):
+            tileList.append((coord,side))
 
             connectionsList = self.__board[coord].getConnections(side)
             connectionsList.insert(0,side)
@@ -154,6 +159,25 @@ class board:
         self.__board[tile].claimFeature("","")
         return currentClaimer
     
+    def checkIfValidPlacements(self,tile):
+        #getting adjacent coordinates list
+        adjancentCoordList = []
+        for coord in self.__board.keys():
+            coordCheckList = [(coord[0]+1,coord[1]),(coord[0]-1,coord[1]),(coord[0],coord[1]+1),(coord[0],coord[1]-1)]
+            for i in range(len(coordCheckList)):
+                if coordCheckList[i] not in self.__board.keys():
+                    adjancentCoordList.append(coordCheckList[i])
+
+        #checking all adjacenies with tile
+        for rotation in range(4):
+            for coord in adjancentCoordList:
+                if self.checkValidPlacement(tile,coord):
+                    return True
+
+            tile.rotate()
+
+        return False
+    
     def getAllValidPlacements(self,tile,meeples):
         #getting adjacent coordinates list
         adjancentCoordList = []
@@ -169,7 +193,6 @@ class board:
         for rotation in range(4):
             for coord in adjancentCoordList:
                 tile.claimFeature("","")
-
                 if self.checkValidPlacement(tile,coord):
                         placementList.append(str(rotation)+","+","+str(coord[0])+","+str(coord[1]))
 
@@ -184,5 +207,6 @@ class board:
                             placementList.append(str(rotation)+","+meeplePlacment+","+str(coord[0])+","+str(coord[1]))
 
             tile.rotate()
+            tile.claimFeature("","")
 
         return placementList

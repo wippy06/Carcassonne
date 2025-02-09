@@ -33,7 +33,7 @@ class bot(player):
 
             for side in sideOptions:
                 if tile.getSide(side) != None and side not in completedSides:
-                    placementScore += self.__evaluateFeature(board,placement[2],side,turnCount) 
+                    placementScore += self.__evaluateFeature(board,placement[2],side,turnCount,placement[1]) 
 
                 #done to remove double counting a feature if the sides of a tile are connected
                 completedSides.append(side)
@@ -46,11 +46,11 @@ class bot(player):
             for monestryCoord in monestryCheckList:
                 boardDict = board.getBoard()
                 if monestryCoord in boardDict and board.getBoard()[monestryCoord].getSide("Centre") == "Monestry":
-                    placementScore += self.__evaluateFeature(board,monestryCoord,"Centre",turnCount)
+                    placementScore += self.__evaluateFeature(board,monestryCoord,"Centre",turnCount,placement[1])
 
             placementDict[encodedPlacement] = placementScore
 
-        return max(placementDict, key=placementDict.get)              
+        return max(placementDict, key=placementDict.get)             
     
     def __decodePlacement(self,placement):
         #turns encoded move of "rotations,meepleClaimSide,xCoord,yCoord" to [rotations,meepleClaimSide,(xCoord,yCoord)]
@@ -69,7 +69,7 @@ class bot(player):
     def __modulusFunction(self,yStrech,xSolution,xTranslation,x):
         return -yStrech*(abs(x-xTranslation)-xSolution)
     
-    def __evaluateFeature(self,board,coord,side,turnCount):
+    def __evaluateFeature(self,board,coord,side,turnCount,meeplePlacement):
         score,playerList,completed,meepleTiles = board.getFeatureScore(coord,side)
 
         #mathmatical functions to determine evaluation

@@ -37,7 +37,6 @@ class game:
         #for keeping track of placement for saving and loading game
         self.__tempRotations = 0
         self.__tempClaimSide = ""
-
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
@@ -108,7 +107,7 @@ class game:
     def getPlayerLeaderboard(self):
         playerScores = {}
         for player in self.__playerKeys:
-            playerScores[self.__playerDict[player].getName()] = self.__playerDict[player].getScore()
+            playerScores[self.__playerDict[player].getName()] = [self.__playerDict[player].getScore(),player]
 
         return playerScores
     
@@ -161,15 +160,17 @@ class game:
         self.__nextPlayer()
         self.__tileStack.stackPop()
 
+        #check if there is a valid placment for next tile
+        if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
+            self.__alterTileStack()
+
         #resets placment vars
         self.__tempRotations = 0
         self.__tempClaimSide = ""
-
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
-        self.__currentClaimSide = ""
-            
+        self.__currentClaimSide = ""      
 
     def __nextPlayer(self):
         #left list rotation
@@ -384,7 +385,6 @@ class game:
             #resets placement vars
             self.__tempRotations = 0
             self.__tempClaimSide = ""
-
             self.__placementMade = False
             self.__currentCoord = (0,0)
             self.__currentRotations = 0
@@ -393,6 +393,10 @@ class game:
             self.__nextPlayer()
             self.__tileStack.stackPop()
             self.__checkGameEnd()
+
+            #check if there is a valid placment for next tile
+            if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
+                self.__alterTileStack()
 
             #logic to handle bot moves and game over state
             while self.__checkIfBot():
@@ -404,11 +408,34 @@ class game:
             if self.__checkGameEnd():
                 return True
             return False
+        
+    def __alterTileStack(self):
+        #temp stack to hold tiles
+        newStack = tileStack(self.__tileStack.getSize())
+
+        #load tiles off stack until a tile with a valid placement is found
+        while not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
+            newStack.stackAppend(self.__tileStack.getItem())
+            self.__tileStack.stackPop()
+
+            if self.__tileStack.emptyCheck():
+                self.__gameOver()
+                return
+            
+        #load tiles back onto stack then push valid placeable tile
+        placeHolder = self.__tileStack.getItem()
+        self.__tileStack.stackPop()
+
+        while not newStack.emptyCheck():  
+            self.__tileStack.stackAppend(newStack.getItem())
+            newStack.stackPop()
+
+        self.__tileStack.stackAppend(placeHolder)
 
     def __generatePlacement(self):
         #deepcopy to avoid changing data related to actual game tile
         placementList = self.__board.getAllValidPlacements(copy.deepcopy(self.__tileStack.getItem()),self.__playerDict[self.__playerKeys[0]].getRemainingMeeples())
-
+        
         placement = self.__playerDict[self.__playerKeys[0]].pickMove(placementList, self.__board, self.__tileStack.getItem())
 
         self.__gameFile["moves"].append(placement)

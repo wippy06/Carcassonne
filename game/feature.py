@@ -12,9 +12,6 @@ class feature:
     def getMeepleList(self):
         return list(self.__meepleDict.values())
     
-    def getTileList(self):
-        return self.__tileList
-    
     def getScoreChanges(self):
         #if no meeples on feature score should not change
         if self.__meepleDict == {}:

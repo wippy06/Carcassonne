@@ -22,11 +22,6 @@ class tileStack:
     def getItem(self):
         return self.__stack[self.__topPointer-1]
     
-    def fullCheck(self):
-        if self.__topPointer == self.__space:
-            return True
-        return False
-    
     def emptyCheck(self):
         if self.__topPointer == 0:
             return True

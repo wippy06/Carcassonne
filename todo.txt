@@ -1,3 +1,2 @@
 make look pretty
 display colour of players during turn
-I,L,W,X tile edge case on scoring when 2 meeples in feature and feature doubles back on itself
