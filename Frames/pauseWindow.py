@@ -10,7 +10,7 @@ class pauseWindow:
         self.__pauseWindow.grab_set()
         self.__pauseWindow.title("paused")
 
-        self.__pauseWindow.geometry(PAUSE_SIZE)
+        self.__pauseWindow.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))
 
         tk.Label(self.__pauseWindow,text ="Paused").pack()
         tk.Button(self.__pauseWindow, text="Resume", command = self.__pauseWindow.destroy).pack()

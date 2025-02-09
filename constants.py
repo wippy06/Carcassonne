@@ -1,6 +1,7 @@
 #Set up to be easily changeable
 
-PAUSE_SIZE = '200x150'
+PAUSE_SIZE = (200,150)
+MINIMAP_MAX_SIZE = (800,800)
 
 START_FULLSCREEN = True
 

@@ -47,7 +47,12 @@ class game:
         self.__tileStack.stackPop()
 
         if self.__gameFile["moves"] != []:
-            self.__loadPreviousMoves()
+            #iterates through move list loaded, decodes and plays move
+            for move in self.__gameFile["moves"]:
+                self.__loadMove(move)
+
+        while self.__checkIfBot():
+            self.__generatePlacement() 
 
     def drawTile(self,canvas,preview):
         self.__tileStack.getItem().draw(canvas, preview)
@@ -77,14 +82,8 @@ class game:
         for i in range(amount):
             self.__tileStack.getItem().rotate()
             self.__currentRotationsPreview += 1
-            if self.__currentClaimSide == "North":
-                self.__currentClaimSide = "West"
-            elif self.__currentClaimSide == "East":
-                self.__currentClaimSide = "North"
-            elif self.__currentClaimSide == "South":
-                self.__currentClaimSide = "East"
-            elif self.__currentClaimSide == "West":
-                self.__currentClaimSide = "South"
+
+        self.__currentClaimSide = self.__tileStack.getItem().getClaimedSide()
 
         self.drawTile(canvas,True)
 
@@ -129,26 +128,24 @@ class game:
         fileObj.write(json.dumps(self.__gameFile, indent=4))
         fileObj.close()
 
-    def __loadPreviousMoves(self):
-        #iterates through move list loaded, decodes and plays move
+    def __loadMove(self,move):
         #moves encoded as string "rotations,meeplePlacement,xCoord,yCoord"
-        for move in self.__gameFile["moves"]:
-            moveList = move.split(",")
-            for i in range(int(moveList[0])):
-                self.__tileStack.getItem().rotate()
-            if moveList[1] != "":
-                self.claimFeature(moveList[1])
-                self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
-            self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))               
+        moveList = move.split(",")
+        for i in range(int(moveList[0])):
+            self.__tileStack.getItem().rotate()
+        if moveList[1] != "":
+            self.claimFeature(moveList[1])
+            self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
+        self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))               
 
-            #score
-            sideOptions = ["North","South","East","West","Centre"]
-            for side in sideOptions:
-                if self.__tileStack.getItem().getSide(side) != None:
-                    self.__scoreFeature((int(moveList[2]),int(moveList[3])),side,False)
+        #score
+        sideOptions = ["North","South","East","West","Centre"]
+        for side in sideOptions:
+            if self.__tileStack.getItem().getSide(side) != None:
+                self.__scoreFeature((int(moveList[2]),int(moveList[3])),side,False)
 
-            self.__nextPlayer()
-            self.__tileStack.stackPop()
+        self.__nextPlayer()
+        self.__tileStack.stackPop()
 
         #resets placment vars
         self.__placementMade = False
@@ -313,7 +310,9 @@ class game:
         #removes the meeples in the tiles in the list
         for tile in meepleTiles:
             #self.__board.removeMeeple(tile) returns player key used to increase meeple count for player
-            self.__playerDict[self.__board.removeMeeple(tile)].alterMeepleCount(1)
+            playerKey = self.__board.removeMeeple(tile)
+            if playerKey != "":
+               self.__playerDict[playerKey].alterMeepleCount(1)
 
     def __checkGameEnd(self):
         if self.__tileStack.emptyCheck():
@@ -329,6 +328,9 @@ class game:
             fileObj.close()
 
             self.__gameOver()
+
+            return True
+        return False
             
 
     def completeTurn(self):
@@ -364,3 +366,29 @@ class game:
             self.__nextPlayer()
             self.__tileStack.stackPop()
             self.__checkGameEnd()
+
+            #logic to handle bot moves and game over state
+            while self.__checkIfBot():
+                if self.__checkGameEnd():
+                    return True
+                
+                self.__generatePlacement()
+
+            if self.__checkGameEnd():
+                return True
+            return False
+
+    def __generatePlacement(self):
+        #deepcopy to avoid changing data related to actual game tile
+        placementList = self.__board.getAllValidPlacements(copy.deepcopy(self.__tileStack.getItem()),self.__playerDict[self.__playerKeys[0]].getRemainingMeeples())
+
+        placement = placementList[random.randint(0,len(placementList)-1)]
+
+        self.__gameFile["moves"].append(placement)
+
+        self.__loadMove(placement)
+
+    def __checkIfBot(self):
+        if self.__playerDict[self.__playerKeys[0]].getType() == "player":
+            return False
+        return True

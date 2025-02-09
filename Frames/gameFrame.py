@@ -1,5 +1,6 @@
 import tkinter as tk
 from game.game import game
+from frames.minimapWindow import minimapWindow
 from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
 
 class gameFrame:
@@ -69,8 +70,11 @@ class gameFrame:
         self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Right", command= lambda:self.__moveView("Right"))
         self.__viewRightButton.pack()
 
-        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= lambda:self.__confirmPlacement())
+        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= self.__confirmPlacement)
         self.__viewRightButton.pack()
+
+        self.__minimapButton = tk.Button(self.__mapViewKeypadFrame, text = "Minimap", command=self.__openMinimap)
+        self.__minimapButton.pack()
 
         #main game grid frame
         self.__mainGameFrame = tk.Frame(self.__mainFrame)
@@ -89,14 +93,14 @@ class gameFrame:
         self.__updateDisplay()
         self.__redrawBoard()
 
+    def __openMinimap(self):
+        board = self.__game.getBoard()
+        minimapWindow(self.__mainFrame.winfo_toplevel(),board)
+
     def __confirmPlacement(self):
-        self.__game.completeTurn()
-        #fix for better solution for when game ends
-        try:
+        if not self.__game.completeTurn():
             self.__updateDisplay()
             self.__redrawBoard()
-        except:
-            pass
     
     def __updateDisplay(self):
         #reloads ui

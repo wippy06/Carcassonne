@@ -77,7 +77,7 @@ class selectPlayersFrame:
                 nameList.append(players.getName())
                 typeList.append(players.getType())
 
-        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not("" in nameList) and not(0 in orderList) and orderList != [] and nameList != [] and typeList != []:
+        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not("" in nameList) and not(0 in orderList) and orderList != [] and nameList != [] and typeList != [] and "player" in typeList:
             self.__continue()
 
     def __bubbleSort(self, playerList):

@@ -1,4 +1,3 @@
-leaderboard for end
 make look pretty
 display colour of players during turn
 

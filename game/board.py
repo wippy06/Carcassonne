@@ -101,24 +101,7 @@ class board:
     
     def checkValidPlacement(self,tile,coordinate):       
         # list to reduce redundancy of coord checking
-        coordinateCheckList = [coordinate,(coordinate[0],coordinate[1]-1),(coordinate[0],coordinate[1]+1),(coordinate[0]-1,coordinate[1]),(coordinate[0]+1,coordinate[1])]
-
-        #to check if prexisting meeple attached to feature
-        if tile.getClaimingPlayer():
-            claimedSide = tile.getClaimedSide()
-            connectedSidesList = tile.getConnections(claimedSide)
-            connectedSidesList.insert(0,claimedSide)
-            
-            for side in connectedSidesList:
-                if side == "North" and coordinateCheckList[1] in self.__board and self.__generateFeature(coordinateCheckList[1],"South").getMeepleList() != []:
-                    return False
-                elif side == "South" and coordinateCheckList[2] in self.__board and self.__generateFeature(coordinateCheckList[2],"North").getMeepleList() != []:
-                    return False
-                elif side == "East" and coordinateCheckList[4] in self.__board and self.__generateFeature(coordinateCheckList[4],"West").getMeepleList() != []:
-                    return False
-                elif side == "West" and coordinateCheckList[3]in self.__board and self.__generateFeature(coordinateCheckList[3],"East").getMeepleList() != []:
-                    return False
-            
+        coordinateCheckList = [coordinate,(coordinate[0],coordinate[1]-1),(coordinate[0],coordinate[1]+1),(coordinate[0]-1,coordinate[1]),(coordinate[0]+1,coordinate[1])]          
 
         #checks adjacencies of tiles
         tileAdjecent = False
@@ -145,6 +128,24 @@ class board:
 
         if not tileAdjecent:
             return False
+        
+        #to check if prexisting meeple attached to feature
+        #done afer checking tile adjacencies to reduce number of times recursive algorithm needs to be called
+        #greatly improves possible placements generation speed for bots
+        if tile.getClaimingPlayer():
+            claimedSide = tile.getClaimedSide()
+            connectedSidesList = tile.getConnections(claimedSide)
+            connectedSidesList.insert(0,claimedSide)
+            
+            for side in connectedSidesList:
+                if side == "North" and coordinateCheckList[1] in self.__board and self.__generateFeature(coordinateCheckList[1],"South").getMeepleList() != []:
+                    return False
+                elif side == "South" and coordinateCheckList[2] in self.__board and self.__generateFeature(coordinateCheckList[2],"North").getMeepleList() != []:
+                    return False
+                elif side == "East" and coordinateCheckList[4] in self.__board and self.__generateFeature(coordinateCheckList[4],"West").getMeepleList() != []:
+                    return False
+                elif side == "West" and coordinateCheckList[3]in self.__board and self.__generateFeature(coordinateCheckList[3],"East").getMeepleList() != []:
+                    return False
           
         return True
     
@@ -153,5 +154,36 @@ class board:
         currentClaimer = self.__board[tile].getClaimingPlayer()
         self.__board[tile].claimFeature("","")
         return currentClaimer
-            
+    
+    def getAllValidPlacements(self,tile,meeples):
+        #getting adjacent coordinates list
+        adjancentCoordList = []
+        for coord in self.__board.keys():
+            coordCheckList = [(coord[0]+1,coord[1]),(coord[0]-1,coord[1]),(coord[0],coord[1]+1),(coord[0],coord[1]-1)]
+            for i in range(len(coordCheckList)):
+                if coordCheckList[i] not in self.__board.keys():
+                    adjancentCoordList.append(coordCheckList[i])
+
+        #checking valid placements then appending to placementList
+        placementList = []
         
+        for rotation in range(4):
+            for coord in adjancentCoordList:
+                tile.claimFeature("","")
+
+                if self.checkValidPlacement(tile,coord):
+                        placementList.append(str(rotation)+","+","+str(coord[0])+","+str(coord[1]))
+
+                #only checks for meeples if bot has remaining meeples, optimisation to reduce instances of recursive alg
+                if meeples != 0:
+                    for meeplePlacment in ["Centre","North","South","East","West"]:
+                        if tile.getSide(meeplePlacment) == None:
+                            continue
+
+                        tile.claimFeature(meeplePlacment,True)
+                        if self.checkValidPlacement(tile,coord):
+                            placementList.append(str(rotation)+","+meeplePlacment+","+str(coord[0])+","+str(coord[1]))
+
+            tile.rotate()
+
+        return placementList

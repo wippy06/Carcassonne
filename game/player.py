@@ -26,3 +26,6 @@ class player:
     def alterMeepleCount(self, amount):
         #only alter not increas and decrease as ammount can be -ve therefoe reducing code
         self.__meeples += amount
+
+    def getType(self):
+        return self.__playerType
