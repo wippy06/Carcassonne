@@ -6,6 +6,7 @@ from .board import board
 from .tile import tile
 from .tileStack import tileStack
 from .player import player
+from .bot import bot
 
 class game:
     def __init__(self, gameFileDir, gameOverFunc):
@@ -30,13 +31,15 @@ class game:
         self.__generateTileStack()
         self.__generatePlayerDict()
 
-        #board obj handles board methods eg checking if move is valid
+        #board obj handles board methods eg checking if placement is valid
         self.__board = board()
 
-        #for keeping track of move for saving and loading game
+        #for keeping track of placement for saving and loading game
+        self.__tempRotations = 0
+        self.__tempClaimSide = ""
+
         self.__placementMade = False
         self.__currentCoord = (0,0)
-        self.__currentRotationsPreview = 0
         self.__currentRotations = 0
         self.__currentClaimSide = ""
 
@@ -47,7 +50,7 @@ class game:
         self.__tileStack.stackPop()
 
         if self.__gameFile["moves"] != []:
-            #iterates through move list loaded, decodes and plays move
+            #iterates through placement list loaded, decodes and plays move
             for move in self.__gameFile["moves"]:
                 self.__loadMove(move)
 
@@ -61,7 +64,8 @@ class game:
         #checks if placement is valid then changes current placement vars
         if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
             self.__currentCoord = coord
-            self.__currentRotations = self.__currentRotationsPreview
+            self.__currentClaimSide = self.__tempClaimSide
+            self.__currentRotations = self.__tempRotations
             self.__placementMade = True
             self.drawTile(canvas, False)
         else:
@@ -81,9 +85,9 @@ class game:
 
         for i in range(amount):
             self.__tileStack.getItem().rotate()
-            self.__currentRotationsPreview += 1
+            self.__tempRotations += 1
 
-        self.__currentClaimSide = self.__tileStack.getItem().getClaimedSide()
+        self.__tempClaimSide = self.__tileStack.getItem().getClaimedSide()
 
         self.drawTile(canvas,True)
 
@@ -95,11 +99,11 @@ class game:
             if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") != None:
                 if self.__playerDict[self.__playerKeys[0]].getRemainingMeeples() != 0:
                     self.__tileStack.getItem().claimFeature(side, self.__playerKeys[0])
-                    self.__currentClaimSide = side
+                    self.__tempClaimSide = side
         else:
             #removes claim
             self.__tileStack.getItem().claimFeature("", "")
-            self.__currentClaimSide = ""
+            self.__tempClaimSide = ""
 
     def getPlayerLeaderboard(self):
         playerScores = {}
@@ -128,6 +132,19 @@ class game:
         fileObj.write(json.dumps(self.__gameFile, indent=4))
         fileObj.close()
 
+    def __scoreTiles(self,coord):
+        sideOptions = ["North","South","East","West","Centre"]
+        for side in sideOptions:
+            if self.__tileStack.getItem().getSide(side) != None:
+                self.__scoreFeature(coord,side,False)
+
+        #checks adjacent tiles in case of completed monestry
+        monestryCheckList = [(coord[0]+1,coord[1]),(coord[0]-1,coord[1]),(coord[0],coord[1]+1),(coord[0],coord[1]-1),(coord[0]+1,coord[1]+1),(coord[0]+1,coord[1]-1),(coord[0]-1,coord[1]+1),(coord[0]-1,coord[1]-1)]
+        for monestryCoord in monestryCheckList:
+            boardDict = self.__board.getBoard()
+            if monestryCoord in boardDict and self.__board.getBoard()[monestryCoord].getSide("Centre") == "Monestry":
+                self.__scoreFeature(monestryCoord,"Centre",False)
+
     def __loadMove(self,move):
         #moves encoded as string "rotations,meeplePlacement,xCoord,yCoord"
         moveList = move.split(",")
@@ -139,19 +156,18 @@ class game:
         self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))               
 
         #score
-        sideOptions = ["North","South","East","West","Centre"]
-        for side in sideOptions:
-            if self.__tileStack.getItem().getSide(side) != None:
-                self.__scoreFeature((int(moveList[2]),int(moveList[3])),side,False)
+        self.__scoreTiles((int(moveList[2]),int(moveList[3])))
 
         self.__nextPlayer()
         self.__tileStack.stackPop()
 
         #resets placment vars
+        self.__tempRotations = 0
+        self.__tempClaimSide = ""
+
         self.__placementMade = False
         self.__currentCoord = (0,0)
         self.__currentRotations = 0
-        self.__currentRotationsPreview = 0
         self.__currentClaimSide = ""
             
 
@@ -171,7 +187,10 @@ class game:
     def __generatePlayerDict(self):
         playerList = self.__gameFile["players"]
         for i in range(len(playerList)):
-            self.__playerDict[PLAYER_COLOUR_LIST[i]] = player(playerList[i], PLAYER_COLOUR_LIST[i])
+            if playerList[i]["Type"] == "player":
+                self.__playerDict[PLAYER_COLOUR_LIST[i]] = player(playerList[i], PLAYER_COLOUR_LIST[i])
+            else:
+                self.__playerDict[PLAYER_COLOUR_LIST[i]] = bot(playerList[i], PLAYER_COLOUR_LIST[i])
             self.__playerKeys.append(PLAYER_COLOUR_LIST[i])
 
     def __generateTileStack(self):
@@ -332,7 +351,6 @@ class game:
             return True
         return False
             
-
     def completeTurn(self):
         move = []
         if self.__placementMade:
@@ -344,6 +362,16 @@ class game:
 
             self.__gameFile["moves"].append(",".join(str(i) for i in move))
 
+            #to sync up preview rotations with board placment rotations
+            for i in range(self.__tempRotations-self.__currentRotations):
+                self.__tileStack.getItem().rotate()
+                self.__tileStack.getItem().rotate()
+                self.__tileStack.getItem().rotate()
+            
+            #to sync up preview claim with board claim
+            if self.__currentClaimSide != "":
+                self.__tileStack.getItem().claimFeature(self.__currentClaimSide,self.__playerKeys[0])
+
             #alters board and current player attributes
             self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
 
@@ -351,16 +379,15 @@ class game:
                 self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
 
             #score
-            sideOptions = ["North","South","East","West","Centre"]
-            for side in sideOptions:
-                if self.__tileStack.getItem().getSide(side) != None:
-                    self.__scoreFeature(self.__currentCoord,side,False)
+            self.__scoreTiles(self.__currentCoord)
 
             #resets placement vars
+            self.__tempRotations = 0
+            self.__tempClaimSide = ""
+
             self.__placementMade = False
             self.__currentCoord = (0,0)
             self.__currentRotations = 0
-            self.__currentRotationsPreview = 0
             self.__currentClaimSide = ""
 
             self.__nextPlayer()
@@ -382,7 +409,7 @@ class game:
         #deepcopy to avoid changing data related to actual game tile
         placementList = self.__board.getAllValidPlacements(copy.deepcopy(self.__tileStack.getItem()),self.__playerDict[self.__playerKeys[0]].getRemainingMeeples())
 
-        placement = placementList[random.randint(0,len(placementList)-1)]
+        placement = self.__playerDict[self.__playerKeys[0]].pickMove(placementList, self.__board, self.__tileStack.getItem())
 
         self.__gameFile["moves"].append(placement)
 

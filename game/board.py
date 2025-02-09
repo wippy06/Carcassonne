@@ -90,7 +90,6 @@ class board:
 
     #programming to interface
     def placeTile(self,tile,coordinate):
-        self.checkValidPlacement(tile,coordinate)
         self.__board[coordinate] = tile
 
     def getBoard(self):
