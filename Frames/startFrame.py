@@ -1,4 +1,5 @@
 import tkinter as tk
+from constants import BUTTON_DEFAULT_COLOUR
 
 class startFrame:
     def __init__(self, window, frame, startFunc):
@@ -8,8 +9,8 @@ class startFrame:
         self.__startFunc = startFunc
 
         tk.Label(self.__frame,text ="Carcassonne").pack()
-        tk.Button(self.__frame, text = "Start", command = self.__start).pack()
-        tk.Button(self.__frame, text="Exit", command = self.__window.destroy).pack()
+        tk.Button(self.__frame, text = "Start", command = self.__start, bg = BUTTON_DEFAULT_COLOUR).pack()
+        tk.Button(self.__frame, text="Exit", command = self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
 
     def __start(self):
         #removes tk children to prepare for next window

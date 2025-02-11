@@ -1,5 +1,6 @@
 import tkinter as tk
 import json
+from constants import BUTTON_DEFAULT_COLOUR
 
 class selectGameFrame:
     def __init__(self, frame, playerFunc, loadGameFunc):
@@ -34,14 +35,14 @@ class selectGameFrame:
         tk.Label(frame,text="Save Slot " + str(slot)).pack()
 
         if fileString == "":
-            tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot)).pack()
+            tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR).pack()
         else:
             fileData = json.loads(fileString)
             tk.Label(frame,text="Players : " + str(len(fileData["players"]))).pack()
             tk.Label(frame,text="Turn : " + str(len(fileData["moves"])+1)).pack()
             tk.Label(frame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"])))).pack()
-            tk.Button(frame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot)).pack()
-            tk.Button(frame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame)).pack()
+            tk.Button(frame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR).pack()
+            tk.Button(frame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR).pack()
 
         slotFile.close()
 

@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import BG_DEFAULT_COLOUR
+from constants import BUTTON_DEFAULT_COLOUR
 
 
 class playerSelectBox:
@@ -29,7 +29,7 @@ class playerSelectBox:
 
         #types can be bot or player
         tk.Label(self.__frame, text = "Type: ").pack()
-        self.__typeButton = tk.Button(self.__frame, text = self.__type, command = self.__typeChange)
+        self.__typeButton = tk.Button(self.__frame, text = self.__type, command = self.__typeChange, bg = BUTTON_DEFAULT_COLOUR)
         self.__typeButton.pack()
 
         tk.Label(self.__frame, text = "Order: ").pack()
@@ -38,12 +38,12 @@ class playerSelectBox:
         self.__orderFrame.pack()
 
         #not done as for loop for ease of access, buttons stored in button list to be indexed
-        self.__orderB1 = tk.Button(self.__orderFrame, text = "1", command = lambda: self.__selectOrder(1))
-        self.__orderB2 = tk.Button(self.__orderFrame, text = "2", command = lambda: self.__selectOrder(2))
-        self.__orderB3 = tk.Button(self.__orderFrame, text = "3", command = lambda: self.__selectOrder(3))
-        self.__orderB4 = tk.Button(self.__orderFrame, text = "4", command = lambda: self.__selectOrder(4))
-        self.__orderB5 = tk.Button(self.__orderFrame, text = "5", command = lambda: self.__selectOrder(5))
-        self.__orderB6 = tk.Button(self.__orderFrame, text = "6", command = lambda: self.__selectOrder(6))
+        self.__orderB1 = tk.Button(self.__orderFrame, text = "1", command = lambda: self.__selectOrder(1), bg = BUTTON_DEFAULT_COLOUR)
+        self.__orderB2 = tk.Button(self.__orderFrame, text = "2", command = lambda: self.__selectOrder(2), bg = BUTTON_DEFAULT_COLOUR)
+        self.__orderB3 = tk.Button(self.__orderFrame, text = "3", command = lambda: self.__selectOrder(3), bg = BUTTON_DEFAULT_COLOUR)
+        self.__orderB4 = tk.Button(self.__orderFrame, text = "4", command = lambda: self.__selectOrder(4), bg = BUTTON_DEFAULT_COLOUR)
+        self.__orderB5 = tk.Button(self.__orderFrame, text = "5", command = lambda: self.__selectOrder(5), bg = BUTTON_DEFAULT_COLOUR)
+        self.__orderB6 = tk.Button(self.__orderFrame, text = "6", command = lambda: self.__selectOrder(6), bg = BUTTON_DEFAULT_COLOUR)
 
         self.__orderBList = [self.__orderB1, self.__orderB2, self.__orderB3, self.__orderB4, self.__orderB5, self.__orderB6,]
 
@@ -53,7 +53,7 @@ class playerSelectBox:
 
         self.__orderChanged()
 
-        tk.Button(self.__frame, text = "Delete", command = lambda: self.__deletePlayer()).pack()
+        tk.Button(self.__frame, text = "Delete", command = lambda: self.__deletePlayer(), bg = BUTTON_DEFAULT_COLOUR).pack()
 
     def __typeChange(self):
         #self.__type not a bool even though only 2 states in case of additions in the future
@@ -68,9 +68,9 @@ class playerSelectBox:
     def __selectOrder(self, number):
         for i in range(len(self.__orderBList)):
             if i == number-1:
-                self.__orderBList[i].config(bg = "black", fg = BG_DEFAULT_COLOUR)
+                self.__orderBList[i].config(bg = "black", fg = BUTTON_DEFAULT_COLOUR)
             else:
-                self.__orderBList[i].config(bg = BG_DEFAULT_COLOUR, fg = "black")
+                self.__orderBList[i].config(bg = BUTTON_DEFAULT_COLOUR, fg = "black")
 
         self.__order = number
         self.__orderChanged()
@@ -106,4 +106,4 @@ class playerSelectBox:
         for widget in self.__frame.winfo_children():
             widget.destroy()
 
-        tk.Button(self.__frame, text = "New Player", command = lambda: self.__newPlayer()).pack()
+        tk.Button(self.__frame, text = "New Player", command = lambda: self.__newPlayer(), bg = BUTTON_DEFAULT_COLOUR).pack()

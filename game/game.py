@@ -59,6 +59,11 @@ class game:
     def drawTile(self,canvas,preview):
         self.__tileStack.getItem().draw(canvas, preview)
 
+    def checkIfRemoveTempTile(self,coord):
+        if coord == self.__currentCoord and self.__tempClaimSide == self.__currentClaimSide and self.__tempRotations == self.__currentRotations:
+            return True
+        return False
+
     def placeTempTile(self, canvas, coord):
         #checks if placement is valid then changes current placement vars
         if self.__board.checkValidPlacement(self.__tileStack.getItem(), coord):
@@ -366,7 +371,7 @@ class game:
     def getCurrentCoord(self):
         return self.__currentCoord
             
-    def completeTurn(self):
+    def completeTurn(self,updateDisplay):
         move = []
         if self.__placementMade:
             #sets up move to be appended to move queue to be saved and loaded
@@ -418,6 +423,7 @@ class game:
                 if self.__checkGameEnd():
                     return True
                 
+                updateDisplay()
                 self.__generatePlacement()
 
             if self.__checkGameEnd():

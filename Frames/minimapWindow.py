@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import MINIMAP_MAX_SIZE,CONTROLS
+from constants import MINIMAP_MAX_SIZE,CONTROLS,EMPTY_COLOUR
 
 class minimapWindow:
     def __init__(self,window,board):
@@ -37,7 +37,7 @@ class minimapWindow:
         for i in range(gridSizeX):
             tileGridCanvasList.append([])
             for j in range(gridSizeY):
-                tileGridCanvasList[i].append(tk.Canvas(minimapWindow, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black"))
+                tileGridCanvasList[i].append(tk.Canvas(minimapWindow, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black",bg=EMPTY_COLOUR))
 
         for i in range(len(tileGridCanvasList)):
             for j in range(len(tileGridCanvasList[i])):
@@ -48,7 +48,7 @@ class minimapWindow:
         for coord in tileCoordList:
             board[coord].draw(tileGridCanvasList[coord[0]+offsetX][coord[1]+offsetY],False)
 
-        minimapWindow.bind(CONTROLS[13],lambda event: minimapWindow.destroy())
+        minimapWindow.bind(CONTROLS[14],lambda event: minimapWindow.destroy())
 
 
         

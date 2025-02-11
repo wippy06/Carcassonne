@@ -5,7 +5,7 @@ from frames.selectGameFrame import selectGameFrame
 from frames.selectPlayersFrame import selectPlayersFrame
 from frames.gameFrame import gameFrame
 from frames.leaderBoardFrame import leaderBoardFrame
-from constants import START_FULLSCREEN
+from constants import START_FULLSCREEN,BUTTON_DEFAULT_COLOUR,FRAME_BG_DEFAULT_COLOUR
 
 class mainWindow:
     def __init__(self):
@@ -16,7 +16,7 @@ class mainWindow:
         self.__window.title("Carcassonne")
 
         #set tk frames for tk children
-        self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1)
+        self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__topBarFrame.pack(side="top", fill ="x")
 
         self.__topBarFrameL = tk.Frame(self.__topBarFrame)
@@ -25,12 +25,12 @@ class mainWindow:
         self.__topBarFrameR = tk.Frame(self.__topBarFrame)
         self.__topBarFrameR.pack(side="right")
 
-        self.__bottomFrame = tk.Frame(self.__window)
-        self.__bottomFrame.pack(side="top", fill="both")
+        self.__bottomFrame = tk.Frame(self.__window,bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__bottomFrame.pack(side="top", fill="both",expand=True)
 
         tk.Label(self.__topBarFrameL,text ="Carcassonne").pack(side="left")
-        tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__displayPauseWindow).pack(side="right")
+        tk.Button(self.__topBarFrameR, text="Exit", command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "Pause", command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
 
         #for full screen mode
         self.__window.bind("<Escape>", self.__endFullscreen)

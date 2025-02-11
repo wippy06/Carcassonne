@@ -1,4 +1,5 @@
 import tkinter as tk
+from constants import BUTTON_DEFAULT_COLOUR
 
 class leaderBoardFrame:
     def __init__(self, window, frame, playerScoreDict,startFunc):
@@ -22,8 +23,8 @@ class leaderBoardFrame:
         self.__buttonFrame = tk.Frame(self.__mainFrame)
         self.__buttonFrame.pack(side="top")
 
-        tk.Button(self.__buttonFrame, text="Play again", command=self.__startFunc).pack(side="left")
-        tk.Button(self.__buttonFrame, text = "Exit", command = self.__window.destroy).pack(side="right")
+        tk.Button(self.__buttonFrame, text="Play again", command=self.__startFunc, bg = BUTTON_DEFAULT_COLOUR).pack(side="left")
+        tk.Button(self.__buttonFrame, text = "Exit", command = self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
 
     def __displayScores(self):
         playerNames = list(self.__playerScoreDict.keys())

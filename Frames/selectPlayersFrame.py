@@ -1,9 +1,9 @@
 import tkinter as tk
-from constants import BG_DEFAULT_COLOUR
 from game.playerSelectionBox import playerSelectBox
 import json
 import random
 import re
+from constants import BUTTON_DEFAULT_COLOUR
 
 #skipped deactivating buttons
 
@@ -49,7 +49,7 @@ class selectPlayersFrame:
         
         self.__playerList = [self.__player1, self.__player2, self.__player3, self.__player4, self.__player5, self.__player6]
 
-        tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice()).grid(column=1, row=2)
+        tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice(), bg = BUTTON_DEFAULT_COLOUR).grid(column=1, row=2)
 
     def __changeOrderButtons(self):
         #generates list of button indexes that have to be disabled

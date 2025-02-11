@@ -12,7 +12,11 @@ STARTING_TILE = "D"
 PLAYER_COLOUR_LIST = ["Red", "Blue", "Lime", "Yellow", "Magenta", "Cyan"]
 
 #game display colours
-BG_DEFAULT_COLOUR = "gray94"
+BUTTON_DEFAULT_COLOUR = "grey94"
+FRAME_BG_DEFAULT_COLOUR = "grey94"
+
+#tile colours
+EMPTY_COLOUR = "grey94"
 CASTLE_COLOUR = "Orange"
 ROAD_COLOUR = "Grey"
 FIELD_COLOUR = "Green"
@@ -33,4 +37,20 @@ INCOMPLETE_MULT_FUNCTION = [13.9,36,1.2,-24]
 MEEPLE_REMAINING_VALUE_FUNCTION = [0.8,5,3]
 
 #key binds for game play frame
-CONTROLS = ["w","s","a","d","e","q","c","1","2","3","4","5","r","x"]
+    #move view up
+    #move view down
+    #move view left
+    #move view right
+    #centre view to home
+    #rotate preview tile clockwise
+    #rotate preview tile anticlockwise
+    #confirm placement
+    #claim north side
+    #claim east side
+    #claim south side
+    #claim west side
+    #claim centre side
+    #remove claim
+    #open/close minimap
+CONTROLS = ["w","s","a","d","z","e","q","c","1","2","3","4","5","r","x"]
+

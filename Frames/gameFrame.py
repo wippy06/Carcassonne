@@ -1,7 +1,7 @@
 import tkinter as tk
 from game.game import game
 from frames.minimapWindow import minimapWindow
-from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS
+from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS,BUTTON_DEFAULT_COLOUR,EMPTY_COLOUR
 
 class gameFrame:
     def __init__(self,frame, gameFile, leaderBoardFunc):
@@ -15,7 +15,7 @@ class gameFrame:
         self.__leftSideBarFrame.pack(side="left")
 
         self.__scoreFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
-        self.__scoreFrame.grid(column=0, row=0)
+        self.__scoreFrame.grid(column=0, row=0,sticky="ew")
 
         #done as list to reduce code
         self.__scoreLableList = []
@@ -25,7 +25,7 @@ class gameFrame:
 
         #tile preview frame
         self.__tilePreviewFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
-        self.__tilePreviewFrame.grid(column=0, row=1)
+        self.__tilePreviewFrame.grid(column=0, row=1,sticky="ew")
 
         self.__tileCanvas = tk.Canvas(self.__tilePreviewFrame, width=TILE_SIZE, height=TILE_SIZE)
         self.__tileCanvas.pack(side = "top")
@@ -34,8 +34,8 @@ class gameFrame:
         self.__rotateButtonFrame = tk.Frame(self.__tilePreviewFrame)
         self.__rotateButtonFrame.pack()
         
-        self.__tileRotateClock = tk.Button(self.__rotateButtonFrame, text = "clockwise", command = lambda:self.__game.rotatePreview(False, self.__tileCanvas))
-        self.__tileRotateAntiClock = tk.Button(self.__rotateButtonFrame, text = "anticlockwise", command = lambda:self.__game.rotatePreview(True, self.__tileCanvas))
+        self.__tileRotateClock = tk.Button(self.__rotateButtonFrame, text = "⟳", command = lambda:self.__game.rotatePreview(False, self.__tileCanvas), bg = BUTTON_DEFAULT_COLOUR)
+        self.__tileRotateAntiClock = tk.Button(self.__rotateButtonFrame, text = "⟲", command = lambda:self.__game.rotatePreview(True, self.__tileCanvas), bg = BUTTON_DEFAULT_COLOUR)
         self.__tileRotateClock.pack(side="right")
         self.__tileRotateAntiClock.pack(side="left")
 
@@ -44,7 +44,7 @@ class gameFrame:
 
         #extra info frame
         self.__extraInfoFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
-        self.__extraInfoFrame.grid(column=0, row=2)
+        self.__extraInfoFrame.grid(column=0, row=2,sticky="ew")
 
         self.__turnCountLable = tk.Label(self.__extraInfoFrame,text = "Turn number: ")
         self.__turnPlayerLable = tk.Label(self.__extraInfoFrame, text="Turn player: ")
@@ -56,24 +56,30 @@ class gameFrame:
 
         #map movement frame
         self.__mapViewKeypadFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
-        self.__mapViewKeypadFrame.grid(column=0,row=3)
+        self.__mapViewKeypadFrame.grid(column=0,row=3,sticky="ew")
 
-        self.__viewUpButton = tk.Button(self.__mapViewKeypadFrame, text="Up", command= lambda:self.__moveView("Up"))
-        self.__viewUpButton.pack()
+        self.__keyPadFrame = tk.Frame(self.__mapViewKeypadFrame)
+        self.__keyPadFrame.pack()
 
-        self.__viewDownButton = tk.Button(self.__mapViewKeypadFrame, text="Down", command= lambda:self.__moveView("Down"))
-        self.__viewDownButton.pack()
+        self.__viewUpButton = tk.Button(self.__keyPadFrame, text="↑", command= lambda:self.__moveView("Up"), bg = BUTTON_DEFAULT_COLOUR)
+        self.__viewUpButton.grid(row=0,column=1)
 
-        self.__viewLeftButton = tk.Button(self.__mapViewKeypadFrame, text="Left", command= lambda:self.__moveView("Left"))
-        self.__viewLeftButton.pack()
+        self.__viewDownButton = tk.Button(self.__keyPadFrame, text="↓", command= lambda:self.__moveView("Down"), bg = BUTTON_DEFAULT_COLOUR)
+        self.__viewDownButton.grid(row=2,column=1)
 
-        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Right", command= lambda:self.__moveView("Right"))
+        self.__viewLeftButton = tk.Button(self.__keyPadFrame, text="←", command= lambda:self.__moveView("Left"), bg = BUTTON_DEFAULT_COLOUR)
+        self.__viewLeftButton.grid(row=1,column=0)
+
+        self.__viewRightButton = tk.Button(self.__keyPadFrame, text="→", command= lambda:self.__moveView("Right"), bg = BUTTON_DEFAULT_COLOUR)
+        self.__viewRightButton.grid(row=1,column=2)
+
+        self.__viewHomeButton = tk.Button(self.__keyPadFrame, text="🏠", command= lambda:self.__moveView("Home"), bg = BUTTON_DEFAULT_COLOUR)
+        self.__viewHomeButton.grid(row=1,column=1)
+
+        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= self.__confirmPlacement, bg = BUTTON_DEFAULT_COLOUR)
         self.__viewRightButton.pack()
 
-        self.__viewRightButton = tk.Button(self.__mapViewKeypadFrame, text="Confirm placement", command= self.__confirmPlacement)
-        self.__viewRightButton.pack()
-
-        self.__minimapButton = tk.Button(self.__mapViewKeypadFrame, text = "Minimap", command=self.__openMinimap)
+        self.__minimapButton = tk.Button(self.__mapViewKeypadFrame, text = "Minimap", command=self.__openMinimap, bg = BUTTON_DEFAULT_COLOUR)
         self.__minimapButton.pack()
 
         #main game grid frame
@@ -95,16 +101,17 @@ class gameFrame:
         self.__window.bind(CONTROLS[1], lambda event :self.__moveView("Down"))
         self.__window.bind(CONTROLS[2], lambda event :self.__moveView("Left"))
         self.__window.bind(CONTROLS[3], lambda event :self.__moveView("Right"))
-        self.__window.bind(CONTROLS[4], lambda event :self.__game.rotatePreview(False, self.__tileCanvas))
-        self.__window.bind(CONTROLS[5], lambda event :self.__game.rotatePreview(True, self.__tileCanvas))
-        self.__window.bind(CONTROLS[6], lambda event :self.__confirmPlacement())
-        self.__window.bind(CONTROLS[7], lambda event :(self.__game.claimFeature("North"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[8], lambda event :(self.__game.claimFeature("East"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[9], lambda event :(self.__game.claimFeature("South"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[10], lambda event :(self.__game.claimFeature("West"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[11], lambda event :(self.__game.claimFeature("Centre"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[12], lambda event :(self.__game.claimFeature("Remove"),self.__game.drawTile(self.__tileCanvas,True)))
-        self.__window.bind(CONTROLS[13], lambda event :self.__openMinimap())
+        self.__window.bind(CONTROLS[4], lambda event :self.__moveView("Home"))
+        self.__window.bind(CONTROLS[5], lambda event :self.__game.rotatePreview(False, self.__tileCanvas))
+        self.__window.bind(CONTROLS[6], lambda event :self.__game.rotatePreview(True, self.__tileCanvas))
+        self.__window.bind(CONTROLS[7], lambda event :self.__confirmPlacement())
+        self.__window.bind(CONTROLS[8], lambda event :(self.__game.claimFeature("North"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[9], lambda event :(self.__game.claimFeature("East"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[10], lambda event :(self.__game.claimFeature("South"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[11], lambda event :(self.__game.claimFeature("West"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[12], lambda event :(self.__game.claimFeature("Centre"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[13], lambda event :(self.__game.claimFeature("Remove"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[14], lambda event :self.__openMinimap())
 
         self.__generateTileGridCanvas()
         self.__updateDisplay()
@@ -115,7 +122,7 @@ class gameFrame:
         minimapWindow(self.__window,board)
 
     def __confirmPlacement(self):
-        if not self.__game.completeTurn():
+        if not self.__game.completeTurn(self.__updateDisplay):
             self.__updateDisplay()
             self.__redrawBoard()
     
@@ -137,6 +144,9 @@ class gameFrame:
             self.__coordOffsetX += 1
         if direction == "Right":
             self.__coordOffsetX -= 1
+        if direction == "Home":
+            self.__coordOffsetX = TILE_GRID_X//2
+            self.__coordOffsetY = TILE_GRID_Y//2
         self.__redrawBoard()
 
     def __generateTileGridCanvas(self):
@@ -144,7 +154,7 @@ class gameFrame:
         for i in range(TILE_GRID_X):
             self.__tileGridCanvasList.append([])
             for j in range(TILE_GRID_Y):
-                self.__tileGridCanvasList[i].append(tk.Canvas(self.__tileGridFrame, width=TILE_SIZE, height=TILE_SIZE,highlightthickness=1, highlightbackground="black"))
+                self.__tileGridCanvasList[i].append(tk.Canvas(self.__tileGridFrame, width=TILE_SIZE, height=TILE_SIZE,highlightthickness=1, highlightbackground="black",bg=EMPTY_COLOUR))
 
         for i in range(len(self.__tileGridCanvasList)):
             for j in range(len(self.__tileGridCanvasList[i])):
@@ -155,7 +165,7 @@ class gameFrame:
         self.__game.setupBoard(self.__tileGridCanvasList[TILE_GRID_X//2][TILE_GRID_Y//2])
 
     def __placeTempTile(self, canvas, coord):
-        if coord == self.__game.getCurrentCoord():
+        if self.__game.checkIfRemoveTempTile(coord):
             self.__game.placeTempTile(canvas,(0,0))
         else:
             self.__game.placeTempTile(canvas,coord)

@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import PAUSE_SIZE
+from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR
 
 class pauseWindow:
     def __init__(self, window, isPlaying, saveFunc):
@@ -14,10 +14,10 @@ class pauseWindow:
         self.__pauseWindow.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))
 
         tk.Label(self.__pauseWindow,text ="Paused").pack()
-        tk.Button(self.__pauseWindow, text="Resume", command = self.__pauseWindow.destroy).pack()
+        tk.Button(self.__pauseWindow, text="Resume", command = self.__pauseWindow.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
 
         if isPlaying:
             #displays if there is a current game being played
             tk.Button(self.__pauseWindow, text="Save", command= saveFunc).pack()
 
-        tk.Button(self.__pauseWindow, text = "Exit", command = self.__window.destroy).pack()
+        tk.Button(self.__pauseWindow, text = "Exit", command = self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
