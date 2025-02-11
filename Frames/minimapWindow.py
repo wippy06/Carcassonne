@@ -1,11 +1,12 @@
 import tkinter as tk
-from constants import MINIMAP_MAX_SIZE
+from constants import MINIMAP_MAX_SIZE,CONTROLS
 
 class minimapWindow:
     def __init__(self,window,board):
 
         minimapWindow = tk.Toplevel(window)
         minimapWindow.grab_set()
+        minimapWindow.focus_force()
         minimapWindow.title("minimap")
 
         #used to determine size of grid and size of tiles
@@ -46,6 +47,8 @@ class minimapWindow:
         #draws tiles within the grid
         for coord in tileCoordList:
             board[coord].draw(tileGridCanvasList[coord[0]+offsetX][coord[1]+offsetY],False)
+
+        minimapWindow.bind(CONTROLS[13],lambda event: minimapWindow.destroy())
 
 
         

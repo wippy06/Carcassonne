@@ -42,5 +42,5 @@ class leaderBoardFrame:
 
         #updates player scoreboard using loop to reduce code
         for i in range(len(playerNames)):
-            self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+str(self.__playerScoreDict[playerNames[i]]))
+            self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+self.__playerScoreDict[playerNames[i]][1]+" : "+str(self.__playerScoreDict[playerNames[i]][0]))
 

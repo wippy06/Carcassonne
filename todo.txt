@@ -1,2 +1,3 @@
 make look pretty
-display colour of players during turn
+playerSelectionBoxes gray out order boxes
+Player username database pot.

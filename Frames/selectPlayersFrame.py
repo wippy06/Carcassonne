@@ -1,7 +1,9 @@
 import tkinter as tk
 from constants import BG_DEFAULT_COLOUR
 from game.playerSelectionBox import playerSelectBox
-import json, random
+import json
+import random
+import re
 
 #skipped deactivating buttons
 
@@ -77,7 +79,13 @@ class selectPlayersFrame:
                 nameList.append(players.getName())
                 typeList.append(players.getType())
 
-        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not("" in nameList) and not(0 in orderList) and orderList != [] and nameList != [] and typeList != [] and "player" in typeList:
+        validNames = True
+        for name in nameList:
+            if not re.search("^([a-z]|[A-Z]|[0-9])([a-z]|[A-Z]|[0-9]|( |-)([a-z]|[A-Z]|[0-9]))*$",name):
+                validNames = False
+                break
+
+        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not(0 in orderList) and "player" in typeList and validNames:
             self.__continue()
 
     def __bubbleSort(self, playerList):

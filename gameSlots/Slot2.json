@@ -1,13 +1,13 @@
 {
-    "seed": "89017",
+    "seed": "49179",
     "players": [
         {
-            "Name": "test1",
+            "Name": "1",
             "Type": "player"
         },
         {
-            "Name": "test2",
-            "Type": "bot"
+            "Name": "3",
+            "Type": "player"
         }
     ],
     "moves": [],

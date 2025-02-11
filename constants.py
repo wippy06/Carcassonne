@@ -31,3 +31,6 @@ OPPOSITION_MULT = 0.3
 MEEPLE_VALUE_FUNCTION = [18,36,0.4,59]
 INCOMPLETE_MULT_FUNCTION = [13.9,36,1.2,-24]
 MEEPLE_REMAINING_VALUE_FUNCTION = [0.8,5,3]
+
+#key binds for game play frame
+CONTROLS = ["w","s","a","d","e","q","c","1","2","3","4","5","r","x"]

@@ -1,7 +1,7 @@
 import tkinter as tk
 from game.game import game
 from frames.minimapWindow import minimapWindow
-from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y
+from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS
 
 class gameFrame:
     def __init__(self,frame, gameFile, leaderBoardFunc):
@@ -89,13 +89,30 @@ class gameFrame:
         self.__coordOffsetX = TILE_GRID_X//2
         self.__coordOffsetY = TILE_GRID_Y//2
 
+        #bind key binds for effective gameplay
+        self.__window = self.__mainFrame.winfo_toplevel()
+        self.__window.bind(CONTROLS[0], lambda event :self.__moveView("Up"))
+        self.__window.bind(CONTROLS[1], lambda event :self.__moveView("Down"))
+        self.__window.bind(CONTROLS[2], lambda event :self.__moveView("Left"))
+        self.__window.bind(CONTROLS[3], lambda event :self.__moveView("Right"))
+        self.__window.bind(CONTROLS[4], lambda event :self.__game.rotatePreview(False, self.__tileCanvas))
+        self.__window.bind(CONTROLS[5], lambda event :self.__game.rotatePreview(True, self.__tileCanvas))
+        self.__window.bind(CONTROLS[6], lambda event :self.__confirmPlacement())
+        self.__window.bind(CONTROLS[7], lambda event :(self.__game.claimFeature("North"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[8], lambda event :(self.__game.claimFeature("East"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[9], lambda event :(self.__game.claimFeature("South"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[10], lambda event :(self.__game.claimFeature("West"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[11], lambda event :(self.__game.claimFeature("Centre"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[12], lambda event :(self.__game.claimFeature("Remove"),self.__game.drawTile(self.__tileCanvas,True)))
+        self.__window.bind(CONTROLS[13], lambda event :self.__openMinimap())
+
         self.__generateTileGridCanvas()
         self.__updateDisplay()
         self.__redrawBoard()
 
     def __openMinimap(self):
         board = self.__game.getBoard()
-        minimapWindow(self.__mainFrame.winfo_toplevel(),board)
+        minimapWindow(self.__window,board)
 
     def __confirmPlacement(self):
         if not self.__game.completeTurn():
@@ -138,8 +155,11 @@ class gameFrame:
         self.__game.setupBoard(self.__tileGridCanvasList[TILE_GRID_X//2][TILE_GRID_Y//2])
 
     def __placeTempTile(self, canvas, coord):
+        if coord == self.__game.getCurrentCoord():
+            self.__game.placeTempTile(canvas,(0,0))
+        else:
+            self.__game.placeTempTile(canvas,coord)
         self.__redrawBoard()
-        self.__game.placeTempTile(canvas,coord)
 
     def __redrawBoard(self):
         #clears and reloads tiles in tile grid
@@ -157,6 +177,12 @@ class gameFrame:
             if coord[0]+self.__coordOffsetX < len(self.__tileGridCanvasList) and coord[0]+self.__coordOffsetX >=0:
                 if coord[1]+self.__coordOffsetY < len(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX]) and coord[1]+self.__coordOffsetY >=0:
                     self.__game.tileRedraw(self.__tileGridCanvasList[coord[0]+self.__coordOffsetX][coord[1]+self.__coordOffsetY],board[coord])
+
+        currentCoord = self.__game.getCurrentCoord()
+        if currentCoord != None:
+            if currentCoord[0]+self.__coordOffsetX < len(self.__tileGridCanvasList) and currentCoord[0]+self.__coordOffsetX >=0:
+                if currentCoord[1]+self.__coordOffsetY < len(self.__tileGridCanvasList[currentCoord[0]+self.__coordOffsetX]) and currentCoord[1]+self.__coordOffsetY >=0:
+                    self.__game.redrawTempTile(self.__tileGridCanvasList[currentCoord[0]+self.__coordOffsetX][currentCoord[1]+self.__coordOffsetY])
 
     def __placeMeeple(self,cursorX,cursorY):
         #preview tile canvas
@@ -212,6 +238,9 @@ class gameFrame:
         #removes tk children to prepare for next window
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
+
+        for binding in CONTROLS:
+            self.__mainFrame.winfo_toplevel().unbind(binding)
 
         self.__leaderBoardFunc(playerScoreDict)
 

@@ -8,6 +8,7 @@ class pauseWindow:
         self.__window = window
         self.__pauseWindow = tk.Toplevel(self.__window)
         self.__pauseWindow.grab_set()
+        self.__pauseWindow.focus_force()
         self.__pauseWindow.title("paused")
 
         self.__pauseWindow.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))

@@ -38,7 +38,7 @@ class game:
         self.__tempRotations = 0
         self.__tempClaimSide = ""
         self.__placementMade = False
-        self.__currentCoord = (0,0)
+        self.__currentCoord = None
         self.__currentRotations = 0
         self.__currentClaimSide = ""
 
@@ -69,6 +69,10 @@ class game:
             self.drawTile(canvas, False)
         else:
             self.__placementMade = False
+            self.__currentCoord = None
+
+    def redrawTempTile(self,canvas):
+        self.drawTile(canvas, False)
 
     def tileRedraw(self,canvas,tile):
         tile.draw(canvas, False)
@@ -94,8 +98,14 @@ class game:
         #first checks if side picked is not already claimed
         #then checks if feature on side picked
         #then checks if meeples avaliable
+        if side == "remove":
+            #removes claim for when keys are used
+            self.__tileStack.getItem().claimFeature("", "")
+            self.__tempClaimSide = ""
+            return
+
         if self.__tileStack.getItem().getClaimedSide() != side:
-            if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") != None:
+            if side == "North" and self.__tileStack.getItem().getSide("North") != None or side == "South" and self.__tileStack.getItem().getSide("South") != None or side == "East" and self.__tileStack.getItem().getSide("East") != None or side == "West" and self.__tileStack.getItem().getSide("West") != None or side == "Centre" and self.__tileStack.getItem().getSide("Centre") == "Monestry":
                 if self.__playerDict[self.__playerKeys[0]].getRemainingMeeples() != 0:
                     self.__tileStack.getItem().claimFeature(side, self.__playerKeys[0])
                     self.__tempClaimSide = side
@@ -160,15 +170,16 @@ class game:
         self.__nextPlayer()
         self.__tileStack.stackPop()
 
-        #check if there is a valid placment for next tile
-        if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
-            self.__alterTileStack()
+        if not self.__checkGameEnd():
+            #check if there is a valid placment for next tile
+            if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
+                self.__alterTileStack()
 
         #resets placment vars
         self.__tempRotations = 0
         self.__tempClaimSide = ""
         self.__placementMade = False
-        self.__currentCoord = (0,0)
+        self.__currentCoord = None
         self.__currentRotations = 0
         self.__currentClaimSide = ""      
 
@@ -351,6 +362,9 @@ class game:
 
             return True
         return False
+    
+    def getCurrentCoord(self):
+        return self.__currentCoord
             
     def completeTurn(self):
         move = []
@@ -372,6 +386,8 @@ class game:
             #to sync up preview claim with board claim
             if self.__currentClaimSide != "":
                 self.__tileStack.getItem().claimFeature(self.__currentClaimSide,self.__playerKeys[0])
+            else:
+                self.__tileStack.getItem().claimFeature(self.__currentClaimSide,"")
 
             #alters board and current player attributes
             self.__board.placeTile(self.__tileStack.getItem(), self.__currentCoord)
@@ -386,17 +402,16 @@ class game:
             self.__tempRotations = 0
             self.__tempClaimSide = ""
             self.__placementMade = False
-            self.__currentCoord = (0,0)
+            self.__currentCoord = None
             self.__currentRotations = 0
             self.__currentClaimSide = ""
 
             self.__nextPlayer()
             self.__tileStack.stackPop()
-            self.__checkGameEnd()
-
-            #check if there is a valid placment for next tile
-            if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
-                self.__alterTileStack()
+            if not self.__checkGameEnd():
+                #check if there is a valid placment for next tile
+                if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
+                    self.__alterTileStack()
 
             #logic to handle bot moves and game over state
             while self.__checkIfBot():
