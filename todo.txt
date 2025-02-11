@@ -1,3 +1,2 @@
 make look pretty
-playerSelectionBoxes gray out order boxes
 Player username database pot.

@@ -9,8 +9,8 @@ class playerSelectBox:
         self.__order = 0
         self.__isPlaying = False
 
-        #not in use
-        #self.__orderChanged = changeOrderButtons
+        #function to tell selectPlayersFrame a new order has been chosen
+        self.__orderChanged = changeOrderButtons
 
         self.__orderBList = []
         self.__deletePlayer()
@@ -51,10 +51,12 @@ class playerSelectBox:
         for i in range(len(self.__orderBList)):
             self.__orderBList[i].grid(column=i, row=0)
 
+        self.__orderChanged()
+
         tk.Button(self.__frame, text = "Delete", command = lambda: self.__deletePlayer()).pack()
 
     def __typeChange(self):
-        #self.__type not a bool even though only 2 states incase of additions in the future
+        #self.__type not a bool even though only 2 states in case of additions in the future
         if self.__type == "player":
             self.__type = "bot"
         else:
@@ -62,6 +64,7 @@ class playerSelectBox:
 
         self.__typeButton.config(text = self.__type)
 
+    #for changing colours and active states of the order buttons
     def __selectOrder(self, number):
         for i in range(len(self.__orderBList)):
             if i == number-1:
@@ -70,12 +73,10 @@ class playerSelectBox:
                 self.__orderBList[i].config(bg = BG_DEFAULT_COLOUR, fg = "black")
 
         self.__order = number
-        #self.__orderChanged()
+        self.__orderChanged()
 
-    #not working skip for now maybe move back
     def deactivateOrderBs(self, takenList):
-        if self.__orderBList != []:
-            print(self.__orderBList)
+        if self.__isPlaying:
             for i in range(len(self.__orderBList)):
                 if i+1 in takenList:
                     self.__orderBList[i].config(state="disabled")
@@ -98,10 +99,11 @@ class playerSelectBox:
     def __deletePlayer(self):
         #reset all vaiables if player selection box is deleted
         self.__isPlaying = False
-        self.__name = ""
         self.__type = "player"
         self.__order = 0
+        self.__orderChanged()
 
         for widget in self.__frame.winfo_children():
             widget.destroy()
+
         tk.Button(self.__frame, text = "New Player", command = lambda: self.__newPlayer()).pack()

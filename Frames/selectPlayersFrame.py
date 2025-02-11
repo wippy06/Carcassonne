@@ -52,16 +52,16 @@ class selectPlayersFrame:
         tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice()).grid(column=1, row=2)
 
     def __changeOrderButtons(self):
-        #currently not in use
+        #generates list of button indexes that have to be disabled
         orderList = []      
-        if self.__playerList != []:
-            for player in self.__playerList:
+        for player in self.__playerList:
+            if player.getIsPlaying():
                 if player.getOrder() != 0:
                     orderList.append(player.getOrder())
             
-            #for deactivating buttons not working
-            '''for player in self.__playerList:
-                player.deactivateOrderBs(orderList)'''
+            #for deactivating buttons
+            for player in self.__playerList:
+                player.deactivateOrderBs(orderList)
         
     def __confirmChoice(self):
         #used to check whether options are valid
