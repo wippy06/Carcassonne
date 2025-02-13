@@ -42,7 +42,7 @@ class game:
         self.__currentRotations = 0
         self.__currentClaimSide = ""
 
-    def setupBoard(self,canvas):
+    def setupBoard(self,canvas,redrawFrameFunc):
         #drawing start tile
         self.drawTile(canvas,False)
         self.__board.placeTile(self.__tileStack.getItem(), (0,0))
@@ -54,8 +54,13 @@ class game:
                 self.__loadMove(move)
 
         while self.__checkIfBot():
-            self.__generatePlacement() 
+            self.__generatePlacement()
+            redrawFrameFunc()
 
+            if self.checkGameEnd():
+                break
+
+            
     def drawTile(self,canvas,preview):
         self.__tileStack.getItem().draw(canvas, preview)
 
@@ -175,7 +180,7 @@ class game:
         self.__nextPlayer()
         self.__tileStack.stackPop()
 
-        if not self.__checkGameEnd():
+        if not self.checkGameEnd():
             #check if there is a valid placment for next tile
             if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
                 self.__alterTileStack()
@@ -350,7 +355,7 @@ class game:
             if playerKey != "":
                self.__playerDict[playerKey].alterMeepleCount(1)
 
-    def __checkGameEnd(self):
+    def checkGameEnd(self):
         if self.__tileStack.emptyCheck():
             boardDict = self.__board.getBoard()
 
@@ -413,21 +418,23 @@ class game:
 
             self.__nextPlayer()
             self.__tileStack.stackPop()
-            if not self.__checkGameEnd():
+            if not self.checkGameEnd():
                 #check if there is a valid placment for next tile
                 if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
                     self.__alterTileStack()
 
             #logic to handle bot moves and game over state
             while self.__checkIfBot():
-                if self.__checkGameEnd():
+                if self.checkGameEnd():
                     return True
                 
                 updateDisplay()
                 self.__generatePlacement()
 
-            if self.__checkGameEnd():
+            if self.checkGameEnd():
                 return True
+            
+            updateDisplay()
             return False
         
     def __alterTileStack(self):

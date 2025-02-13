@@ -11,7 +11,8 @@ STARTING_TILE = "D"
 #player meeple colours, acts as player keys too
 PLAYER_COLOUR_LIST = ["Red", "Blue", "Lime", "Yellow", "Magenta", "Cyan"]
 
-#game display colours
+#game display options
+TEXT_FONT = "Arial"
 BUTTON_DEFAULT_COLOUR = "grey94"
 FRAME_BG_DEFAULT_COLOUR = "grey94"
 

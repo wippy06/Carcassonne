@@ -3,7 +3,7 @@ from game.playerSelectionBox import playerSelectBox
 import json
 import random
 import re
-from constants import BUTTON_DEFAULT_COLOUR
+from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT
 
 #skipped deactivating buttons
 
@@ -15,27 +15,26 @@ class selectPlayersFrame:
         self.__gameFunc = gameFunc
         self.__mainFrame = frame
 
+        tk.Label(self.__mainFrame,text ="Choose players",font=(TEXT_FONT,30)).place(relx=0.5,rely=0.08,anchor="center")
+
         #set up tk frames for children placement
-        self.__playerFrame = tk.Frame(frame)
-        self.__playerFrame.pack(side="top")
+        self.__topLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__topLFrame.place(relx=0.25,rely=0.3,anchor="center",width=200,height=200)
 
-        self.__topLFrame = tk.Frame(self.__playerFrame)
-        self.__topLFrame.grid(column=0,row=0)
+        self.__topMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__topMFrame.place(relx=0.5,rely=0.3,anchor="center",width=200,height=200)
 
-        self.__topMFrame = tk.Frame(self.__playerFrame)
-        self.__topMFrame.grid(column=1,row=0)
+        self.__topRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__topRFrame.place(relx=0.75,rely=0.3,anchor="center",width=200,height=200)
 
-        self.__topRFrame = tk.Frame(self.__playerFrame)
-        self.__topRFrame.grid(column=2,row=0)
+        self.__bottomLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__bottomLFrame.place(relx=0.25,rely=0.6,anchor="center",width=200,height=200)
 
-        self.__bottomLFrame = tk.Frame(self.__playerFrame)
-        self.__bottomLFrame.grid(column=0,row=1)
+        self.__bottomMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__bottomMFrame.place(relx=0.5,rely=0.6,anchor="center",width=200,height=200)
 
-        self.__bottomMFrame = tk.Frame(self.__playerFrame)
-        self.__bottomMFrame.grid(column=1,row=1)
-
-        self.__bottomRFrame = tk.Frame(self.__playerFrame)
-        self.__bottomRFrame.grid(column=2,row=1)
+        self.__bottomRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        self.__bottomRFrame.place(relx=0.75,rely=0.6,anchor="center",width=200,height=200)
 
         self.__playerList = []
 
@@ -49,7 +48,7 @@ class selectPlayersFrame:
         
         self.__playerList = [self.__player1, self.__player2, self.__player3, self.__player4, self.__player5, self.__player6]
 
-        tk.Button(self.__playerFrame, text = "Continue", command = lambda: self.__confirmChoice(), bg = BUTTON_DEFAULT_COLOUR).grid(column=1, row=2)
+        tk.Button(self.__mainFrame, text = "Continue",font=(TEXT_FONT,20), bd=4, command = lambda: self.__confirmChoice(), bg = BUTTON_DEFAULT_COLOUR).place(relx=0.5,rely=0.8,anchor="center")
 
     def __changeOrderButtons(self):
         #generates list of button indexes that have to be disabled
@@ -85,7 +84,7 @@ class selectPlayersFrame:
                 validNames = False
                 break
 
-        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not(0 in orderList) and "player" in typeList and validNames:
+        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not(0 in orderList) and validNames:
             self.__continue()
 
     def __bubbleSort(self, playerList):

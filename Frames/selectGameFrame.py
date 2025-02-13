@@ -1,26 +1,26 @@
 import tkinter as tk
 import json
-from constants import BUTTON_DEFAULT_COLOUR
+from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT
 
 class selectGameFrame:
     def __init__(self, frame, playerFunc, loadGameFunc):
         self.__mainFrame = frame
         self.__frame = tk.Frame(frame)
-        self.__frame.pack(side="top")
+        self.__frame.pack(side="top",expand=True,fill="both")
         self.__playerFunc = playerFunc
         self.__loadGameFunc = loadGameFunc
 
         #set tk frames for game slot options
-        tk.Label(self.__frame,text ="Choose save slot").grid(column=1,row=0)
+        tk.Label(self.__frame,text ="Choose save slot",font=(TEXT_FONT,40)).place(relx=0.5,rely=0.2,anchor="center")
 
-        self.__slot1Frame = tk.Frame(self.__frame)
-        self.__slot1Frame.grid(column=0,row=1)
+        self.__slot1Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+        self.__slot1Frame.place(relx=0.25,rely=0.5,anchor="center",width=300,height=300)
 
-        self.__slot2Frame = tk.Frame(self.__frame)
-        self.__slot2Frame.grid(column=1,row=1)
+        self.__slot2Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+        self.__slot2Frame.place(relx=0.5,rely=0.5,anchor="center",width=300,height=300)
 
-        self.__slot3Frame = tk.Frame(self.__frame)
-        self.__slot3Frame.grid(column=2,row=1)
+        self.__slot3Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+        self.__slot3Frame.place(relx=0.75,rely=0.5,anchor="center",width=300,height=300)
 
         #create button options for slots not done as for loop to specify tk frames
         self.__createSlotDisplay(1, self.__slot1Frame)
@@ -32,17 +32,19 @@ class selectGameFrame:
         slotFile = open("gameSlots/slot"+str(slot)+".json", "r")
         fileString = slotFile.read()
 
-        tk.Label(frame,text="Save Slot " + str(slot)).pack()
+        tk.Label(frame,text="Save Slot " + str(slot),font=(TEXT_FONT,20)).pack()
 
         if fileString == "":
-            tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR).pack()
+            tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).place(relx=0.5,rely=0.5,anchor="center")
         else:
             fileData = json.loads(fileString)
-            tk.Label(frame,text="Players : " + str(len(fileData["players"]))).pack()
-            tk.Label(frame,text="Turn : " + str(len(fileData["moves"])+1)).pack()
-            tk.Label(frame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"])))).pack()
-            tk.Button(frame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR).pack()
-            tk.Button(frame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR).pack()
+            centreFrame = tk.Frame(frame)
+            centreFrame.place(relx=0.5,rely=0.5,anchor="center")
+            tk.Label(centreFrame,text="Players : " + str(len(fileData["players"])),font=(TEXT_FONT,10)).pack()
+            tk.Label(centreFrame,text="Turn : " + str(len(fileData["moves"])+1),font=(TEXT_FONT,10)).pack()
+            tk.Label(centreFrame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"]))),font=(TEXT_FONT,10)).pack()
+            tk.Button(centreFrame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).pack()
+            tk.Button(centreFrame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).pack()
 
         slotFile.close()
 
