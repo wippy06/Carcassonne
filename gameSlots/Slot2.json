@@ -1,31 +1,15 @@
 {
-    "seed": "69237",
+    "seed": "41545",
     "players": [
         {
-            "Name": "q243",
+            "Name": "feadsc",
             "Type": "player"
         },
         {
-            "Name": "43",
-            "Type": "player"
-        },
-        {
-            "Name": "gfdgfd",
-            "Type": "player"
-        },
-        {
-            "Name": "gefdgerfregfdgredf",
-            "Type": "player"
-        },
-        {
-            "Name": "gregfddgerdfredfdfgredf",
-            "Type": "player"
-        },
-        {
-            "Name": "gesafa",
+            "Name": "frwsd",
             "Type": "player"
         }
     ],
     "moves": [],
-    "tileNum": 71
+    "tileNum": 2
 }

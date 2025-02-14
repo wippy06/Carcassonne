@@ -7,7 +7,7 @@ class minimapWindow:
         minimapWindow = tk.Toplevel(window)
         minimapWindow.grab_set()
         minimapWindow.focus_force()
-        minimapWindow.title("minimap")
+        minimapWindow.title("Minimap")
 
         #used to determine size of grid and size of tiles
         minX, maxX, minY, maxY = 0,0,0,0
@@ -47,8 +47,17 @@ class minimapWindow:
         #draws tiles within the grid
         for coord in tileCoordList:
             board[coord].draw(tileGridCanvasList[coord[0]+offsetX][coord[1]+offsetY],False)
+        
+        self.__center_window(minimapWindow)
 
         minimapWindow.bind(CONTROLS[14],lambda event: minimapWindow.destroy())
+
+    def __center_window(self, window):
+        screen_width = window.winfo_screenwidth()
+        screen_height = window.winfo_screenheight()
+        x = (screen_width - window.winfo_reqwidth()) // 2
+        y = (screen_height - window.winfo_reqheight()) // 2
+        window.geometry(f"+{x}+{y}")
 
 
         

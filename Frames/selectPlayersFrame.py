@@ -3,7 +3,7 @@ from game.playerSelectionBox import playerSelectBox
 import json
 import random
 import re
-from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT
+from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 
 #skipped deactivating buttons
 
@@ -15,26 +15,26 @@ class selectPlayersFrame:
         self.__gameFunc = gameFunc
         self.__mainFrame = frame
 
-        tk.Label(self.__mainFrame,text ="Choose players",font=(TEXT_FONT,30)).place(relx=0.5,rely=0.08,anchor="center")
+        tk.Label(self.__mainFrame,text ="Choose players",font=(TEXT_FONT,30),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.08,anchor="center")
 
         #set up tk frames for children placement
         self.__topLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topLFrame.place(relx=0.25,rely=0.3,anchor="center",width=200,height=200)
+        self.__topLFrame.place(relx=0.25,rely=0.3,anchor="center",width=250,height=250)
 
         self.__topMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topMFrame.place(relx=0.5,rely=0.3,anchor="center",width=200,height=200)
+        self.__topMFrame.place(relx=0.5,rely=0.3,anchor="center",width=250,height=250)
 
         self.__topRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topRFrame.place(relx=0.75,rely=0.3,anchor="center",width=200,height=200)
+        self.__topRFrame.place(relx=0.75,rely=0.3,anchor="center",width=250,height=250)
 
         self.__bottomLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomLFrame.place(relx=0.25,rely=0.6,anchor="center",width=200,height=200)
+        self.__bottomLFrame.place(relx=0.25,rely=0.6,anchor="center",width=250,height=250)
 
         self.__bottomMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomMFrame.place(relx=0.5,rely=0.6,anchor="center",width=200,height=200)
+        self.__bottomMFrame.place(relx=0.5,rely=0.6,anchor="center",width=250,height=250)
 
         self.__bottomRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomRFrame.place(relx=0.75,rely=0.6,anchor="center",width=200,height=200)
+        self.__bottomRFrame.place(relx=0.75,rely=0.6,anchor="center",width=250,height=250)
 
         self.__playerList = []
 

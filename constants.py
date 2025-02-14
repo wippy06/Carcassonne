@@ -1,7 +1,7 @@
 #Set up to be easily changeable
 
 #size of windows
-PAUSE_SIZE = (200,150)
+PAUSE_SIZE = (300,200)
 MINIMAP_MAX_SIZE = (800,800)
 START_FULLSCREEN = True
 
@@ -12,12 +12,12 @@ STARTING_TILE = "D"
 PLAYER_COLOUR_LIST = ["Red", "Blue", "Lime", "Yellow", "Magenta", "Cyan"]
 
 #game display options
-TEXT_FONT = "Arial"
+TEXT_FONT = "Trebuchet MS"
 BUTTON_DEFAULT_COLOUR = "grey94"
-FRAME_BG_DEFAULT_COLOUR = "grey94"
+FRAME_BG_DEFAULT_COLOUR = "darkslategray1"
 
 #tile colours
-EMPTY_COLOUR = "grey94"
+EMPTY_COLOUR = "deepskyblue"
 CASTLE_COLOUR = "Orange"
 ROAD_COLOUR = "Grey"
 FIELD_COLOUR = "Green"

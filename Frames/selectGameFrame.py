@@ -1,17 +1,17 @@
 import tkinter as tk
 import json
-from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT
+from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 
 class selectGameFrame:
     def __init__(self, frame, playerFunc, loadGameFunc):
         self.__mainFrame = frame
-        self.__frame = tk.Frame(frame)
+        self.__frame = tk.Frame(frame,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__frame.pack(side="top",expand=True,fill="both")
         self.__playerFunc = playerFunc
         self.__loadGameFunc = loadGameFunc
 
         #set tk frames for game slot options
-        tk.Label(self.__frame,text ="Choose save slot",font=(TEXT_FONT,40)).place(relx=0.5,rely=0.2,anchor="center")
+        tk.Label(self.__frame,text ="Choose save slot",font=(TEXT_FONT,40),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.2,anchor="center")
 
         self.__slot1Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
         self.__slot1Frame.place(relx=0.25,rely=0.5,anchor="center",width=300,height=300)
@@ -35,16 +35,16 @@ class selectGameFrame:
         tk.Label(frame,text="Save Slot " + str(slot),font=(TEXT_FONT,20)).pack()
 
         if fileString == "":
-            tk.Button(frame, text = "New Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).place(relx=0.5,rely=0.5,anchor="center")
+            tk.Button(frame, text = "New Game", command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).place(relx=0.5,rely=0.5,anchor="center")
         else:
             fileData = json.loads(fileString)
             centreFrame = tk.Frame(frame)
             centreFrame.place(relx=0.5,rely=0.5,anchor="center")
-            tk.Label(centreFrame,text="Players : " + str(len(fileData["players"])),font=(TEXT_FONT,10)).pack()
-            tk.Label(centreFrame,text="Turn : " + str(len(fileData["moves"])+1),font=(TEXT_FONT,10)).pack()
-            tk.Label(centreFrame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"]))),font=(TEXT_FONT,10)).pack()
-            tk.Button(centreFrame, text = "Continue Game"+ str(slot), command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).pack()
-            tk.Button(centreFrame, text = "Delete Game"+ str(slot), command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,10)).pack()
+            tk.Label(centreFrame,text="Players : " + str(len(fileData["players"])),font=(TEXT_FONT,13)).pack()
+            tk.Label(centreFrame,text="Turn : " + str(len(fileData["moves"])+1),font=(TEXT_FONT,13)).pack()
+            tk.Label(centreFrame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"]))),font=(TEXT_FONT,13)).pack()
+            tk.Button(centreFrame, text = "Continue Game", command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
+            tk.Button(centreFrame, text = "Delete Game", command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
 
         slotFile.close()
 

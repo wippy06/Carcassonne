@@ -1,7 +1,7 @@
 import tkinter as tk
 from game.game import game
 from frames.minimapWindow import minimapWindow
-from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS,BUTTON_DEFAULT_COLOUR,EMPTY_COLOUR,TEXT_FONT
+from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS,BUTTON_DEFAULT_COLOUR,EMPTY_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 
 class gameFrame:
     def __init__(self,frame, gameFile, leaderBoardFunc):
@@ -14,24 +14,24 @@ class gameFrame:
         self.__leftSideBarFrame = tk.Frame(self.__mainFrame)
         self.__leftSideBarFrame.pack(side="left",expand=True,fill="both")
 
-        self.__scoreFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
+        self.__scoreFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__scoreFrame.pack(side="top",expand=True,fill="both")
 
         #done as list to reduce code
         self.__scoreLableList = []
         for i in range(self.__game.getNumPlayers()):
-            self.__scoreLableList.append(tk.Label(self.__scoreFrame, text=str(i+1)+". ",font=(TEXT_FONT,13)))
+            self.__scoreLableList.append(tk.Label(self.__scoreFrame, text=str(i+1)+". ",font=(TEXT_FONT,13),bg=FRAME_BG_DEFAULT_COLOUR))
             self.__scoreLableList[i].pack(anchor = "nw",padx=5,pady=5)
 
         #tile preview frame
-        self.__tilePreviewFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
+        self.__tilePreviewFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__tilePreviewFrame.pack(side="top",expand=True,fill="both")
 
         self.__tileCanvas = tk.Canvas(self.__tilePreviewFrame, width=200, height=200)
         self.__tileCanvas.pack(side = "top",padx=10,pady=15)
         self.__tileCanvas.bind("<Button-1>",lambda event:self.__placeMeeple(event.x,event.y))
 
-        self.__rotateButtonFrame = tk.Frame(self.__tilePreviewFrame)
+        self.__rotateButtonFrame = tk.Frame(self.__tilePreviewFrame,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__rotateButtonFrame.pack()
         
         self.__tileRotateClock = tk.Button(self.__rotateButtonFrame, text = "⟳",font=(TEXT_FONT,13), command = lambda:self.__game.rotatePreview(False, self.__tileCanvas), bg = BUTTON_DEFAULT_COLOUR)
@@ -43,13 +43,13 @@ class gameFrame:
         self.__confirmPlacementButton.pack(pady=5)
 
         #extra info frame
-        self.__extraInfoFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
+        self.__extraInfoFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__extraInfoFrame.pack(side="top",expand=True,fill="both")
 
-        self.__turnCountLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13),text = "Turn number: ")
-        self.__turnPlayerLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13), text="Turn player: ")
-        self.__MeepleCountLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13),text="Meeples remaining: ")
-        self.__tileRemainingLable = tk.Label(self.__tilePreviewFrame,font=(TEXT_FONT,13), text = "Tiles remaining: ")
+        self.__turnCountLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13),text = "Turn number: ",bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__turnPlayerLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13), text="Turn player: ",bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__MeepleCountLable = tk.Label(self.__extraInfoFrame,font=(TEXT_FONT,13),text="Meeples remaining: ",bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__tileRemainingLable = tk.Label(self.__tilePreviewFrame,font=(TEXT_FONT,13), text = "Tiles remaining: ",bg=FRAME_BG_DEFAULT_COLOUR)
 
         self.__turnCountLable.pack(pady=5)
         self.__turnPlayerLable.pack(pady=5)
@@ -57,10 +57,10 @@ class gameFrame:
         self.__tileRemainingLable.pack(pady=5)
 
         #map movement frame
-        self.__mapViewKeypadFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1)
+        self.__mapViewKeypadFrame = tk.Frame(self.__leftSideBarFrame,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__mapViewKeypadFrame.pack(side="top",expand=True,fill="both")
 
-        self.__keyPadFrame = tk.Frame(self.__mapViewKeypadFrame)
+        self.__keyPadFrame = tk.Frame(self.__mapViewKeypadFrame,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__keyPadFrame.pack(pady=5)
 
         #used to get buttons to be square

@@ -16,7 +16,7 @@ class mainWindow:
         self.__window.title("Carcassonne")
 
         #set tk frames for tk children
-        self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1,bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__topBarFrame = tk.Frame(self.__window,highlightbackground="black",highlightthickness=1,bg="darkturquoise")
         self.__topBarFrame.pack(side="top", fill ="x")
 
         self.__topBarFrameL = tk.Frame(self.__topBarFrame)
@@ -28,7 +28,7 @@ class mainWindow:
         self.__bottomFrame = tk.Frame(self.__window,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__bottomFrame.pack(side="top", fill="both",expand=True)
 
-        tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16)).pack(side="left")
+        tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg="darkturquoise").pack(side="left")
         tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
         tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
 
