@@ -17,7 +17,7 @@ BUTTON_DEFAULT_COLOUR = "grey94"
 FRAME_BG_DEFAULT_COLOUR = "darkslategray1"
 
 #tile colours
-EMPTY_COLOUR = "deepskyblue"
+EMPTY_COLOUR = "lightskyblue"
 CASTLE_COLOUR = "Orange"
 ROAD_COLOUR = "Grey"
 FIELD_COLOUR = "Green"
