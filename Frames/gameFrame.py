@@ -229,7 +229,7 @@ class gameFrame:
         playerScoreDict = self.__game.getPlayerLeaderboard()
         playerNames = list(playerScoreDict.keys())
 
-        #bubble sort to sort playerNames list into order based on scores
+        #bubble sort to sort playerNames list into order based on scores then alphabetically
         #includes optimisations to stop if no swaps
         #bubble sort used as number of items needed to be sorted is small
         for i in range(len(playerNames)):

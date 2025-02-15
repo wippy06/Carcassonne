@@ -59,8 +59,7 @@ class game:
 
             if self.checkGameEnd():
                 break
-
-            
+     
     def drawTile(self,canvas,preview):
         self.__tileStack.getItem().draw(canvas, preview)
 
@@ -219,7 +218,6 @@ class game:
         #method of methods to generate tile stack
         #tiles then random list the assign tiles to random list then sorts then push to stack
         tileList, tileCount = self.__generateTiles()
-        self.__gameFile["tileNum"] = tileCount
         self.updateGameFile()
         randomList = self.__generateList(tileCount)
         self.__assignTileOrder(randomList,tileList)

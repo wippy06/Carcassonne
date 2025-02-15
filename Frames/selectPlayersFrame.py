@@ -125,7 +125,7 @@ class selectPlayersFrame:
                 playerDict = {"Name" : player.getName(), "Type" : player.getType()}
                 fullPlayerList.append(playerDict)         
 
-        self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[], "tileNum":0}, indent=4))
+        self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[]}, indent=4))
 
         #removes tk children to prepare for next window
         for widget in self.__mainFrame.winfo_children():

@@ -42,11 +42,22 @@ class selectGameFrame:
             centreFrame.place(relx=0.5,rely=0.5,anchor="center")
             tk.Label(centreFrame,text="Players : " + str(len(fileData["players"])),font=(TEXT_FONT,13)).pack()
             tk.Label(centreFrame,text="Turn : " + str(len(fileData["moves"])+1),font=(TEXT_FONT,13)).pack()
-            tk.Label(centreFrame,text="Tiles Remaining : " + str(int(fileData["tileNum"]-len(fileData["moves"]))),font=(TEXT_FONT,13)).pack()
+            tk.Label(centreFrame,text="Tiles Remaining : " + str(int(self.__maxTiles()-len(fileData["moves"]))),font=(TEXT_FONT,13)).pack()
             tk.Button(centreFrame, text = "Continue Game", command = lambda: self.__slotChoice(slot), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
             tk.Button(centreFrame, text = "Delete Game", command = lambda: self.__clearSlot(slotFile, slot, frame), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
 
         slotFile.close()
+
+    def __maxTiles(self):
+        tileTypeCount = open("tiles/tileCount.json", "r")
+        tileTypeCountDict = json.loads(tileTypeCount.read())
+        tileTypeCount.close()
+
+        count = 0
+        for value in tileTypeCountDict.values():
+            count += value
+            
+        return count
 
     def __clearSlot(self, slotFile, slot, frame):
         #delete data from game slots by accessing file
