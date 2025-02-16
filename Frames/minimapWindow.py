@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import MINIMAP_MAX_SIZE,CONTROLS,EMPTY_COLOUR
+from constants import MINIMAP_MAX_SIZE,CONTROLS,EMPTY_COLOUR,WINDOW_CENTER_OFFSET
 
 class minimapWindow:
     def __init__(self,window,board):
@@ -55,7 +55,7 @@ class minimapWindow:
     def __center_window(self, window):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
-        x = (screen_width - window.winfo_reqwidth()) // 2
+        x = (screen_width - window.winfo_reqwidth()) // 2-WINDOW_CENTER_OFFSET
         y = (screen_height - window.winfo_reqheight()) // 2
         window.geometry(f"+{x}+{y}")
 

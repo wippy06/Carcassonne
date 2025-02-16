@@ -1,5 +1,5 @@
 import tkinter as tk
-from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
+from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR,WINDOW_CENTER_OFFSET
 
 class pauseWindow:
     def __init__(self, window, isPlaying, saveFunc):
@@ -30,6 +30,6 @@ class pauseWindow:
         height = window.winfo_height()
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
-        x = (screen_width - width) // 2
+        x = (screen_width - width) // 2 - WINDOW_CENTER_OFFSET
         y = (screen_height - height) // 2
         window.geometry(f"{width}x{height}+{x}+{y}")

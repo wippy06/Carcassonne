@@ -2,7 +2,9 @@
 
 #size of windows
 PAUSE_SIZE = (300,200)
+SIGN_IN_OUT_SIZE = (300,300)
 MINIMAP_MAX_SIZE = (800,800)
+WINDOW_CENTER_OFFSET = 8
 START_FULLSCREEN = True
 
 #start tile for gameplay

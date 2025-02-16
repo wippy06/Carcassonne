@@ -5,6 +5,8 @@ from frames.selectGameFrame import selectGameFrame
 from frames.selectPlayersFrame import selectPlayersFrame
 from frames.gameFrame import gameFrame
 from frames.leaderBoardFrame import leaderBoardFrame
+from frames.signInOutWindow import signInOutWindow
+from database.dbHandler import dbHandler
 from constants import START_FULLSCREEN,BUTTON_DEFAULT_COLOUR,FRAME_BG_DEFAULT_COLOUR,TEXT_FONT
 
 class mainWindow:
@@ -32,12 +34,19 @@ class mainWindow:
         tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
         tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
 
+        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16),command=self.__signInOut, bg = BUTTON_DEFAULT_COLOUR)
+
+        self.__dbHandler = dbHandler()
+
         #for full screen mode
         self.__window.bind("<Escape>", self.__endFullscreen)
         self.__window.bind("<F11>", self.__beginFullscreen)
 
         #playing game attribute to indicate game window, used for showing save button on pause menu
         self.__playingGame = False
+
+        #setting current login to keep track of login
+        self.__currentLogin = ""
 
         #start program
         self.__displayStartFrame()
@@ -54,17 +63,18 @@ class mainWindow:
         pauseWindow(self.__window,self.__playingGame, self.__saveGame)
 
     def __displayStartFrame(self):
-        for widget in self.__bottomFrame.winfo_children():
-            widget.destroy()
+        self.__signInOutButton.pack(side="right")
         startFrame(self.__window, self.__bottomFrame, self.__displaySelectGameFrame)
 
     def __displaySelectGameFrame(self):
         selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame)
 
     def __displaySelectPlayersFrame(self, gameSlot):
+        self.__signInOutButton.pack_forget()
         selectPlayersFrame(self.__bottomFrame, gameSlot, self.__displayGameFrame)
 
     def __displayGameFrame(self, gameFile):
+        self.__signInOutButton.pack_forget()
         self.__playingGame = True
         self.__gameWindowObj = gameFrame(self.__bottomFrame, gameFile,self.__displayLeaderBoardFrame)
 
@@ -72,8 +82,14 @@ class mainWindow:
         self.__playingGame = False
         leaderBoardFrame(self.__window, self.__bottomFrame, playerScoreDict,self.__displayStartFrame)
 
+    def __signInOut(self):
+        signInOutWindow(self.__window,self.__currentLogin,self.__setLogin,self.__dbHandler)
+
     def __saveGame(self):
         self.__gameWindowObj.saveGame()
+
+    def __setLogin(self, user):
+        self.__currentLogin = user
 
     def run(self):
         self.__window.mainloop()

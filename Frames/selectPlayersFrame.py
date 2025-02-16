@@ -1,5 +1,5 @@
 import tkinter as tk
-from game.playerSelectionBox import playerSelectBox
+from frames.selectPlayersSubFrame import playerSelectBox
 import json
 import random
 import re
@@ -127,7 +127,7 @@ class selectPlayersFrame:
 
         self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[]}, indent=4))
 
-        #removes tk children to prepare for next window
+        #removes tk children to prepare for next frame
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
             

@@ -56,7 +56,7 @@ class selectGameFrame:
         count = 0
         for value in tileTypeCountDict.values():
             count += value
-            
+
         return count
 
     def __clearSlot(self, slotFile, slot, frame):
@@ -70,7 +70,7 @@ class selectGameFrame:
         self.__createSlotDisplay(slot, frame)
         
     def __slotChoice(self, slot):
-        #removes tk children to prepare for next window
+        #removes tk children to prepare for next frame
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
 

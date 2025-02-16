@@ -26,8 +26,15 @@ class leaderBoardFrame:
         self.__buttonFrame = tk.Frame(self.__mainFrame,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__buttonFrame.pack(side="top",pady=20)
 
-        tk.Button(self.__buttonFrame, text="Return",font=(TEXT_FONT,20), width=6,command=self.__startFunc, bg = BUTTON_DEFAULT_COLOUR).pack(side="left",padx=10,pady=10)
+        tk.Button(self.__buttonFrame, text="Return",font=(TEXT_FONT,20), width=6,command=lambda:self.__return(frame), bg = BUTTON_DEFAULT_COLOUR).pack(side="left",padx=10,pady=10)
         tk.Button(self.__buttonFrame, text = "Exit",font=(TEXT_FONT,20), width=6,command = self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right",padx=10,pady=10)
+
+    def __return(self,frame):
+        #removes tk children to prepare for next frame
+        for widget in frame.winfo_children():
+            widget.destroy()
+        self.__startFunc()
+        
 
     def __displayScores(self):
         playerNames = list(self.__playerScoreDict.keys())

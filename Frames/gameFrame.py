@@ -257,7 +257,7 @@ class gameFrame:
     def __gameOver(self):
         playerScoreDict = self.__game.getPlayerLeaderboard()
 
-        #removes tk children to prepare for next window
+        #removes tk children to prepare for next frame
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
 

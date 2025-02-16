@@ -1,7 +1,3 @@
-import tkinter as tk
+import re
 
-window = tk.Tk()
-
-window.eval(f'tk::PlaceWindow . center')
-
-window.mainloop()
+print(re.search("^([a-z]|[A-Z]|[0-9]|!|%|_|\+|-|=|<|>|\?|\$|&|@)+$"," "))
