@@ -4,9 +4,9 @@ from frames.minimapWindow import minimapWindow
 from constants import TILE_SIZE, TILE_GRID_X,TILE_GRID_Y,CONTROLS,BUTTON_DEFAULT_COLOUR,EMPTY_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 
 class gameFrame:
-    def __init__(self,frame, gameFile, leaderBoardFunc):
+    def __init__(self,frame, gameID, leaderBoardFunc, dbHandler):
         #init game object, gameFrame handles user interface, game obj handles game operations
-        self.__game = game(gameFile,self.__gameOver)
+        self.__game = game(gameID,self.__gameOver,dbHandler)
         self.__leaderBoardFunc = leaderBoardFunc
         self.__mainFrame = frame
 
@@ -252,7 +252,7 @@ class gameFrame:
             self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+playerScoreDict[playerNames[i]][1]+" : "+str(playerScoreDict[playerNames[i]][0]))
 
     def saveGame(self):
-        self.__game.updateGameFile()
+        self.__game.updateRecord()
 
     def __gameOver(self):
         playerScoreDict = self.__game.getPlayerLeaderboard()

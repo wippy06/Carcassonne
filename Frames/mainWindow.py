@@ -67,29 +67,32 @@ class mainWindow:
         startFrame(self.__window, self.__bottomFrame, self.__displaySelectGameFrame)
 
     def __displaySelectGameFrame(self):
-        selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame)
+        selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame, self.__getLoginID, self.__dbHandler, self.__signInOut, self.__signInOutButton)
 
-    def __displaySelectPlayersFrame(self, gameSlot):
+    def __displaySelectPlayersFrame(self, gameID):
         self.__signInOutButton.pack_forget()
-        selectPlayersFrame(self.__bottomFrame, gameSlot, self.__displayGameFrame)
+        selectPlayersFrame(self.__bottomFrame, gameID, self.__displayGameFrame, self.__dbHandler)
 
-    def __displayGameFrame(self, gameFile):
+    def __displayGameFrame(self, gameID):
         self.__signInOutButton.pack_forget()
         self.__playingGame = True
-        self.__gameWindowObj = gameFrame(self.__bottomFrame, gameFile,self.__displayLeaderBoardFrame)
+        self.__gameWindowObj = gameFrame(self.__bottomFrame, gameID, self.__displayLeaderBoardFrame, self.__dbHandler)
 
     def __displayLeaderBoardFrame(self,playerScoreDict):
         self.__playingGame = False
         leaderBoardFrame(self.__window, self.__bottomFrame, playerScoreDict,self.__displayStartFrame)
 
     def __signInOut(self):
-        signInOutWindow(self.__window,self.__currentLogin,self.__setLogin,self.__dbHandler)
+        return signInOutWindow(self.__window,self.__currentLogin,self.__setLoginID,self.__dbHandler)
 
     def __saveGame(self):
         self.__gameWindowObj.saveGame()
 
-    def __setLogin(self, user):
+    def __setLoginID(self, user):
         self.__currentLogin = user
+
+    def __getLoginID(self):
+        return self.__currentLogin
 
     def run(self):
         self.__window.mainloop()

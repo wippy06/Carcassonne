@@ -8,12 +8,11 @@ from constants import BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 #skipped deactivating buttons
 
 class selectPlayersFrame:
-    def __init__(self, frame, gameSlot, gameFunc):
-        self.__gameSlot = gameSlot
-        self.__fileName = "gameSlots/slot"+str(self.__gameSlot)+".json"
-        self.__gameFile = open(self.__fileName, "r+")
+    def __init__(self, frame, gameID, gameFunc, dbHandler):
+        self.__gameID = gameID
         self.__gameFunc = gameFunc
         self.__mainFrame = frame
+        self.__dbHandler = dbHandler
 
         tk.Label(self.__mainFrame,text ="Choose players",font=(TEXT_FONT,30),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.08,anchor="center")
 
@@ -106,31 +105,17 @@ class selectPlayersFrame:
         return playerList
 
     def __continue(self):
-        #seed giving max of 100000 different games
-        #seed used for loading game so tile order does not have to be stored 
-        seed = str(random.randint(0,99999))
-
-        #to fill seed with leading 0 as random is int initially
-        while(len(seed) != 5):
-            seed = "0" + seed
-
         #to sort players into playing order to be loaded into the file
         sortedPlayerList = self.__bubbleSort(self.__playerList)
 
-        fullPlayerList = []
-
         #setting up and writing data to save file
-        for player in sortedPlayerList:
-            if player.getIsPlaying():
-                playerDict = {"Name" : player.getName(), "Type" : player.getType()}
-                fullPlayerList.append(playerDict)         
-
-        self.__gameFile.write(json.dumps({"seed":seed,"players":fullPlayerList,"moves":[]}, indent=4))
+        for i in range(len(sortedPlayerList)):
+            if sortedPlayerList[i].getIsPlaying():
+                self.__dbHandler.newPlayer(i, sortedPlayerList[i].getName(), sortedPlayerList[i].getType(), self.__gameID)
 
         #removes tk children to prepare for next frame
         for widget in self.__mainFrame.winfo_children():
             widget.destroy()
-            
-        self.__gameFile.close()
-        self.__gameFunc(self.__fileName)
+
+        self.__gameFunc(self.__gameID)
  

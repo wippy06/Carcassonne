@@ -9,18 +9,15 @@ from .player import player
 from .bot import bot
 
 class game:
-    def __init__(self, gameFileDir, gameOverFunc):
+    def __init__(self, gameID, gameOverFunc, dbHandler):
         #load file to check whether game needs to be loaded or not
         #also sets seed for random lib so that game is the same when loaded
         #as well as player info
-        self.__gameFileDir = gameFileDir
+        self.__gameID = gameID
+        self.__dbHandler = dbHandler
         self.__gameOver = gameOverFunc
-        
-        fileObj = open(self.__gameFileDir, "r")
-        self.__gameFile = json.loads(fileObj.read())
-        fileObj.close()
 
-        random.seed(self.__gameFile["seed"])
+        random.seed(self.__dbHandler.getGameSeed(self.__gameID))
 
         #players stored in dictionary with keys being colours
         #player keys are to store the order of players
@@ -145,7 +142,7 @@ class game:
     def getTilesRemaining(self):
         return self.__tileStack.getSize()
 
-    def updateGameFile(self):
+    def updateRecord(self):
         fileObj = open(self.__gameFileDir, "w")
         fileObj.write(json.dumps(self.__gameFile, indent=4))
         fileObj.close()

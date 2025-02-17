@@ -4,6 +4,7 @@ from constants import SIGN_IN_OUT_SIZE, FRAME_BG_DEFAULT_COLOUR,WINDOW_CENTER_OF
 
 class signInOutWindow:
     def __init__(self,window,currentLogin,loginFunc,dbHandler):
+        #new tk window
         self.__signWindow = tk.Toplevel(window,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__signWindow.grab_set()
         self.__signWindow.focus_force()
@@ -62,6 +63,7 @@ class signInOutWindow:
         tk.Button(self.__signWindow,text = "Confirm",font=(TEXT_FONT,13),command=self.__confirmSignUp).pack()
 
     def __confirmSignIn(self):
+        #takes username and password then looks up in database
         username = self.__usernameEntry.get()
         password = self.__passwordEntry.get()
 
@@ -102,6 +104,10 @@ class signInOutWindow:
         #removes tk children
         for widget in self.__signWindow.winfo_children():
             widget.destroy()
+
+    def getSignWindow(self):
+        #for game selection frame to wait until this window has closed
+        return self.__signWindow
 
     def __center_window(self, window):
         window.update_idletasks()

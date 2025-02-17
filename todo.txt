@@ -1,1 +1,1 @@
-Player username database pot.
+create hash function
