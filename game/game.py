@@ -242,11 +242,11 @@ class game:
         return NumList
     
     def __generateTiles(self):
-        tileData = open("tiles/tileData.json", "r")
+        tileData = open("jsonFiles/tileData.json", "r")
         tileDataDict = json.loads(tileData.read())
         tileData.close()
 
-        tileTypeCount = open("tiles/tileCount.json", "r")
+        tileTypeCount = open("jsonFiles/tileCount.json", "r")
         tileTypeCountDict = json.loads(tileTypeCount.read())
         tileTypeCount.close()
 
@@ -312,7 +312,7 @@ class game:
     
     def __populateTileStack(self,tileList):
         #to get starting tile
-        tileData = open("tiles/tileData.json", "r")
+        tileData = open("jsonFiles/tileData.json", "r")
         tileDataDict = json.loads(tileData.read())
         tileData.close()
 

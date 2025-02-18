@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, json
 
 class dbHandler:
     def __init__(self):
@@ -46,6 +46,39 @@ class dbHandler:
             GameID INTEGER NOT NULL,
             FOREIGN KEY (GameID) REFERENCES Game(GameID));                                           
         """)
+
+        #creates Achievement table
+        self.__cur.execute("""
+            CREATE TABLE IF NOT EXISTS Achievement(
+            AchievementID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Name TEXT UNIQUE NOT NULL,
+            Description TEXT UNIQUE NOT NULL);
+        """)
+
+        #creates GameAchievement table, linking table for many to many relationship with game and achievement tables
+        self.__cur.execute("""
+            CREATE TABLE IF NOT EXISTS GameAchievement(
+            GameID INTEGER NOT NULL,
+            AchievementID INTEGER NOT NULL,
+            PRIMARY KEY (GameID, AchievementID),        
+            FOREIGN KEY (GameID) REFERENCES Game(GameID)
+            FOREIGN KEY (AchievementID) REFERENCES Achievement(AchievementID));
+        """)
+
+        #inserting achievement data into database
+        achievementData = open("jsonFiles/achievements.json", "r")
+        achievementDataDict = json.loads(achievementData.read())
+        achievementData.close()
+
+        for i in achievementDataDict.keys():
+            #try except in case achievement already in db
+            try:
+                self.__cur.execute("""
+                    INSERT INTO Achievement (Name, Description)
+                    VALUES (?,?);
+                """, (achievementDataDict[i][0], achievementDataDict[i][1],))
+            except:
+                pass
 
     def newUser(self,username,passwordHash):
         #try except in case user already in db
@@ -114,6 +147,18 @@ class dbHandler:
             UPDATE Game
             SET Playable = 0
             WHERE GameID = ?;
+        """, (gameID,))
+        self.__db.commit()
+
+    def deleteGame(self,gameID):
+        self.__cur.execute("""
+            DELETE FROM Game WHERE GameID = ?;
+        """, (gameID,))
+        self.__cur.execute("""
+            DELETE FROM Player WHERE GameID = ?;
+        """, (gameID,))
+        self.__cur.execute("""
+            DELETE FROM Move WHERE GameID = ?;
         """, (gameID,))
         self.__db.commit()
 

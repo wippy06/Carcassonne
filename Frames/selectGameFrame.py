@@ -14,9 +14,9 @@ class selectGameFrame:
         self.__dbHandler = dbHandler
         signInOutButton.config(command = self.__openLoginWindow)
 
-        self.__initateDisplayFrame()      
+        self.__initiateDisplayFrame()      
 
-    def __initateDisplayFrame(self):
+    def __initiateDisplayFrame(self):
         #removes tk children
         for widget in self.__frame.winfo_children():
             widget.destroy()
@@ -50,7 +50,7 @@ class selectGameFrame:
 
     def __openLoginWindow(self):
         self.__frame.winfo_toplevel().wait_window(self.__signInOutFunc().getSignWindow())
-        self.__initateDisplayFrame()
+        self.__initiateDisplayFrame()
 
     def __createSlotDisplay(self, gameID, frame):
         if gameID == "":
@@ -70,7 +70,7 @@ class selectGameFrame:
             tk.Button(centreFrame, text = "Delete Game", command = lambda: self.__clearSlot(gameID, frame), bg = BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
 
     def __maxTiles(self):
-        tileTypeCount = open("tiles/tileCount.json", "r")
+        tileTypeCount = open("jsonFiles/tileCount.json", "r")
         tileTypeCountDict = json.loads(tileTypeCount.read())
         tileTypeCount.close()
 
@@ -81,7 +81,7 @@ class selectGameFrame:
         return count
 
     def __clearSlot(self, gameID, frame):
-        self.__dbHandler.disableGame(gameID)
+        self.__dbHandler.deleteGame(gameID)
 
         for widget in frame.winfo_children():
             widget.destroy()
