@@ -24,6 +24,7 @@ class game:
         #so that list rotation for next player only has to rotate colour strings not player objects
         self.__playerDict = {}
         self.__playerKeys = []
+        self.__placementList = self.__dbHandler.getMoveList(self.__gameID)
 
         self.__generateTileStack()
         self.__generatePlayerDict()
@@ -45,9 +46,9 @@ class game:
         self.__board.placeTile(self.__tileStack.getItem(), (0,0))
         self.__tileStack.stackPop()
 
-        if self.__gameFile["moves"] != []:
+        if self.__placementList != []:
             #iterates through placement list loaded, decodes and plays move
-            for move in self.__gameFile["moves"]:
+            for move in self.__placementList:
                 self.__loadMove(move)
 
         while self.__checkIfBot():
@@ -76,9 +77,6 @@ class game:
         else:
             self.__placementMade = False
             self.__currentCoord = None
-
-    def redrawTempTile(self,canvas):
-        self.drawTile(canvas, False)
 
     def tileRedraw(self,canvas,tile):
         tile.draw(canvas, False)
@@ -143,9 +141,11 @@ class game:
         return self.__tileStack.getSize()
 
     def updateRecord(self):
-        fileObj = open(self.__gameFileDir, "w")
-        fileObj.write(json.dumps(self.__gameFile, indent=4))
-        fileObj.close()
+        loadedMoves = self.__dbHandler.getMoveList(self.__gameID)
+
+        for i in range(len(self.__placementList)):
+            if self.__placementList[i] not in loadedMoves:
+                self.__dbHandler.newMove(i, self.__placementList[i][0],self.__placementList[i][1],self.__placementList[i][2],self.__placementList[i][3],self.__gameID)
 
     def __scoreTiles(self,coord):
         sideOptions = ["North","South","East","West","Centre"]
@@ -162,16 +162,15 @@ class game:
 
     def __loadMove(self,move):
         #moves encoded as string "rotations,meeplePlacement,xCoord,yCoord"
-        moveList = move.split(",")
-        for i in range(int(moveList[0])):
+        for i in range(int(move[0])):
             self.__tileStack.getItem().rotate()
-        if moveList[1] != "":
-            self.claimFeature(moveList[1])
+        if move[1] != "":
+            self.claimFeature(move[1])
             self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
-        self.__board.placeTile(self.__tileStack.getItem(), (int(moveList[2]),int(moveList[3])))               
+        self.__board.placeTile(self.__tileStack.getItem(), (int(move[2]),int(move[3])))               
 
         #score
-        self.__scoreTiles((int(moveList[2]),int(moveList[3])))
+        self.__scoreTiles((int(move[2]),int(move[3])))
 
         self.__nextPlayer()
         self.__tileStack.stackPop()
@@ -203,9 +202,9 @@ class game:
         return self.__playerKeys
 
     def __generatePlayerDict(self):
-        playerList = self.__gameFile["players"]
+        playerList = self.__dbHandler.getGamePlayerInfo(self.__gameID)
         for i in range(len(playerList)):
-            if playerList[i]["Type"] == "player":
+            if playerList[i][1] == "player":
                 self.__playerDict[PLAYER_COLOUR_LIST[i]] = player(playerList[i], PLAYER_COLOUR_LIST[i])
             else:
                 self.__playerDict[PLAYER_COLOUR_LIST[i]] = bot(playerList[i], PLAYER_COLOUR_LIST[i])
@@ -215,8 +214,7 @@ class game:
         #method of methods to generate tile stack
         #tiles then random list the assign tiles to random list then sorts then push to stack
         tileList, tileCount = self.__generateTiles()
-        self.updateGameFile()
-        randomList = self.__generateList(tileCount)
+        randomList = self.__generateRandomNumberList(tileCount)
         self.__assignTileOrder(randomList,tileList)
         randomTileList = self.__mergeSort(tileList)
         self.__tileStack = tileStack(len(randomTileList)+1)
@@ -226,7 +224,7 @@ class game:
         for i in range(len(randomList)):
             tileList[i].setOrder(randomList[i])
 
-    def __generateList(self, tileCount):
+    def __generateRandomNumberList(self, tileCount):
         generatedList = []
         for i in range(tileCount):
             generatedList.append(i+1)
@@ -359,9 +357,8 @@ class game:
                 if boardDict[tile].getClaimingPlayer() != "":
                     self.__scoreFeature(tile,boardDict[tile].getClaimedSide(),True)
 
-            #clear gameFile
-            fileObj = open(self.__gameFileDir, "w")
-            fileObj.close()
+            #disable game
+            self.__dbHandler.disableGame(self.__gameID)
 
             self.__gameOver()
 
@@ -372,15 +369,11 @@ class game:
         return self.__currentCoord
             
     def completeTurn(self,updateDisplay):
-        move = []
         if self.__placementMade:
             #sets up move to be appended to move queue to be saved and loaded
-            move.append(self.__currentRotations%4)
-            move.append(self.__currentClaimSide)
-            move.append(self.__currentCoord[0])
-            move.append(self.__currentCoord[1])
+            move = (self.__currentRotations%4,self.__currentClaimSide,self.__currentCoord[0],self.__currentCoord[1])
 
-            self.__gameFile["moves"].append(",".join(str(i) for i in move))
+            self.__placementList.append(move)
 
             #to sync up preview rotations with board placment rotations
             for i in range(self.__tempRotations-self.__currentRotations):
@@ -457,11 +450,11 @@ class game:
 
     def __generatePlacement(self):
         #deepcopy to avoid changing data related to actual game tile
-        placementList = self.__board.getAllValidPlacements(copy.deepcopy(self.__tileStack.getItem()),self.__playerDict[self.__playerKeys[0]].getRemainingMeeples())
+        validPlacementList = self.__board.getAllValidPlacements(copy.deepcopy(self.__tileStack.getItem()),self.__playerDict[self.__playerKeys[0]].getRemainingMeeples())
         
-        placement = self.__playerDict[self.__playerKeys[0]].pickMove(placementList, self.__board, self.__tileStack.getItem())
+        placement = self.__playerDict[self.__playerKeys[0]].pickMove(validPlacementList, self.__board, self.__tileStack.getItem())
 
-        self.__gameFile["moves"].append(placement)
+        self.__placementList.append(placement)
 
         self.__loadMove(placement)
 

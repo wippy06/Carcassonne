@@ -6,6 +6,7 @@ from frames.selectPlayersFrame import selectPlayersFrame
 from frames.gameFrame import gameFrame
 from frames.leaderBoardFrame import leaderBoardFrame
 from frames.signInOutWindow import signInOutWindow
+from frames.achievementsWindow import achievementsWindow
 from database.dbHandler import dbHandler
 from constants import START_FULLSCREEN,BUTTON_DEFAULT_COLOUR,FRAME_BG_DEFAULT_COLOUR,TEXT_FONT
 
@@ -30,11 +31,14 @@ class mainWindow:
         self.__bottomFrame = tk.Frame(self.__window,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__bottomFrame.pack(side="top", fill="both",expand=True)
 
-        tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg="darkturquoise").pack(side="left")
-        tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        #used to get buttons to be square
+        self.__pixel = tk.PhotoImage(width=1, height=1)
 
-        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16),command=self.__signInOut, bg = BUTTON_DEFAULT_COLOUR)
+        tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg="darkturquoise").pack(side="left")
+        tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=30,height=30,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
+        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command=self.__displaySignInOut, bg = BUTTON_DEFAULT_COLOUR)
 
         self.__dbHandler = dbHandler()
 
@@ -67,7 +71,7 @@ class mainWindow:
         startFrame(self.__window, self.__bottomFrame, self.__displaySelectGameFrame)
 
     def __displaySelectGameFrame(self):
-        selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame, self.__getLoginID, self.__dbHandler, self.__signInOut, self.__signInOutButton)
+        selectGameFrame(self.__bottomFrame, self.__displaySelectPlayersFrame, self.__displayGameFrame, self.__getLoginID, self.__dbHandler, self.__displaySignInOut, self.__signInOutButton)
 
     def __displaySelectPlayersFrame(self, gameID):
         self.__signInOutButton.pack_forget()
@@ -82,8 +86,11 @@ class mainWindow:
         self.__playingGame = False
         leaderBoardFrame(self.__window, self.__bottomFrame, playerScoreDict,self.__displayStartFrame)
 
-    def __signInOut(self):
+    def __displaySignInOut(self):
         return signInOutWindow(self.__window,self.__currentLogin,self.__setLoginID,self.__dbHandler)
+    
+    def __displayAchievements(self):
+        achievementsWindow(self.__window, self.__getLoginID, self.__dbHandler, self.__displaySignInOut)
 
     def __saveGame(self):
         self.__gameWindowObj.saveGame()

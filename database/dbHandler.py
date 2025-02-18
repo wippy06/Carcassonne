@@ -152,26 +152,15 @@ class dbHandler:
         """, (playingOrder, name, playerType, gameID,))
         self.__db.commit()
 
-    def getPlayerID(self, gameID):
+    def getGamePlayerInfo(self, gameID):
         self.__cur.execute("""
-            SELECT PlayerID
+            SELECT Name, Type
             FROM Player
-            WHERE GameID = ?
-            SORT BY PlayingOrder ASC;
+            WHERE gameID = ?
+            ORDER BY PlayingOrder ASC;         
         """, (gameID,))
 
-        PlayerIDs = self.__cur.fetchall()
-
-        return [x[0] for x in PlayerIDs]
-
-    def getPlayerInfo(self, playerID):
-        self.__cur.execute("""
-            SELECT PlayingOrder, Name, Type
-            FROM Player
-            WHERE playerID = ?
-        """, (playerID,))
-
-        return self.__cur.fetchone()
+        return self.__cur.fetchall()
     
     def getGameSeed(self,gameID):
         self.__cur.execute("""
@@ -181,3 +170,20 @@ class dbHandler:
         """, (gameID,))
 
         return self.__cur.fetchone()[0]
+    
+    def getMoveList(self,gameID):
+        self.__cur.execute("""
+            SELECT Rotations, Meeple, XCoord, YCoord
+            FROM Move
+            WHERE GameID = ?
+            ORDER BY PlayingOrder ASC;
+        """, (gameID,))
+
+        return self.__cur.fetchall()
+    
+    def newMove(self, order, rotations, meeple, xCoord, yCoord, gameID):
+        self.__cur.execute("""
+            INSERT INTO Move(PlayingOrder, Rotations, Meeple, XCoord, YCoord, GameID)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (order, rotations, meeple, xCoord, yCoord, gameID,))
+        self.__db.commit()

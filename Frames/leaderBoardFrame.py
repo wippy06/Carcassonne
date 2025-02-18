@@ -51,7 +51,7 @@ class leaderBoardFrame:
             if not swaps:
                 break
 
-        self.__winnerLable.config(text="Winner: "+playerNames[i])
+        self.__winnerLable.config(text="Winner: "+playerNames[0])
 
         #updates player scoreboard using loop to reduce code
         for i in range(len(playerNames)):

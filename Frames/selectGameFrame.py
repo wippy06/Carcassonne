@@ -21,10 +21,10 @@ class selectGameFrame:
         for widget in self.__frame.winfo_children():
             widget.destroy()
 
-        if self.__getLoginIDFunc() != "":
-            #set tk frames for game slot options
-            tk.Label(self.__frame,text ="Choose save slot",font=(TEXT_FONT,40),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.2,anchor="center")
+        tk.Label(self.__frame,text ="Choose save slot",font=(TEXT_FONT,40),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.2,anchor="center")
 
+        if self.__getLoginIDFunc() != "":
+            #set tk frames for game slot options      
             self.__slot1Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
             self.__slot1Frame.place(relx=0.25,rely=0.5,anchor="center",width=300,height=300)
 
@@ -46,7 +46,7 @@ class selectGameFrame:
 
         else:
             self.__loginButton = tk.Button(self.__frame,text = "Login", font = (TEXT_FONT,13), command= self.__openLoginWindow)
-            self.__loginButton.pack()
+            self.__loginButton.place(relx=0.5,rely=0.5,anchor="center")
 
     def __openLoginWindow(self):
         self.__frame.winfo_toplevel().wait_window(self.__signInOutFunc().getSignWindow())

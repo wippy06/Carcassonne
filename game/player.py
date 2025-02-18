@@ -1,8 +1,8 @@
 class player:
     def __init__(self, infoDict, colour):
         #collection of player attributes
-        self._name = infoDict["Name"]
-        self._playerType = infoDict["Type"]
+        self._name = infoDict[0]
+        self._playerType = infoDict[1]
         self._score = 0
         self._meeples = 7
         self._colour = colour

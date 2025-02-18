@@ -9,12 +9,12 @@ class bot(player):
 
     def pickMove(self, placementList, boardObj, tileObj):
         placementDict = {}
-        for encodedPlacement in placementList:
+        for placement in placementList:
             #deepcopy to simulate placements without affecting original board or tile
             board = copy.deepcopy(boardObj)
             tile = copy.deepcopy(tileObj)
 
-            placement = self.__decodePlacement(encodedPlacement)
+            coord = (placement[2],placement[3])
 
             #place tile onto board copy
             for i in range(placement[0]):
@@ -23,7 +23,7 @@ class bot(player):
             if placement[1] != "":
                 tile.claimFeature(placement[1],self._colour)
 
-            board.placeTile(tile,placement[2])
+            board.placeTile(tile,coord)
 
             #determine tile placement evaluation
             turnCount = len(board.getBoard().values())
@@ -33,7 +33,7 @@ class bot(player):
 
             for side in sideOptions:
                 if tile.getSide(side) != None and side not in completedSides:
-                    placementScore += self.__evaluateFeature(board,placement[2],side,turnCount,placement[1]) 
+                    placementScore += self.__evaluateFeature(board,coord,side,turnCount) 
 
                 #done to remove double counting a feature if the sides of a tile are connected
                 completedSides.append(side)
@@ -42,26 +42,15 @@ class bot(player):
                         completedSides.append(sideConnection)
 
             #checks adjacent tiles in case of completed monestry
-            monestryCheckList = [(placement[2][0]+1,placement[2][1]),(placement[2][0]-1,placement[2][1]),(placement[2][0],placement[2][1]+1),(placement[2][0],placement[2][1]-1),(placement[2][0]+1,placement[2][1]+1),(placement[2][0]+1,placement[2][1]-1),(placement[2][0]-1,placement[2][1]+1),(placement[2][0]-1,placement[2][1]-1)]
+            monestryCheckList = [(coord[0]+1,coord[1]),(coord[0]-1,coord[1]),(coord[0],coord[1]+1),(coord[0],coord[1]-1),(coord[0]+1,coord[1]+1),(coord[0]+1,coord[1]-1),(coord[0]-1,coord[1]+1),(coord[0]-1,coord[1]-1)]
             for monestryCoord in monestryCheckList:
                 boardDict = board.getBoard()
                 if monestryCoord in boardDict and board.getBoard()[monestryCoord].getSide("Centre") == "Monestry":
-                    placementScore += self.__evaluateFeature(board,monestryCoord,"Centre",turnCount,placement[1])
+                    placementScore += self.__evaluateFeature(board,monestryCoord,"Centre",turnCount)
 
-            placementDict[encodedPlacement] = placementScore
+            placementDict[placement] = placementScore
 
         return max(placementDict, key=placementDict.get)             
-    
-    def __decodePlacement(self,placement):
-        #turns encoded move of "rotations,meepleClaimSide,xCoord,yCoord" to [rotations,meepleClaimSide,(xCoord,yCoord)]
-        placementElementList = placement.split(",")
-
-        placementList = []
-        placementList.append(int(placementElementList[0]))
-        placementList.append(placementElementList[1])
-        placementList.append((int(placementElementList[2]),int(placementElementList[3])))
-
-        return placementList
 
     def __normalDistFunction(self,sigma,mu,yTranslation,yStrech,x):
         return yStrech*((math.e**((-(x-mu)**2)/(2*(sigma)**2)))/math.sqrt(2*math.pi*sigma**2))+yTranslation
@@ -69,7 +58,7 @@ class bot(player):
     def __modulusFunction(self,yStrech,xSolution,xTranslation,x):
         return -yStrech*(abs(x-xTranslation)-xSolution)
     
-    def __evaluateFeature(self,board,coord,side,turnCount,meeplePlacement):
+    def __evaluateFeature(self,board,coord,side,turnCount):
         score,playerList,completed,meepleTiles = board.getFeatureScore(coord,side)
 
         #mathmatical functions to determine evaluation

@@ -194,7 +194,7 @@ class board:
             for coord in adjancentCoordList:
                 tile.claimFeature("","")
                 if self.checkValidPlacement(tile,coord):
-                        placementList.append(str(rotation)+","+","+str(coord[0])+","+str(coord[1]))
+                        placementList.append((rotation,"",coord[0],coord[1]))
 
                 #only checks for meeples if bot has remaining meeples, optimisation to reduce instances of recursive alg
                 if meeples != 0:
@@ -204,7 +204,7 @@ class board:
 
                         tile.claimFeature(meeplePlacment,True)
                         if self.checkValidPlacement(tile,coord):
-                            placementList.append(str(rotation)+","+meeplePlacment+","+str(coord[0])+","+str(coord[1]))
+                            placementList.append((rotation,meeplePlacment,coord[0],coord[1]))
 
             tile.rotate()
             tile.claimFeature("","")

@@ -198,7 +198,7 @@ class gameFrame:
         if currentCoord != None:
             if currentCoord[0]+self.__coordOffsetX < len(self.__tileGridCanvasList) and currentCoord[0]+self.__coordOffsetX >=0:
                 if currentCoord[1]+self.__coordOffsetY < len(self.__tileGridCanvasList[currentCoord[0]+self.__coordOffsetX]) and currentCoord[1]+self.__coordOffsetY >=0:
-                    self.__game.redrawTempTile(self.__tileGridCanvasList[currentCoord[0]+self.__coordOffsetX][currentCoord[1]+self.__coordOffsetY])
+                    self.__game.drawTile(self.__tileGridCanvasList[currentCoord[0]+self.__coordOffsetX][currentCoord[1]+self.__coordOffsetY],False)
 
     def __placeMeeple(self,cursorX,cursorY):
         #preview tile canvas
