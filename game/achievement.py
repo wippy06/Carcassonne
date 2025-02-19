@@ -1,8 +1,10 @@
 class achievement:
     def __init__(self, playerDict, claimNumDict):
+        #dictionaries used to determine achievements
         self.__playerDict = playerDict
         self.__claimNumDict = claimNumDict
 
+    #methods to work out which achievements have been completed
     def getArchitects(self):
         if self.__claimNumDict["Castle"] < 15:
             return False

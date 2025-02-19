@@ -246,7 +246,16 @@ class dbHandler:
             self.__cur.execute("""
                 INSERT INTO GameAchievement(GameID, AchievementID)
                 VALUES (?, ?);
-            """, (gameID,achievementID))
+            """, (gameID,achievementID,))
             self.__db.commit()
         except:
             pass
+
+    def getAllCompletedUsersGames(self, UserID):
+        self.__cur.execute("""
+            SELECT GameID
+            FROM Game
+            WHERE UserID = ?
+            AND Playable = 0;
+        """, (UserID,))
+        return self.__cur.fetchall()

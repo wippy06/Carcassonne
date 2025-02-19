@@ -17,6 +17,7 @@ PLAYER_COLOUR_LIST = ["Red", "Blue", "Lime", "Yellow", "Magenta", "Cyan"]
 #game display options
 TEXT_FONT = "Trebuchet MS"
 BUTTON_DEFAULT_COLOUR = "grey94"
+FRAME_TOP_BAR_COLOUR = "darkturquoise"
 FRAME_BG_DEFAULT_COLOUR = "darkslategray1"
 
 #tile colours

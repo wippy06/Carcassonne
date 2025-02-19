@@ -1,39 +1,50 @@
 import tkinter as tk
 
-# Create the main window
+class HoverPopup:
+    def __init__(self, widget, text):
+        self.widget = widget
+        self.text = text
+        self.popup = None
+
+        # Bind events to show/hide tooltip
+        widget.bind("<Enter>", self.show_popup)
+        widget.bind("<Leave>", self.hide_popup)
+
+    def show_popup(self, event):
+        """Create a popup when mouse enters the widget."""
+        if self.popup:
+            return  # Prevent multiple popups
+
+        # Create the popup window
+        self.popup = tk.Toplevel(self.widget)
+        self.popup.wm_overrideredirect(True)  # Remove window decorations
+
+        # Position the popup near the cursor
+        x, y, _, _ = self.widget.bbox("insert")
+        x += self.widget.winfo_rootx() + 20
+        y += self.widget.winfo_rooty() + 20
+        self.popup.wm_geometry(f"+{x}+{y}")
+
+        # Add text label to popup
+        label = tk.Label(self.popup, text=self.text, bg="yellow", relief="solid", borderwidth=1, padx=5, pady=2)
+        label.pack()
+
+    def hide_popup(self, event):
+        """Destroy the popup when the mouse leaves the widget."""
+        if self.popup:
+            self.popup.destroy()
+            self.popup = None
+
+# Create the main application window
 root = tk.Tk()
-root.title("Scrollable Canvas with Frames")
+root.title("Hover Popup Example")
 
-# Create a frame to hold the canvas and scrollbar
-main_frame = tk.Frame(root)
-main_frame.pack(fill="both", expand=True)
+# Create a label
+label = tk.Label(root, text="Hover over me", font=("Arial", 14), fg="blue")
+label.pack(pady=20)
 
-# Create a canvas inside the main frame
-canvas = tk.Canvas(main_frame, height=400, width=400)
-canvas.pack(side="left", fill="both", expand=True)
+# Attach popup tooltip to the label
+HoverPopup(label, "This is a tooltip!")
 
-# Create a vertical scrollbar and link it to the canvas
-scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
-scrollbar.pack(side="right", fill="y")
-canvas.configure(yscrollcommand=scrollbar.set)
-
-# Create an inner frame inside the canvas
-inner_frame = tk.Frame(canvas)
-inner_window = canvas.create_window((0, 0), window=inner_frame, anchor="nw")
-
-# Function to update the scroll region when inner_frame changes size
-def update_scroll_region(event=None):
-    canvas.configure(scrollregion=canvas.bbox("all"))
-
-# Bind the update function to inner_frame resizing
-inner_frame.bind("<Configure>", update_scroll_region)
-
-# Add multiple frames inside the inner_frame
-for i in range(20):  # Example: Creating 20 frames
-    frame = tk.Frame(inner_frame, bg="lightblue", height=50, width=380)
-    label = tk.Label(frame, text=f"Frame {i+1}")
-    label.pack(pady=10)
-    frame.pack(pady=5, padx=10)
-
-# Start the Tkinter main loop
+# Run the Tkinter event loop
 root.mainloop()

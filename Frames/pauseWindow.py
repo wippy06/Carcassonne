@@ -1,15 +1,17 @@
 import tkinter as tk
-from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR,WINDOW_CENTER_OFFSET
+from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR
 
 class pauseWindow:
     def __init__(self, window, isPlaying, saveFunc):
         #opens new window and sets to root to prevent user from accessing main window
 
         self.__window = window
-        self.__pauseWindow = tk.Toplevel(self.__window,bg=FRAME_BG_DEFAULT_COLOUR)
+        self.__pauseWindow = tk.Toplevel(self.__window,bg=FRAME_BG_DEFAULT_COLOUR,highlightthickness=2)
         self.__pauseWindow.grab_set()
         self.__pauseWindow.focus_force()
         self.__pauseWindow.title("Paused")
+
+        self.__pauseWindow.wm_overrideredirect(True)
 
         self.__pauseWindow.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))
 
@@ -30,6 +32,6 @@ class pauseWindow:
         height = window.winfo_height()
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
-        x = (screen_width - width) // 2 - WINDOW_CENTER_OFFSET
+        x = (screen_width - width) // 2
         y = (screen_height - height) // 2
         window.geometry(f"{width}x{height}+{x}+{y}")

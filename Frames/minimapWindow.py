@@ -1,13 +1,27 @@
 import tkinter as tk
-from constants import MINIMAP_MAX_SIZE,CONTROLS,EMPTY_COLOUR,WINDOW_CENTER_OFFSET
+from constants import MINIMAP_MAX_SIZE,CONTROLS,EMPTY_COLOUR,FRAME_TOP_BAR_COLOUR,TEXT_FONT,BUTTON_DEFAULT_COLOUR
 
 class minimapWindow:
     def __init__(self,window,board):
 
-        minimapWindow = tk.Toplevel(window)
+        minimapWindow = tk.Toplevel(window, highlightthickness=2)
         minimapWindow.grab_set()
         minimapWindow.focus_force()
         minimapWindow.title("Minimap")
+        minimapWindow.wm_overrideredirect(True)
+
+        minimapTopBar = tk.Frame(minimapWindow,bg=FRAME_TOP_BAR_COLOUR)
+        minimapMainFrame = tk.Frame(minimapWindow)
+
+        minimapTopBar.pack(fill="x")
+        minimapMainFrame.pack()
+
+        tk.Label(minimapTopBar,text ="Minimap",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
+
+        pixel = tk.PhotoImage(width=1, height=1)
+        button = tk.Button(minimapTopBar, text="Close",font=(TEXT_FONT,16), width=50,height=30,image=pixel, compound='c', command=minimapWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
+        button.image = pixel
+        button.pack(side="right")
 
         #used to determine size of grid and size of tiles
         minX, maxX, minY, maxY = 0,0,0,0
@@ -37,7 +51,7 @@ class minimapWindow:
         for i in range(gridSizeX):
             tileGridCanvasList.append([])
             for j in range(gridSizeY):
-                tileGridCanvasList[i].append(tk.Canvas(minimapWindow, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black",bg=EMPTY_COLOUR))
+                tileGridCanvasList[i].append(tk.Canvas(minimapMainFrame, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black",bg=EMPTY_COLOUR))
 
         for i in range(len(tileGridCanvasList)):
             for j in range(len(tileGridCanvasList[i])):
@@ -55,7 +69,7 @@ class minimapWindow:
     def __center_window(self, window):
         screen_width = window.winfo_screenwidth()
         screen_height = window.winfo_screenheight()
-        x = (screen_width - window.winfo_reqwidth()) // 2-WINDOW_CENTER_OFFSET
+        x = (screen_width - window.winfo_reqwidth()) // 2
         y = (screen_height - window.winfo_reqheight()) // 2
         window.geometry(f"+{x}+{y}")
 
