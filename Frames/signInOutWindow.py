@@ -16,12 +16,12 @@ class signInOutWindow:
         self.__signWindowMainFrame = tk.Frame(self.__signWindow,bg=FRAME_BG_DEFAULT_COLOUR)
 
         self.__signWindowTopBar.pack(fill="x",anchor="n")
-        self.__signWindowMainFrame.pack(fill="both",expand=True,anchor="n")
+        self.__signWindowMainFrame.pack(fill="both",expand=True,anchor="center")
 
         tk.Label(self.__signWindowTopBar,text ="Sign In",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
 
         pixel = tk.PhotoImage(width=1, height=1)
-        button = tk.Button(self.__signWindowTopBar, text="Close",font=(TEXT_FONT,16), width=50,height=30,image=pixel, compound='c', command=self.__signWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
+        button = tk.Button(self.__signWindowTopBar, text="❌",font=(TEXT_FONT,16), width=30,height=30,image=pixel, compound='c', command=self.__signWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
         button.image = pixel
         button.pack(side="right")
 
@@ -37,12 +37,12 @@ class signInOutWindow:
     def __displayInitFrame(self):
         self.__clearFrame()
         if self.__currentLogin == "":
-            tk.Button(self.__signWindowMainFrame,text = "Log In",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__loadLoginFrame).pack()
-            tk.Button(self.__signWindowMainFrame,text = "Sign Up",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__loadSignUpFrame).pack()
+            tk.Button(self.__signWindowMainFrame,text = "Log In",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__loadLoginFrame).place(relx=0.5,rely=0.33,anchor="center")
+            tk.Button(self.__signWindowMainFrame,text = "Sign Up",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__loadSignUpFrame).place(relx=0.5,rely=0.66,anchor="center")
         else:
             currentUser = self.__dbHander.getUsername(self.__currentLogin)
-            tk.Label(self.__signWindowMainFrame,text="Logged in as: "+currentUser,bg=FRAME_BG_DEFAULT_COLOUR,font=(TEXT_FONT,13)).pack()
-            tk.Button(self.__signWindowMainFrame,text = "Log Out",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__logOut).pack()
+            tk.Label(self.__signWindowMainFrame,text="Logged in as: "+currentUser,bg=FRAME_BG_DEFAULT_COLOUR,font=(TEXT_FONT,13)).place(relx=0.5,rely=0.33,anchor="center")
+            tk.Button(self.__signWindowMainFrame,text = "Log Out",bg=BUTTON_DEFAULT_COLOUR,font=(TEXT_FONT,13),command=self.__logOut).place(relx=0.5,rely=0.66,anchor="center")
 
     def __loadLoginFrame(self):
         self.__clearFrame()

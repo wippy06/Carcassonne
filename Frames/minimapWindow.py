@@ -19,7 +19,7 @@ class minimapWindow:
         tk.Label(minimapTopBar,text ="Minimap",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
 
         pixel = tk.PhotoImage(width=1, height=1)
-        button = tk.Button(minimapTopBar, text="Close",font=(TEXT_FONT,16), width=50,height=30,image=pixel, compound='c', command=minimapWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
+        button = tk.Button(minimapTopBar, text="❌",font=(TEXT_FONT,16), width=30,height=30,image=pixel, compound='c', command=minimapWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
         button.image = pixel
         button.pack(side="right")
 
@@ -51,7 +51,7 @@ class minimapWindow:
         for i in range(gridSizeX):
             tileGridCanvasList.append([])
             for j in range(gridSizeY):
-                tileGridCanvasList[i].append(tk.Canvas(minimapMainFrame, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black",bg=EMPTY_COLOUR))
+                tileGridCanvasList[i].append(tk.Canvas(minimapMainFrame, width=tileSize, height=tileSize,highlightthickness=1, highlightbackground="black",bg="grey94"))
 
         for i in range(len(tileGridCanvasList)):
             for j in range(len(tileGridCanvasList[i])):

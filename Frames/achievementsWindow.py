@@ -1,5 +1,6 @@
 import tkinter as tk
 from constants import FRAME_BG_DEFAULT_COLOUR, ACHIEVEMENTS_SIZE, TEXT_FONT,FRAME_TOP_BAR_COLOUR,BUTTON_DEFAULT_COLOUR
+from .achievementInfoWindow import achievementInfoWindow
 
 class achievementsWindow:
     def __init__(self, window, getLoginFunc, dbHandler, signInOutFunc):
@@ -19,10 +20,16 @@ class achievementsWindow:
 
         tk.Label(self.__achievementWindowTopBar,text ="Achievements",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
 
+        #used to set button size
         pixel = tk.PhotoImage(width=1, height=1)
-        button = tk.Button(self.__achievementWindowTopBar, text="Close",font=(TEXT_FONT,16), width=50,height=30,image=pixel, compound='c', command=self.__achievementWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
-        button.image = pixel
-        button.pack(side="right")
+
+        closeButton = tk.Button(self.__achievementWindowTopBar, text="❌",font=(TEXT_FONT,16),width=30,height=30,image=pixel, compound='c', command=self.__achievementWindow.destroy, bg = BUTTON_DEFAULT_COLOUR)
+        closeButton.image = pixel
+        closeButton.pack(side="right")
+
+        helpButton = tk.Button(self.__achievementWindowTopBar, text="?",font=(TEXT_FONT,16),width=30,height=30,image=pixel, compound='c', command=lambda:achievementInfoWindow(self.__achievementWindow), bg = BUTTON_DEFAULT_COLOUR)
+        helpButton.image = pixel
+        helpButton.pack(side="right")
 
         self.__center_window(self.__achievementWindow)
 
@@ -43,7 +50,7 @@ class achievementsWindow:
             gameListFrame.place(relx=0.5,rely=0.5,anchor="center")
 
             #canvas is used as frame can't be scrolled through
-            canvas = tk.Canvas(gameListFrame, height=500, width=600)
+            canvas = tk.Canvas(gameListFrame, height=ACHIEVEMENTS_SIZE[1]-100, width=ACHIEVEMENTS_SIZE[0]-100)
             canvas.pack(side="left")
 
             scrollBar = tk.Scrollbar(gameListFrame, orient="vertical", command=canvas.yview)
@@ -52,7 +59,7 @@ class achievementsWindow:
 
             #new frame to hold game frames
             canvasFrame = tk.Frame(canvas, highlightthickness=2)
-            canvas.create_window((0, 0), window=canvasFrame, anchor="nw", width=600)
+            canvas.create_window((0, 0), window=canvasFrame, anchor="nw", width=ACHIEVEMENTS_SIZE[0]-100)
 
             gameDict = self.__dbHandler.getCompletedUsersGamesAndAchievements(self.__getLogin())
 
@@ -68,6 +75,8 @@ class achievementsWindow:
             # Update scroll region to allow proper scrolling
             canvas.update_idletasks()
             canvas.configure(scrollregion=canvas.bbox("all"))
+
+            canvas.bind_all("<MouseWheel>", lambda event:canvas.yview_scroll(-1 if event.delta > 0 else 1, "units"))
 
         else:
             self.__loginButton = tk.Button(self.__achievementWindowMainFrame,text = "Login", font = (TEXT_FONT,13), bg = BUTTON_DEFAULT_COLOUR, command= self.__openLoginWindow)
