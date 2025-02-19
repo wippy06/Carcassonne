@@ -1,8 +1,8 @@
 {
-    "0":["Architects", "Collectively claim 15 cities"],
-    "1":["Travellers", "Collectively claim 20 roads"],
-    "2":["Monks", "Collectively claim 5 monestries"],
-    "3":["Collectors", "Collectively claim 30 features"],
-    "4":["Experts", "Collectively get 150 points"],
-    "5":["Meeple People", "End the game with 7 meeples each"]
+    "0":["Architects", "Collectively claim 20 cities", "🏰"],
+    "1":["Travellers", "Collectively claim 20 roads", "🐎"],
+    "2":["Monks", "Collectively claim 5 monestries", "🧘"],
+    "3":["Collectors", "Collectively claim 40 features", "💎"],
+    "4":["Experts", "Collectively get 200 points", "🧠"],
+    "5":["Meeple People", "End the game with 7 meeples each", "👥"]
 } 

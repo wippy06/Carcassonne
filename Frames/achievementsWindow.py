@@ -40,10 +40,10 @@ class achievementsWindow:
         if self.__getLogin() != "":
             #holds the canvas and the scroll bar
             gameListFrame = tk.Frame(self.__achievementWindowMainFrame)
-            gameListFrame.pack()
+            gameListFrame.place(relx=0.5,rely=0.5,anchor="center")
 
             #canvas is used as frame can't be scrolled through
-            canvas = tk.Canvas(gameListFrame, height=400, width=400)
+            canvas = tk.Canvas(gameListFrame, height=500, width=600)
             canvas.pack(side="left")
 
             scrollBar = tk.Scrollbar(gameListFrame, orient="vertical", command=canvas.yview)
@@ -52,13 +52,18 @@ class achievementsWindow:
 
             #new frame to hold game frames
             canvasFrame = tk.Frame(canvas, highlightthickness=2)
-            canvas.create_window((0, 0), window=canvasFrame, anchor="nw", width=400)
+            canvas.create_window((0, 0), window=canvasFrame, anchor="nw", width=600)
 
-            for gameID in self.__dbHandler.getAllCompletedUsersGames(self.__getLogin()):
-                frame = tk.Frame(canvasFrame, highlightthickness=1, highlightbackground="black")
-                frame.pack(fill="x")
-                label = tk.Label(frame, text="Game " + str(gameID[0]), font=(TEXT_FONT, 13))
-                label.pack(side="left")
+            gameDict = self.__dbHandler.getCompletedUsersGamesAndAchievements(self.__getLogin())
+
+            for gameID in gameDict.keys():
+                gameFrame = tk.Frame(canvasFrame, highlightthickness=1, highlightbackground="black",pady=5)
+                gameFrame.pack(fill="x")
+
+                tk.Label(gameFrame, text="Game " + str(gameID), font=(TEXT_FONT, 13)).pack(side="left")
+                
+                for symbol in gameDict[gameID]:
+                    tk.Label(gameFrame, text=symbol, font=(TEXT_FONT, 13),width=2).pack(side="right")
 
             # Update scroll region to allow proper scrolling
             canvas.update_idletasks()

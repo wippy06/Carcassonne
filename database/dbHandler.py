@@ -52,7 +52,8 @@ class dbHandler:
             CREATE TABLE IF NOT EXISTS Achievement(
             AchievementID INTEGER PRIMARY KEY AUTOINCREMENT,
             Name TEXT UNIQUE NOT NULL,
-            Description TEXT UNIQUE NOT NULL);
+            Description TEXT UNIQUE NOT NULL,
+            Symbol CHARACTER(1) UNIQUE NOT NULL);
         """)
 
         #creates GameAchievement table, linking table for many to many relationship with game and achievement tables
@@ -61,12 +62,12 @@ class dbHandler:
             GameID INTEGER NOT NULL,
             AchievementID INTEGER NOT NULL,
             PRIMARY KEY (GameID, AchievementID),        
-            FOREIGN KEY (GameID) REFERENCES Game(GameID)
+            FOREIGN KEY (GameID) REFERENCES Game(GameID),
             FOREIGN KEY (AchievementID) REFERENCES Achievement(AchievementID));
         """)
 
         #inserting achievement data into database
-        achievementData = open("jsonFiles/achievements.json", "r")
+        achievementData = open("jsonFiles/achievements.json", "r", encoding="utf-8")
         achievementDataDict = json.loads(achievementData.read())
         achievementData.close()
 
@@ -74,9 +75,9 @@ class dbHandler:
             #try except in case achievement already in db
             try:
                 self.__cur.execute("""
-                    INSERT INTO Achievement (Name, Description)
-                    VALUES (?,?);
-                """, (achievementDataDict[i][0], achievementDataDict[i][1],))
+                    INSERT INTO Achievement (Name, Description, Symbol)
+                    VALUES (?,?,?);
+                """, (achievementDataDict[i][0], achievementDataDict[i][1],achievementDataDict[i][2],))
                 self.__db.commit()
             except:
                 pass
@@ -167,7 +168,8 @@ class dbHandler:
             SELECT GameID
             FROM Game
             WHERE UserID = ?
-            AND Playable = 1;
+            AND Playable = 1
+            ORDER BY GameID ASC;
         """, (userID,))
         GameIDs = self.__cur.fetchall()
 
@@ -251,11 +253,28 @@ class dbHandler:
         except:
             pass
 
-    def getAllCompletedUsersGames(self, UserID):
+    def getCompletedUsersGamesAndAchievements(self, UserID):
         self.__cur.execute("""
             SELECT GameID
             FROM Game
             WHERE UserID = ?
-            AND Playable = 0;
+            AND Playable = 0
+            ORDER BY GameID ASC;
         """, (UserID,))
-        return self.__cur.fetchall()
+        
+        gameIDs = [x[0] for x in self.__cur.fetchall()]
+
+        gameSymbolDict = {}
+
+        for gameID in gameIDs:
+            self.__cur.execute("""
+            SELECT Achievement.Symbol
+            FROM Achievement, GameAchievement
+            WHERE GameAchievement.GameID = ?
+            AND Achievement.AchievementID = GameAchievement.AchievementID
+            ORDER BY Achievement.AchievementID ASC;
+            """, (gameID,))
+
+            gameSymbolDict[gameID] = [x[0] for x in self.__cur.fetchall()]
+
+        return gameSymbolDict

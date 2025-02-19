@@ -6,7 +6,7 @@ class achievement:
 
     #methods to work out which achievements have been completed
     def getArchitects(self):
-        if self.__claimNumDict["Castle"] < 15:
+        if self.__claimNumDict["Castle"] < 20:
             return False
         return True
     
@@ -25,12 +25,12 @@ class achievement:
         for player in self.__playerDict.values():
             scoreTotal += player.getScore()
 
-        if scoreTotal < 150:
+        if scoreTotal < 200:
             return False
         return True
     
     def getCollectors(self):
-        if self.__claimNumDict["Castle"] + self.__claimNumDict["Road"] + self.__claimNumDict["Monestry"] < 30:
+        if self.__claimNumDict["Castle"] + self.__claimNumDict["Road"] + self.__claimNumDict["Monestry"] < 40:
             return False
         return True
     

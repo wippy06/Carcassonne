@@ -35,10 +35,10 @@ class mainWindow:
         self.__pixel = tk.PhotoImage(width=1, height=1)
 
         tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
-        tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=30,height=30,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
-        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16), width=30,height=30,image=self.__pixel, compound='c', command=self.__displaySignInOut, bg = BUTTON_DEFAULT_COLOUR)
+        tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(self.__topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=32,height=32,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
+        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', bg = BUTTON_DEFAULT_COLOUR)
 
         self.__dbHandler = dbHandler()
 
@@ -68,6 +68,7 @@ class mainWindow:
 
     def __displayStartFrame(self):
         self.__signInOutButton.pack(side="right")
+        self.__signInOutButton.config(command=self.__displaySignInOut)
         startFrame(self.__window, self.__bottomFrame, self.__displaySelectGameFrame)
 
     def __displaySelectGameFrame(self):
