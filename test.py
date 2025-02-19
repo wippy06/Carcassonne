@@ -1,70 +1,39 @@
-import sqlite3
+import tkinter as tk
 
-with sqlite3.connect("testDatabase.db") as db:
-            cur = db.cursor()
+# Create the main window
+root = tk.Tk()
+root.title("Scrollable Canvas with Frames")
 
-#creates User table
-cur.execute("""       
-CREATE TABLE IF NOT EXISTS User(                    
-UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-Username TEXT UNIQUE NOT NULL,
-PasswordHash TEXT UNIQUE NOT NULL);                                           
-""")
+# Create a frame to hold the canvas and scrollbar
+main_frame = tk.Frame(root)
+main_frame.pack(fill="both", expand=True)
 
-#creates Game table
-cur.execute("""       
-CREATE TABLE IF NOT EXISTS Game(                    
-GameID INTEGER PRIMARY KEY AUTOINCREMENT,
-Seed INTEGER NOT NULL,
-Playable BOOLEAN NOT NULL,
-UserID INTEGER UNIQUE NOT NULL,
-FOREIGN KEY (UserID) REFERENCES User(UserID));                                           
-""")
+# Create a canvas inside the main frame
+canvas = tk.Canvas(main_frame, height=400, width=400)
+canvas.pack(side="left", fill="both", expand=True)
 
-#creates Player table
-cur.execute("""       
-CREATE TABLE IF NOT EXISTS Player(                    
-PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
-PlayerName TEXT NOT NULL,
-Type TEXT NOT NULL,
-GameID INTEGER UNIQUE NOT NULL,
-FOREIGN KEY (GameID) REFERENCES Game(GameID));                                           
-""")
+# Create a vertical scrollbar and link it to the canvas
+scrollbar = tk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+scrollbar.pack(side="right", fill="y")
+canvas.configure(yscrollcommand=scrollbar.set)
 
-#creates Move table
-cur.execute("""       
-CREATE TABLE IF NOT EXISTS Move(                    
-MoveID INTEGER PRIMARY KEY AUTOINCREMENT,
-Rotations INTEGER NOT NULL,
-Meeple TEXT NOT NULL,
-XCoord INTEGER NOT NULL,
-YCoord INTEGER NOT NULL,
-GameID INTEGER UNIQUE NOT NULL,
-FOREIGN KEY (GameID) REFERENCES Game(GameID));                                           
-""")
+# Create an inner frame inside the canvas
+inner_frame = tk.Frame(canvas)
+inner_window = canvas.create_window((0, 0), window=inner_frame, anchor="nw")
 
-def newGame(seed,userID):
-    #try except in case user already in db
-    try:
-        cur.execute("""
-        INSERT INTO Game (Seed, Playable, UserID) 
-        VALUES (?, 1, ?);
-        """, (seed, userID))
-        db.commit()
-        return True
-    except:
-        return False
-    
-def getPlayableGames(userID):
-    cur.execute("""
-        SELECT GameID
-        FROM Game
-        WHERE UserID = ?
-        AND Playable = 1;
-    """, (userID))
-    GameIDs = cur.fetchall()
+# Function to update the scroll region when inner_frame changes size
+def update_scroll_region(event=None):
+    canvas.configure(scrollregion=canvas.bbox("all"))
 
-    return GameIDs
+# Bind the update function to inner_frame resizing
+inner_frame.bind("<Configure>", update_scroll_region)
 
-print(getPlayableGames(str(0)))
+# Add multiple frames inside the inner_frame
+for i in range(20):  # Example: Creating 20 frames
+    frame = tk.Frame(inner_frame, bg="lightblue", height=50, width=380)
+    label = tk.Label(frame, text=f"Frame {i+1}")
+    label.pack(pady=10)
+    frame.pack(pady=5, padx=10)
 
+# Start the Tkinter main loop
+root.mainloop()

@@ -1,9 +1,8 @@
 {
-    "0":["Flawless Victory", "Win without your oppenents getting any points"],
-    "1":["Architect", "Claim 10 cities"],
-    "2":["Traveller", "Claim 10 roads"],
-    "3":["Worshiper", "Claim 5 monestries"],
-    "4":["Collector", "Claim 20 features"],
-    "5":["Expert", "Get 100 points"],
-    "6":["Meeple People", "End the game with 7 meeples"]
+    "0":["Architects", "Collectively claim 15 cities"],
+    "1":["Travellers", "Collectively claim 20 roads"],
+    "2":["Monks", "Collectively claim 5 monestries"],
+    "3":["Collectors", "Collectively claim 30 features"],
+    "4":["Experts", "Collectively get 150 points"],
+    "5":["Meeple People", "End the game with 7 meeples each"]
 } 

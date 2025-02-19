@@ -7,6 +7,7 @@ from .tile import tile
 from .tileStack import tileStack
 from .player import player
 from .bot import bot
+from .achievement import achievement
 
 class game:
     def __init__(self, gameID, gameOverFunc, dbHandler):
@@ -40,6 +41,13 @@ class game:
         self.__currentRotations = 0
         self.__currentClaimSide = ""
 
+        #for keeping track of achievements
+        self.__claimNumDict = {
+            "Castle":0,
+            "Road":0,
+            "Monestry":0
+        }
+
     def setupBoard(self,canvas,redrawFrameFunc):
         #drawing start tile
         self.drawTile(canvas,False)
@@ -56,6 +64,7 @@ class game:
             redrawFrameFunc()
 
             if self.checkGameEnd():
+                self.__runGameEnd()
                 break
      
     def drawTile(self,canvas,preview):
@@ -164,9 +173,14 @@ class game:
         #moves encoded as string "rotations,meeplePlacement,xCoord,yCoord"
         for i in range(int(move[0])):
             self.__tileStack.getItem().rotate()
+
         if move[1] != "":
             self.claimFeature(move[1])
             self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
+
+            #update achievement claim dict
+            self.__claimNumDict[self.__tileStack.getItem().getSide(move[1])] += 1
+
         self.__board.placeTile(self.__tileStack.getItem(), (int(move[2]),int(move[3])))               
 
         #score
@@ -265,7 +279,7 @@ class game:
 
     def __mergeSort(self, arr):
         #used to sort tiles based on tileOrder
-        #merge sort used as number of tiles needed to be sorted can potentially be large
+        #merge sort used as number of tiles needed to be sorted can potentially be large if expansion packs added in future
         #uses recursion
 
         #base case for divisions
@@ -273,40 +287,40 @@ class game:
             return arr
         
         #split list in half, mid is middle and fills left and right
-        mid = len(arr) // 2
+        middle = len(arr) // 2
         leftHalf = []
         rightHalf = []
 
-        for i in range(mid):
+        for i in range(middle):
             leftHalf.append(arr[i])
 
-        for i in range(len(arr)-mid):
-            rightHalf.append(arr[i + mid])
+        for i in range(len(arr)-middle):
+            rightHalf.append(arr[i + middle])
 
         #recursion for splits
         leftHalf = self.__mergeSort(leftHalf)
         rightHalf = self.__mergeSort(rightHalf)
         
         sortedList = []
-        i= 0
-        j= 0
+        iLeft= 0
+        iRight= 0
         
-        #merging list using while loop, i,j as index for left and right
-        while i < len(leftHalf) and j < len(rightHalf):
+        #merging list using while loop, iLeft, iRight as index for left and right
+        while iLeft < len(leftHalf) and iRight < len(rightHalf):
             #puts in higher score to sortedList
-            if leftHalf[i].getScore()>=rightHalf[j].getScore():
-                sortedList.append(leftHalf[i])
-                i+=1
+            if leftHalf[iLeft].getScore()>=rightHalf[iRight].getScore():
+                sortedList.append(leftHalf[iLeft])
+                iLeft+=1
             else:
-                sortedList.append(rightHalf[j])
-                j+=1
+                sortedList.append(rightHalf[iRight])
+                iRight+=1
 
         #appends remaining ends of lists
-        for index in range(len(leftHalf)-i):
-            sortedList.append(leftHalf[index + i])
+        for i in range(len(leftHalf)-iLeft):
+            sortedList.append(leftHalf[i + iLeft])
 
-        for index in range(len(rightHalf)-j):
-            sortedList.append(rightHalf[index + j])
+        for i in range(len(rightHalf)-iRight):
+            sortedList.append(rightHalf[i + iRight])
 
         return sortedList
     
@@ -350,20 +364,43 @@ class game:
 
     def checkGameEnd(self):
         if self.__tileStack.emptyCheck():
-            boardDict = self.__board.getBoard()
-
-            #cycle through all tiles on board, if tiles have a meeple score that feature
-            for tile in list(boardDict.keys()):
-                if boardDict[tile].getClaimingPlayer() != "":
-                    self.__scoreFeature(tile,boardDict[tile].getClaimedSide(),True)
-
-            #disable game
-            self.__dbHandler.disableGame(self.__gameID)
-
-            self.__gameOver()
-
             return True
         return False
+    
+    def __runGameEnd(self):
+        boardDict = self.__board.getBoard()
+
+        self.updateRecord()
+
+        #check achievements
+        achievementObj = achievement(self.__playerDict, self.__claimNumDict)
+
+        achievementDict = {
+            "Architects":achievementObj.getArchitects(),
+            "Travellers":achievementObj.getTravellers(),
+            "Monks":achievementObj.getMonks(),
+            "Collectors":achievementObj.getCollectors(),
+            "Experts":False,
+            "Meeple People":achievementObj.getMeeplePeople()
+        }
+
+        #cycle through all tiles on board, if tiles have a meeple score that feature
+        for tile in list(boardDict.keys()):
+            if boardDict[tile].getClaimingPlayer() != "":
+                self.__scoreFeature(tile,boardDict[tile].getClaimedSide(),True)
+
+        #done separately as final scoring needs to be completed before expert achievement is evaluated
+        achievementDict["Experts"] = achievementObj.getExperts()
+
+        #link achievements to game
+        for achievementName in achievementDict.keys():
+            if achievementDict[achievementName] == True:
+                self.__dbHandler.newGameAchievement(self.__gameID, achievementName)
+
+        #disable game
+        self.__dbHandler.disableGame(self.__gameID)
+
+        self.__gameOver()
     
     def getCurrentCoord(self):
         return self.__currentCoord
@@ -393,6 +430,9 @@ class game:
             if self.__currentClaimSide != "":
                 self.__playerDict[self.__playerKeys[0]].alterMeepleCount(-1)
 
+                #update achievement claim dict
+                self.__claimNumDict[self.__tileStack.getItem().getSide(self.__currentClaimSide)] += 1
+
             #score
             self.__scoreTiles(self.__currentCoord)
 
@@ -406,6 +446,7 @@ class game:
 
             self.__nextPlayer()
             self.__tileStack.stackPop()
+
             if not self.checkGameEnd():
                 #check if there is a valid placment for next tile
                 if not self.__board.checkIfValidPlacements(self.__tileStack.getItem()):
@@ -414,12 +455,14 @@ class game:
             #logic to handle bot moves and game over state
             while self.__checkIfBot():
                 if self.checkGameEnd():
+                    self.__runGameEnd()
                     return True
                 
                 updateDisplay()
                 self.__generatePlacement()
 
             if self.checkGameEnd():
+                self.__runGameEnd()
                 return True
             
             updateDisplay()

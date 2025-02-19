@@ -77,6 +77,7 @@ class dbHandler:
                     INSERT INTO Achievement (Name, Description)
                     VALUES (?,?);
                 """, (achievementDataDict[i][0], achievementDataDict[i][1],))
+                self.__db.commit()
             except:
                 pass
 
@@ -135,12 +136,8 @@ class dbHandler:
         """, (seed, userID,))
         #not committed in case user exits program before selecting players
 
-        #gets game id of just added game and returns it
-        self.__cur.execute("""
-            SELECT MAX(GameID)
-            FROM Game;
-        """)
-        return self.__cur.fetchone()[0]
+        #returns ID of new game
+        return self.__cur.lastrowid
 
     def disableGame(self,gameID):
         self.__cur.execute("""
@@ -159,6 +156,9 @@ class dbHandler:
         """, (gameID,))
         self.__cur.execute("""
             DELETE FROM Move WHERE GameID = ?;
+        """, (gameID,))
+        self.__cur.execute("""
+            DELETE FROM GameAchievement WHERE GameID = ?;
         """, (gameID,))
         self.__db.commit()
 
@@ -232,3 +232,21 @@ class dbHandler:
             VALUES (?, ?, ?, ?, ?, ?)
         """, (order, rotations, meeple, xCoord, yCoord, gameID,))
         self.__db.commit()
+
+    def newGameAchievement(self, gameID, achievementName):
+        self.__cur.execute("""
+            SELECT AchievementID
+            FROM Achievement
+            WHERE Name = ?;
+        """, (achievementName,))
+
+        achievementID = self.__cur.fetchone()[0]
+
+        try:
+            self.__cur.execute("""
+                INSERT INTO GameAchievement(GameID, AchievementID)
+                VALUES (?, ?);
+            """, (gameID,achievementID))
+            self.__db.commit()
+        except:
+            pass

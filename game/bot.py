@@ -32,7 +32,7 @@ class bot(player):
             placementScore = 0
 
             for side in sideOptions:
-                if tile.getSide(side) != None and side not in completedSides:
+                if tile.getSide(side) != None and tile.getSide(side) != "Village" and side not in completedSides:
                     placementScore += self.__evaluateFeature(board,coord,side,turnCount) 
 
                 #done to remove double counting a feature if the sides of a tile are connected
