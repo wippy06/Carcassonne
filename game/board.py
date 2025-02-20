@@ -31,7 +31,7 @@ class board:
                 meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer()
 
         else:
-            tileSides,completed,meeples = self.__generateFeatureFeatures(coord,side,[],True,{})
+            tileSides,completed,meeples = self.__generateFeatureFeatures(coord,side,set(),True,{})
             
             tiles = []
             for tileSide in tileSides:
@@ -46,52 +46,53 @@ class board:
 
         return feature(featureType,tiles,meeples,CoAs,completed)
     
-    def __generateFeatureFeatures(self,coord,side,tileList, completed, meeples):
+    def __generateFeatureFeatures(self,coord,side,tileSet, completed, meeples):
         #recursive algorithm, acts as depth first search
         #nodes as sides of tile
         #edges as connections between tiles and tile sides
 
-        #tileList acts as visited nodes list
-        #base case when coord is in tileList
-        if (coord,side) not in tileList and coord in list(self.__board.keys()):
-            tileList.append((coord,side))
+        #tileSet acts as visited nodes list
+        #set to remove duplicates
+        #base case when coord is in tileSet
+        if (coord,side) not in tileSet and coord in self.__board:
+            tileSet.add((coord,side))
+            currentTile = self.__board[coord]
 
-            connectionsList = self.__board[coord].getConnections(side)
-            connectionsList.insert(0,side)
+            connectionsList = [side] + currentTile.getConnections(side)
 
             #append results for side and connections on tiles, for loop used incase of multiple connected sides
             for connections in connectionsList:
                 if connections == "North":
-                    result = self.__generateFeatureFeatures((coord[0],coord[1]-1),"South",tileList, completed,meeples)
-                    tileList += result[0]
+                    result = self.__generateFeatureFeatures((coord[0],coord[1]-1),"South",tileSet, completed,meeples)
+                    tileSet.update(result[0])
                     completed = result[1]
                     meeples.update(result[2])
                 elif connections == "South":
-                    result = self.__generateFeatureFeatures((coord[0],coord[1]+1),"North",tileList, completed,meeples)
-                    tileList += result[0]
+                    result = self.__generateFeatureFeatures((coord[0],coord[1]+1),"North",tileSet, completed,meeples)
+                    tileSet.update(result[0])
                     completed = result[1]
                     meeples.update(result[2])
                 elif connections == "East":
-                    result = self.__generateFeatureFeatures((coord[0]+1,coord[1]),"West",tileList, completed,meeples)
-                    tileList += result[0]
+                    result = self.__generateFeatureFeatures((coord[0]+1,coord[1]),"West",tileSet, completed,meeples)
+                    tileSet.update(result[0])
                     completed = result[1]
                     meeples.update(result[2])
                 elif connections == "West":
-                    result = self.__generateFeatureFeatures((coord[0]-1,coord[1]),"East",tileList, completed,meeples)
-                    tileList += result[0]
+                    result = self.__generateFeatureFeatures((coord[0]-1,coord[1]),"East",tileSet, completed,meeples)
+                    tileSet.update(result[0])
                     completed = result[1]
                     meeples.update(result[2])
 
             #updating meeple dictionary, key as (coord,side) to prevent duplication of counting
-            if self.__board[coord].getClaimingPlayer() != "":
-                if side == self.__board[coord].getClaimedSide() or side in self.__board[coord].getConnections(self.__board[coord].getClaimedSide()):
-                    meeples[(coord,self.__board[coord].getClaimedSide())] = self.__board[coord].getClaimingPlayer()
+            if currentTile.getClaimingPlayer() != "":
+                if side == currentTile.getClaimedSide() or side in currentTile.getConnections(currentTile.getClaimedSide()):
+                    meeples[(coord,currentTile.getClaimedSide())] = currentTile.getClaimingPlayer()
 
         #storing completed state in case of scoring feature later on
-        if coord not in list(self.__board.keys()):
+        if coord not in self.__board:
             completed = False 
         
-        return list(set(tileList)),completed,meeples
+        return tileSet,completed,meeples
 
     #programming to interface
     def placeTile(self,tile,coordinate):

@@ -1,4 +1,1 @@
-create hash function
-better last dbhandler function
-inheritance for windows
 show rules?

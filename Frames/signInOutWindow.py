@@ -38,6 +38,9 @@ class signInOutWindow(subwindowBase):
 
         tk.Button(self._mainFrame,text = "Return",font=(TEXT_FONT,13),command=self.__displayInitFrame).pack()
         tk.Button(self._mainFrame,text = "Confirm",font=(TEXT_FONT,13),command=self.__confirmSignIn).pack()
+
+        self.__errorMessage = tk.Label(self._mainFrame,text="",font=(TEXT_FONT,13),bg = FRAME_BG_DEFAULT_COLOUR)
+        self.__errorMessage.pack()
         
     def __loadSignUpFrame(self):
         self.__clearFrame()
@@ -57,6 +60,9 @@ class signInOutWindow(subwindowBase):
         tk.Button(self._mainFrame,text = "Return",font=(TEXT_FONT,13),command=self.__displayInitFrame).pack()
         tk.Button(self._mainFrame,text = "Confirm",font=(TEXT_FONT,13),command=self.__confirmSignUp).pack()
 
+        self.__errorMessage = tk.Label(self._mainFrame,text="",font=(TEXT_FONT,13),bg = FRAME_BG_DEFAULT_COLOUR)
+        self.__errorMessage.pack()
+
     def __confirmSignIn(self):
         #takes username and password then looks up in database
         username = self.__usernameEntry.get()
@@ -68,6 +74,8 @@ class signInOutWindow(subwindowBase):
         if userID and self.__dbHander.checkPassword(username,hashedPassword):
             self.__loginFunc(userID)
             self._window.destroy()
+        else:
+            self.__errorMessage.config(text="Incorrect username or password")
 
     def __confirmSignUp(self):
         username = self.__usernameEntry.get()
@@ -75,19 +83,46 @@ class signInOutWindow(subwindowBase):
         confirmPassword = self.__confirmPasswordEntry.get()
 
         #username has to be alphanumeric with space and - as possible special characters
+        #username has to be between 3 and 20 characters
         #password has to be alphanumeric with ! % _ + - = < > ? $ & @ as possible special characters
         #password has to be longer than 8 chars
-        if password == confirmPassword and re.search("^([a-z]|[A-Z]|[0-9])([a-z]|[A-Z]|[0-9]|( |-)([a-z]|[A-Z]|[0-9]))*$",username) and re.search("^([a-z]|[A-Z]|[0-9]|!|%|_|\+|-|=|<|>|\?|\$|&|@)+$",password) and len(password)>=8:
-            hashedPassword = self.__hashPassword(password)
+        if len(username)>=3 and len(username)<=20:
+            if re.search("^([a-z]|[A-Z]|[0-9])([a-z]|[A-Z]|[0-9]|( |-)([a-z]|[A-Z]|[0-9]))*$",username):
+                if len(password)>=8:
+                    if  re.search("^([a-z]|[A-Z]|[0-9]|!|%|_|\+|-|=|<|>|\?|\$|&|@)+$",password):
+                        if password == confirmPassword:
+                            hashedPassword = self.__hashPassword(password)
 
-            if self.__dbHander.newUser(username,hashedPassword):
-                userID = self.__dbHander.getUserID(username)
-                self.__loginFunc(userID)
-                self._window.destroy()                 
+                            if self.__dbHander.newUser(username,hashedPassword):
+                                userID = self.__dbHander.getUserID(username)
+                                self.__loginFunc(userID)
+                                self._window.destroy()
+                            else:
+                                self.__errorMessage.config(text="Username is already taken")
+                        else:
+                            self.__errorMessage.config(text="Passwords are not the same")
+                    else:
+                        self.__errorMessage.config(text="Password must be alphanumeric and can\nonly contain:! % _ + - = < > ? $ & @")
+                else:
+                    self.__errorMessage.config(text="Password is not longer than 8 characters")
+            else:
+                self.__errorMessage.config(text="Username must be alphanumeric and can\nonly contain: space and -")
+        else:
+            self.__errorMessage.config(text="Username is not between 3 and 20 characters")
 
     def __hashPassword(self,password):
-        #to do make hash function
-        return password
+        hashedPassword = 0
+
+        #random numbers hard coded into program
+        #randomLargePrimeNumber ensures hash is 11 chars long
+        randomPrimeList1 = [17,71,43,41,37,73,19,97,67,29]
+        randomPrimeList2 = [79,17,61,51,37,41,73,67,73,59]
+        randomLargePrimeNumber = 87654219371
+
+        for i in range(len(password)):
+            hashedPassword = (hashedPassword * randomPrimeList1[i%len(randomPrimeList1)] + ord(password[i])*randomPrimeList2[i%len(randomPrimeList1)]) % randomLargePrimeNumber
+
+        return hashedPassword
 
     def __logOut(self):
         self.__clearFrame()

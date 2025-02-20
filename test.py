@@ -1,50 +1,13 @@
-import tkinter as tk
+def hashPassword(password):
+    hashedPassword = 0
 
-class HoverPopup:
-    def __init__(self, widget, text):
-        self.widget = widget
-        self.text = text
-        self.popup = None
+    randomPrimeList1 = [17,71,43,41,37,73,19,97,67,29]
+    randomPrimeList2 = [79,17,61,51,37,41,73,67,73,59]
+    randomLargePrimeNumber = 87654219371
 
-        # Bind events to show/hide tooltip
-        widget.bind("<Enter>", self.show_popup)
-        widget.bind("<Leave>", self.hide_popup)
+    for i in range(len(password)):
+        hashedPassword = (hashedPassword * randomPrimeList1[i%len(randomPrimeList1)] + ord(password[i])*randomPrimeList2[i%len(randomPrimeList1)]) % randomLargePrimeNumber
 
-    def show_popup(self, event):
-        """Create a popup when mouse enters the widget."""
-        if self.popup:
-            return  # Prevent multiple popups
+    return hashedPassword
 
-        # Create the popup window
-        self.popup = tk.Toplevel(self.widget)
-        self.popup.wm_overrideredirect(True)  # Remove window decorations
-
-        # Position the popup near the cursor
-        x, y, _, _ = self.widget.bbox("insert")
-        x += self.widget.winfo_rootx() + 20
-        y += self.widget.winfo_rooty() + 20
-        self.popup.wm_geometry(f"+{x}+{y}")
-
-        # Add text label to popup
-        label = tk.Label(self.popup, text=self.text, bg="yellow", relief="solid", borderwidth=1, padx=5, pady=2)
-        label.pack()
-
-    def hide_popup(self, event):
-        """Destroy the popup when the mouse leaves the widget."""
-        if self.popup:
-            self.popup.destroy()
-            self.popup = None
-
-# Create the main application window
-root = tk.Tk()
-root.title("Hover Popup Example")
-
-# Create a label
-label = tk.Label(root, text="Hover over me", font=("Arial", 14), fg="blue")
-label.pack(pady=20)
-
-# Attach popup tooltip to the label
-HoverPopup(label, "This is a tooltip!")
-
-# Run the Tkinter event loop
-root.mainloop()
+print(hashPassword("12345678"))

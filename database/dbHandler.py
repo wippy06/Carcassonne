@@ -9,8 +9,8 @@ class dbHandler:
         self.__cur.execute("""       
             CREATE TABLE IF NOT EXISTS User(                    
             UserID INTEGER PRIMARY KEY AUTOINCREMENT,
-            Username TEXT UNIQUE NOT NULL,
-            PasswordHash TEXT UNIQUE NOT NULL);                                           
+            Username VARCHAR(20) UNIQUE NOT NULL,
+            PasswordHash INTEGER NOT NULL);                                           
         """)
 
         #creates Game table

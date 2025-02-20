@@ -83,7 +83,7 @@ class selectPlayersFrame:
                 validNames = False
                 break
 
-        if len(nameList) >= 2 and len(list(set(nameList))) == len(nameList) and len(list(set(orderList))) == len(orderList) and not(0 in orderList) and validNames:
+        if len(nameList) >= 2 and len(set(nameList)) == len(nameList) and len(set(orderList)) == len(orderList) and not(0 in orderList) and validNames:
             self.__continue()
 
     def __bubbleSort(self, playerList):
