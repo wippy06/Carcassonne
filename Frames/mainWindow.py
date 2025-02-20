@@ -15,6 +15,8 @@ class mainWindow:
         #set tk window vars
         self.__window = tk.Tk()
         self.__window.attributes("-fullscreen", START_FULLSCREEN)
+        self.__window.grab_set()
+        self.__window.focus_force()
 
         self.__window.title("Carcassonne")
 

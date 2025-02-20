@@ -254,27 +254,24 @@ class dbHandler:
             pass
 
     def getCompletedUsersGamesAndAchievements(self, UserID):
+
         self.__cur.execute("""
-            SELECT GameID
-            FROM Game
-            WHERE UserID = ?
-            AND Playable = 0
-            ORDER BY GameID ASC;
+        SELECT Game.GameID, Achievement.Symbol
+        FROM GAME
+        LEFT JOIN GameAchievement
+        ON Game.GameID = GameAchievement.GameID
+        LEFT JOIN Achievement
+        ON GameAchievement.AchievementID = Achievement.AchievementID
+        WHERE Game.UserID = ?;
         """, (UserID,))
-        
-        gameIDs = [x[0] for x in self.__cur.fetchall()]
 
         gameSymbolDict = {}
+        for record in self.__cur.fetchall():
+            if record[0] not in gameSymbolDict:
+                gameSymbolDict[record[0]]=[]
 
-        for gameID in gameIDs:
-            self.__cur.execute("""
-            SELECT Achievement.Symbol
-            FROM Achievement, GameAchievement
-            WHERE GameAchievement.GameID = ?
-            AND Achievement.AchievementID = GameAchievement.AchievementID
-            ORDER BY Achievement.AchievementID ASC;
-            """, (gameID,))
-
-            gameSymbolDict[gameID] = [x[0] for x in self.__cur.fetchall()]
+            for symbol in record[1:]:
+                gameSymbolDict[record[0]].append(symbol)
 
         return gameSymbolDict
+            

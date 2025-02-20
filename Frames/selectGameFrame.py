@@ -49,7 +49,7 @@ class selectGameFrame:
             self.__loginButton.place(relx=0.5,rely=0.5,anchor="center")
 
     def __openLoginWindow(self):
-        self.__frame.winfo_toplevel().wait_window(self.__signInOutFunc().getSignWindow())
+        self.__frame.winfo_toplevel().wait_window(self.__signInOutFunc().getWindow())
         self.__initiateDisplayFrame()
 
     def __createSlotDisplay(self, gameID, frame):

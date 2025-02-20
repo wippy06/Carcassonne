@@ -1,43 +1,31 @@
 import tkinter as tk
-from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT,FRAME_BG_DEFAULT_COLOUR,FRAME_TOP_BAR_COLOUR
+from constants import PAUSE_SIZE, BUTTON_DEFAULT_COLOUR,TEXT_FONT
 from .controlsWindow import controlsWindow
+from .subwindowBase import subwindowBase
 
-class pauseWindow:
+class pauseWindow(subwindowBase):
     def __init__(self, window, isPlaying, saveFunc):
-        #opens new window and sets to root to prevent user from accessing main window
+        self.__mainWindow = window
+        self.__isPlaying = isPlaying
+        self.__saveFunc = saveFunc
 
-        self.__window = window
-        self.__pauseWindow = tk.Toplevel(self.__window,bg=FRAME_BG_DEFAULT_COLOUR,highlightthickness=2)
-        self.__pauseWindow.grab_set()
-        self.__pauseWindow.focus_force()
-        self.__pauseWindow.title("Paused")
-        self.__pauseWindow.wm_overrideredirect(True)
+        super().__init__(window,"Paused")
 
-        self.__pauseWindow.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))
+    def _displayMainFrame(self):
+        self._window.geometry(str(PAUSE_SIZE[0])+"x"+str(PAUSE_SIZE[1]))
 
-        tk.Label(self.__pauseWindow,text ="Paused",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(fill="x")
-        tk.Button(self.__pauseWindow, text="Resume",font=(TEXT_FONT,13), command = self.__pauseWindow.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
+        tk.Button(self._mainFrame, text="Resume",font=(TEXT_FONT,13), command = self._window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
 
-        if isPlaying:
+        if self.__isPlaying:
             #displays if there is a current game being played
-            tk.Button(self.__pauseWindow, text="Save",font=(TEXT_FONT,13), command= saveFunc, bg = BUTTON_DEFAULT_COLOUR).pack()
+            tk.Button(self._mainFrame, text="Save",font=(TEXT_FONT,13), command= self.__saveFunc, bg = BUTTON_DEFAULT_COLOUR).pack()
 
-        tk.Button(self.__pauseWindow, text = "Controls",font=(TEXT_FONT,13), command = lambda: controlsWindow(self.__pauseWindow), bg = BUTTON_DEFAULT_COLOUR).pack()
+        tk.Button(self._mainFrame, text = "Controls",font=(TEXT_FONT,13), command = lambda: self.__openControlsWindow(), bg = BUTTON_DEFAULT_COLOUR).pack()
         
-        tk.Button(self.__pauseWindow, text = "Exit",font=(TEXT_FONT,13), command = self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
-        
-        self.__center_window(self.__pauseWindow)
+        tk.Button(self._mainFrame, text = "Exit",font=(TEXT_FONT,13), command = self.__mainWindow.destroy, bg = BUTTON_DEFAULT_COLOUR).pack()
 
-    def __openControls(self):
-        self.__pauseWindow.winfo_toplevel().wait_window(controlsWindow(self.__pauseWindow).getWindow())
-        self.__pauseWindow.grab_set()
-
-    def __center_window(self, window):
-        window.update_idletasks()
-        width = window.winfo_width()
-        height = window.winfo_height()
-        screen_width = window.winfo_screenwidth()
-        screen_height = window.winfo_screenheight()
-        x = (screen_width - width) // 2
-        y = (screen_height - height) // 2
-        window.geometry(f"{width}x{height}+{x}+{y}")
+    def __openControlsWindow(self):
+        #holds until controls into window closed
+        self._window.winfo_toplevel().wait_window(controlsWindow(self._window).getWindow())
+        self._window.grab_set()
+        self._window.focus_force()

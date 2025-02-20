@@ -1,3 +1,4 @@
 create hash function
-show controls and achievement meaning
+better last dbhandler function
+inheritance for windows
 show rules?
