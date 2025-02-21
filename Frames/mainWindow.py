@@ -21,14 +21,14 @@ class mainWindow:
         self.__window.title("Carcassonne")
 
         #set tk frames for tk children
-        self.__topBarFrame = tk.Frame(self.__window,bg=FRAME_TOP_BAR_COLOUR)
-        self.__topBarFrame.pack(side="top", fill ="x")
+        topBarFrame = tk.Frame(self.__window,bg=FRAME_TOP_BAR_COLOUR)
+        topBarFrame.pack(side="top", fill ="x")
 
-        self.__topBarFrameL = tk.Frame(self.__topBarFrame)
-        self.__topBarFrameL.pack(side="left")
+        topBarFrameL = tk.Frame(topBarFrame)
+        topBarFrameL.pack(side="left")
 
-        self.__topBarFrameR = tk.Frame(self.__topBarFrame)
-        self.__topBarFrameR.pack(side="right")
+        topBarFrameR = tk.Frame(topBarFrame)
+        topBarFrameR.pack(side="right")
 
         self.__bottomFrame = tk.Frame(self.__window,bg=FRAME_BG_DEFAULT_COLOUR)
         self.__bottomFrame.pack(side="top", fill="both",expand=True)
@@ -36,10 +36,10 @@ class mainWindow:
         #used to get buttons to be square
         self.__pixel = tk.PhotoImage(width=1, height=1)
 
-        tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
-        tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
-        tk.Button(self.__topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=32,height=32,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
-        self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', bg = BUTTON_DEFAULT_COLOUR)
+        tk.Label(topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
+        tk.Button(topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
+        tk.Button(topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=32,height=32,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
+        self.__signInOutButton = tk.Button(topBarFrameR,text="👤",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', bg = BUTTON_DEFAULT_COLOUR)
 
         self.__dbHandler = dbHandler()
 

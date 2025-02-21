@@ -17,35 +17,35 @@ class selectPlayersFrame:
         tk.Label(self.__mainFrame,text ="Choose players",font=(TEXT_FONT,30),bg=FRAME_BG_DEFAULT_COLOUR).place(relx=0.5,rely=0.08,anchor="center")
 
         #set up tk frames for children placement
-        self.__topLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topLFrame.place(relx=0.25,rely=0.3,anchor="center",width=250,height=250)
+        topLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        topLFrame.place(relx=0.25,rely=0.3,anchor="center",width=250,height=250)
 
-        self.__topMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topMFrame.place(relx=0.5,rely=0.3,anchor="center",width=250,height=250)
+        topMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        topMFrame.place(relx=0.5,rely=0.3,anchor="center",width=250,height=250)
 
-        self.__topRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__topRFrame.place(relx=0.75,rely=0.3,anchor="center",width=250,height=250)
+        topRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        topRFrame.place(relx=0.75,rely=0.3,anchor="center",width=250,height=250)
 
-        self.__bottomLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomLFrame.place(relx=0.25,rely=0.6,anchor="center",width=250,height=250)
+        bottomLFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        bottomLFrame.place(relx=0.25,rely=0.6,anchor="center",width=250,height=250)
 
-        self.__bottomMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomMFrame.place(relx=0.5,rely=0.6,anchor="center",width=250,height=250)
+        bottomMFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        bottomMFrame.place(relx=0.5,rely=0.6,anchor="center",width=250,height=250)
 
-        self.__bottomRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
-        self.__bottomRFrame.place(relx=0.75,rely=0.6,anchor="center",width=250,height=250)
+        bottomRFrame = tk.Frame(self.__mainFrame,borderwidth=1,relief="solid")
+        bottomRFrame.place(relx=0.75,rely=0.6,anchor="center",width=250,height=250)
 
         self.__playerList = []
 
         #instantiate player selection boxes and stored in a list for ease of access
-        self.__player1 = playerSelectBox(self.__topLFrame, self.__changeOrderButtons)
-        self.__player2 = playerSelectBox(self.__topMFrame, self.__changeOrderButtons)
-        self.__player3 = playerSelectBox(self.__topRFrame, self.__changeOrderButtons)
-        self.__player4 = playerSelectBox(self.__bottomLFrame, self.__changeOrderButtons)
-        self.__player5 = playerSelectBox(self.__bottomMFrame, self.__changeOrderButtons)
-        self.__player6 = playerSelectBox(self.__bottomRFrame, self.__changeOrderButtons)
+        player1 = playerSelectBox(topLFrame, self.__changeOrderButtons)
+        player2 = playerSelectBox(topMFrame, self.__changeOrderButtons)
+        player3 = playerSelectBox(topRFrame, self.__changeOrderButtons)
+        player4 = playerSelectBox(bottomLFrame, self.__changeOrderButtons)
+        player5 = playerSelectBox(bottomMFrame, self.__changeOrderButtons)
+        player6 = playerSelectBox(bottomRFrame, self.__changeOrderButtons)
         
-        self.__playerList = [self.__player1, self.__player2, self.__player3, self.__player4, self.__player5, self.__player6]
+        self.__playerList = [player1, player2, player3, player4, player5, player6]
 
         tk.Button(self.__mainFrame, text = "Continue",font=(TEXT_FONT,20), bd=4, command = lambda: self.__confirmChoice(), bg = BUTTON_DEFAULT_COLOUR).place(relx=0.5,rely=0.8,anchor="center")
 
@@ -90,7 +90,6 @@ class selectPlayersFrame:
         #standard bubble sort used for sorting players into playing order
         #includes optimisations to stop if no swaps
         #bubble sort used as number of items needed to be sorted is small
-
         for i in range(len(playerList)):
             swaps = False
 

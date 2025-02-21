@@ -25,28 +25,28 @@ class selectGameFrame:
 
         if self.__getLoginIDFunc() != "":
             #set tk frames for game slot options      
-            self.__slot1Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
-            self.__slot1Frame.place(relx=0.25,rely=0.5,anchor="center",width=300,height=300)
+            slot1Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+            slot1Frame.place(relx=0.25,rely=0.5,anchor="center",width=300,height=300)
 
-            self.__slot2Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
-            self.__slot2Frame.place(relx=0.5,rely=0.5,anchor="center",width=300,height=300)
+            slot2Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+            slot2Frame.place(relx=0.5,rely=0.5,anchor="center",width=300,height=300)
 
-            self.__slot3Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
-            self.__slot3Frame.place(relx=0.75,rely=0.5,anchor="center",width=300,height=300)
+            slot3Frame = tk.Frame(self.__frame,borderwidth=1,relief="solid")
+            slot3Frame.place(relx=0.75,rely=0.5,anchor="center",width=300,height=300)
 
-            self.__gameIDs = self.__dbHandler.getPlayableGames(self.__getLoginIDFunc())
+            gameIDs = self.__dbHandler.getPlayableGames(self.__getLoginIDFunc())
 
-            while len(self.__gameIDs) != 3:
-                self.__gameIDs.append("")
+            while len(gameIDs) != 3:
+                gameIDs.append("")
 
             #create button options for slots not done as for loop to specify tk frames
-            self.__createSlotDisplay(self.__gameIDs[0], self.__slot1Frame)
-            self.__createSlotDisplay(self.__gameIDs[1], self.__slot2Frame)
-            self.__createSlotDisplay(self.__gameIDs[2], self.__slot3Frame)
+            self.__createSlotDisplay(gameIDs[0], slot1Frame)
+            self.__createSlotDisplay(gameIDs[1], slot2Frame)
+            self.__createSlotDisplay(gameIDs[2], slot3Frame)
 
         else:
-            self.__loginButton = tk.Button(self.__frame,text = "Login", font = (TEXT_FONT,13), command= self.__openLoginWindow)
-            self.__loginButton.place(relx=0.5,rely=0.5,anchor="center")
+            loginButton = tk.Button(self.__frame,text = "Login", font = (TEXT_FONT,13), command= self.__openLoginWindow)
+            loginButton.place(relx=0.5,rely=0.5,anchor="center")
 
     def __openLoginWindow(self):
         self.__frame.winfo_toplevel().wait_window(self.__signInOutFunc().getWindow())

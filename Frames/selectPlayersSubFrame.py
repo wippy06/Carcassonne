@@ -41,14 +41,14 @@ class playerSelectBox:
         self.__orderFrame.pack()
 
         #not done as for loop for ease of access, buttons stored in button list to be indexed
-        self.__orderB1 = tk.Button(self.__orderFrame, text = "1", command = lambda: self.__selectOrder(1), bg = "grey94",font=(TEXT_FONT,13))
-        self.__orderB2 = tk.Button(self.__orderFrame, text = "2", command = lambda: self.__selectOrder(2), bg = "grey94",font=(TEXT_FONT,13))
-        self.__orderB3 = tk.Button(self.__orderFrame, text = "3", command = lambda: self.__selectOrder(3), bg = "grey94",font=(TEXT_FONT,13))
-        self.__orderB4 = tk.Button(self.__orderFrame, text = "4", command = lambda: self.__selectOrder(4), bg = "grey94",font=(TEXT_FONT,13))
-        self.__orderB5 = tk.Button(self.__orderFrame, text = "5", command = lambda: self.__selectOrder(5), bg = "grey94",font=(TEXT_FONT,13))
-        self.__orderB6 = tk.Button(self.__orderFrame, text = "6", command = lambda: self.__selectOrder(6), bg = "grey94",font=(TEXT_FONT,13))
+        orderB1 = tk.Button(self.__orderFrame, text = "1", command = lambda: self.__selectOrder(1), bg = "grey94",font=(TEXT_FONT,13))
+        orderB2 = tk.Button(self.__orderFrame, text = "2", command = lambda: self.__selectOrder(2), bg = "grey94",font=(TEXT_FONT,13))
+        orderB3 = tk.Button(self.__orderFrame, text = "3", command = lambda: self.__selectOrder(3), bg = "grey94",font=(TEXT_FONT,13))
+        orderB4 = tk.Button(self.__orderFrame, text = "4", command = lambda: self.__selectOrder(4), bg = "grey94",font=(TEXT_FONT,13))
+        orderB5 = tk.Button(self.__orderFrame, text = "5", command = lambda: self.__selectOrder(5), bg = "grey94",font=(TEXT_FONT,13))
+        orderB6 = tk.Button(self.__orderFrame, text = "6", command = lambda: self.__selectOrder(6), bg = "grey94",font=(TEXT_FONT,13))
 
-        self.__orderBList = [self.__orderB1, self.__orderB2, self.__orderB3, self.__orderB4, self.__orderB5, self.__orderB6,]
+        self.__orderBList = [orderB1, orderB2, orderB3, orderB4, orderB5, orderB6]
 
         #gridded as for loop to make ui easy to interperate
         for i in range(len(self.__orderBList)):
