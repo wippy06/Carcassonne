@@ -1,5 +1,4 @@
 from .feature import feature
-from constants import PLAYER_COLOUR_LIST
 
 class board:
     def __init__(self):

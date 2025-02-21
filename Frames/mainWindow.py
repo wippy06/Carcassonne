@@ -37,7 +37,6 @@ class mainWindow:
         self.__pixel = tk.PhotoImage(width=1, height=1)
 
         tk.Label(self.__topBarFrameL,text ="Carcassonne",font=(TEXT_FONT,16),bg=FRAME_TOP_BAR_COLOUR).pack(side="left")
-        tk.Button(self.__topBarFrameR, text="Exit",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command=self.__window.destroy, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
         tk.Button(self.__topBarFrameR, text = "☰",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', command = self.__displayPauseWindow, bg = BUTTON_DEFAULT_COLOUR).pack(side="right")
         tk.Button(self.__topBarFrameR, text = "🏅", font=(TEXT_FONT,16,"bold"), width=32,height=32,image=self.__pixel, compound='c', command=self.__displayAchievements).pack(side="right")
         self.__signInOutButton = tk.Button(self.__topBarFrameR,text="👤",font=(TEXT_FONT,16), width=32,height=32,image=self.__pixel, compound='c', bg = BUTTON_DEFAULT_COLOUR)

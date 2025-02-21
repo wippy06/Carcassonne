@@ -29,7 +29,7 @@ class dbHandler:
             PlayerID INTEGER PRIMARY KEY AUTOINCREMENT,
             PlayingOrder INTEGER NOT NULL,
             Name TEXT NOT NULL,
-            Type TEXT NOT NULL,
+            Type VARCHAR(6) NOT NULL,
             GameID INTEGER NOT NULL,
             FOREIGN KEY (GameID) REFERENCES Game(GameID));                                           
         """)
@@ -40,7 +40,7 @@ class dbHandler:
             MoveID INTEGER PRIMARY KEY AUTOINCREMENT,
             PlayingOrder INTEGER NOT NULL,
             Rotations INTEGER NOT NULL,
-            Meeple TEXT NOT NULL,
+            Meeple VARCHAR(6) NOT NULL,
             XCoord INTEGER NOT NULL,
             YCoord INTEGER NOT NULL,
             GameID INTEGER NOT NULL,
@@ -109,8 +109,8 @@ class dbHandler:
     def getUserID(self,username):
         self.__cur.execute("""
             SELECT UserID
-            FROM User WHERE
-            Username = ?;
+            FROM User 
+            WHERE Username = ?;
         """, (username,))
         userID = self.__cur.fetchone()
 
@@ -262,7 +262,8 @@ class dbHandler:
         ON Game.GameID = GameAchievement.GameID
         LEFT JOIN Achievement
         ON GameAchievement.AchievementID = Achievement.AchievementID
-        WHERE Game.UserID = ?;
+        WHERE Game.UserID = ?
+        ORDER BY Game.GameID DESC;
         """, (UserID,))
 
         gameSymbolDict = {}
