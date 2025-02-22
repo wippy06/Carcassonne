@@ -7,7 +7,7 @@ from frames.gameFrame import gameFrame
 from frames.leaderBoardFrame import leaderBoardFrame
 from frames.signInOutWindow import signInOutWindow
 from frames.achievementsWindow import achievementsWindow
-from database.dbHandler import dbHandler
+from databaseFolder.dbHandler import dbHandler
 from constants import START_FULLSCREEN,BUTTON_DEFAULT_COLOUR,FRAME_BG_DEFAULT_COLOUR,TEXT_FONT,FRAME_TOP_BAR_COLOUR
 
 class mainWindow:
