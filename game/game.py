@@ -128,11 +128,17 @@ class game:
             self.__tempClaimSide = ""
 
     def getPlayerLeaderboard(self):
-        playerScores = {}
+        '''playerScores = {}
         for player in self.__playerKeys:
-            playerScores[self.__playerDict[player].getName()] = [self.__playerDict[player].getScore(),player]
+            playerScores[self.__playerDict[player].getName()] = [self.__playerDict[player].getScore(),player]'''
+        
+        playerList = []        
+        for key in self.__playerDict.keys():
+            playerList.append(self.__playerDict[key])
 
-        return playerScores
+        sortedPlayerList = self.__mergeSort(playerList)
+
+        return sortedPlayerList
     
     def getTurnPlayerName(self):
         return self.__playerDict[self.__playerKeys[0]].getName()
@@ -277,25 +283,25 @@ class game:
 
         return tileList, tileCount
 
-    def __mergeSort(self, arr):
+    def __mergeSort(self, unsortedList):
         #used to sort tiles based on tileOrder
         #merge sort used as number of tiles needed to be sorted can potentially be large if expansion packs added in future
         #uses recursion
 
         #base case for divisions
-        if len(arr) == 1:
-            return arr
+        if len(unsortedList) == 1:
+            return unsortedList
         
         #split list in half, mid is middle and fills left and right
-        middle = len(arr) // 2
+        middle = len(unsortedList) // 2
         leftHalf = []
         rightHalf = []
 
         for i in range(middle):
-            leftHalf.append(arr[i])
+            leftHalf.append(unsortedList[i])
 
-        for i in range(len(arr)-middle):
-            rightHalf.append(arr[i + middle])
+        for i in range(len(unsortedList)-middle):
+            rightHalf.append(unsortedList[i + middle])
 
         #recursion for splits
         leftHalf = self.__mergeSort(leftHalf)

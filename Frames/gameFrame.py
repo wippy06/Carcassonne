@@ -225,31 +225,12 @@ class gameFrame:
         self.__game.drawTile(self.__tileCanvas,True)
 
     def __updateScores(self):
-        #playerScoreDict is dictionary, keys is player names, values are [player scores,player colour]
-        playerScoreDict = self.__game.getPlayerLeaderboard()
-        playerNames = list(playerScoreDict.keys())
-
-        #bubble sort to sort playerNames list into order based on scores then alphabetically
-        #includes optimisations to stop if no swaps
-        #bubble sort used as number of items needed to be sorted is small
-        for i in range(len(playerNames)):
-            swaps = False
-            for j in range(len(playerNames)-i-1):
-                if playerScoreDict[playerNames[j]][0]<playerScoreDict[playerNames[j+1]][0]:
-                    playerNames[j],playerNames[j+1]=playerNames[j+1],playerNames[j]
-                    swaps = True
-
-                #sort alphabetically if scores are the same
-                elif playerScoreDict[playerNames[j]][0]==playerScoreDict[playerNames[j+1]][0]:
-                    if playerNames[j]>playerNames[j+1]:
-                        playerNames[j],playerNames[j+1]=playerNames[j+1],playerNames[j]
-                        swaps = True
-            if not swaps:
-                break
+        #playerList is presorted
+        playerList = self.__game.getPlayerLeaderboard()       
 
         #updates player scoreboard using loop to reduce code
-        for i in range(len(playerNames)):
-            self.__scoreLableList[i].config(text=str(i+1)+". "+playerNames[i]+" : "+playerScoreDict[playerNames[i]][1]+" : "+str(playerScoreDict[playerNames[i]][0]))
+        for i in range(len(playerList)):
+            self.__scoreLableList[i].config(text=str(i+1)+". "+playerList[i].getName()+" : "+playerList[i].getColour()+" : "+str(playerList[i].getScore()))
 
     def saveGame(self):
         self.__game.updateRecord()

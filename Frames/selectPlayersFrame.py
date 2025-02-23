@@ -86,31 +86,11 @@ class selectPlayersFrame:
         if len(nameList) >= 2 and len(set(nameList)) == len(nameList) and len(set(orderList)) == len(orderList) and not(0 in orderList) and validNames:
             self.__continue()
 
-    def __bubbleSort(self, playerList):
-        #standard bubble sort used for sorting players into playing order
-        #includes optimisations to stop if no swaps
-        #bubble sort used as number of items needed to be sorted is small
-        for i in range(len(playerList)):
-            swaps = False
-
-            for j in range(len(playerList)-i-1):
-                if playerList[j].getOrder()>playerList[j+1].getOrder():
-                    playerList[j],playerList[j+1]=playerList[j+1],playerList[j]
-                    swaps = True
-
-            if not swaps:
-                break
-
-        return playerList
-
     def __continue(self):
-        #to sort players into playing order to be loaded into the file
-        sortedPlayerList = self.__bubbleSort(self.__playerList)
-
-        #setting up and writing data to save file
-        for i in range(len(sortedPlayerList)):
-            if sortedPlayerList[i].getIsPlaying():
-                self.__dbHandler.newPlayer(i, sortedPlayerList[i].getName(), sortedPlayerList[i].getType(), self.__gameID)
+        #setting up and writing data to db
+        for i in range(len(self.__playerList)):
+            if self.__playerList[i].getIsPlaying():
+                self.__dbHandler.newPlayer(self.__playerList[i].getOrder(), self.__playerList[i].getName(), self.__playerList[i].getType(), self.__gameID)
 
         #removes tk children to prepare for next frame
         for widget in self.__mainFrame.winfo_children():

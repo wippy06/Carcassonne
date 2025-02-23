@@ -2,7 +2,7 @@ import sqlite3, json
 
 class dbHandler:
     def __init__(self):
-        with sqlite3.connect("database/database.db") as self.__db:
+        with sqlite3.connect("databaseFolder/database.db") as self.__db:
             self.__cur = self.__db.cursor()
 
         #creates User table
